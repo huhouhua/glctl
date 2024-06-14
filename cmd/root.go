@@ -1,22 +1,25 @@
 package cmd
 
-import "github.com/spf13/cobra"
+import (
+	"github.com/spf13/cobra"
+	"io"
+)
 
-// rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
-	Use:   "gitrepo",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+var globalUsage = `the gitlab repository operator
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	//      Run: func(cmd *cobra.Command, args []string) { },
-}
+Common actions for gitrepo
 
-func Execute() error {
-	return rootCmd.Execute()
+- gitrepo insert:   start insert file
+`
+
+func NewRootCmd(out io.Writer) (*cobra.Command, error) {
+	cmd := &cobra.Command{
+		Use:           "gitrepo",
+		Short:         "the gitlab repository operator",
+		Long:          globalUsage,
+		SilenceErrors: true,
+	}
+	//flags := cmd.PersistentFlags()
+	cmd.AddCommand(newInsertCmd(out))
+	return cmd, nil
 }

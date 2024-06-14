@@ -15,11 +15,20 @@
 # Build all by default, even if it's not first
 
 GO := go
+NAME = gitrepo
+OS = linux darwin
+architecture = amd64 arm6
 # include the common make file
 COMMON_SELF_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 ifeq ($(origin ROOT_DIR),undefined)
 ROOT_DIR := $(abspath $(shell cd $(COMMON_SELF_DIR) && pwd -P))
 endif
+ifeq ($(origin OUTPUT_DIR),undefined)
+OUTPUT_DIR := $(ROOT_DIR)/_output
+$(shell mkdir -p $(OUTPUT_DIR))
+endif
+
+.DEFAULT_GOAL := help
 
 .PHONY: copyright.verify
 copyright.verify: tools.verify.licctl
@@ -48,6 +57,21 @@ tools.verify.%:
 .PHONY: tidy
 tidy:
 	@$(GO) mod tidy
+
+.PHONY: build
+build: clean tidy ## Generate releases for unix systems
+	@for arch in $(architecture);\
+	do \
+		for os in ${OS};\
+		do \
+			echo "Building $$os-$$arch"; \
+			CGO_ENABLED=0 GOOS=$$os GOARCH=$$arch go build -ldflags "-s -w" -o $(OUTPUT_DIR)/$(NAME)-$$os-$$arch; \
+		done \
+	done
+
+.PHONY: clean
+clean: ## Remove building artifacts
+	rm -rf $(OUTPUT_DIR)/*
 
 ## help: Show this help info.
 .PHONY: help
