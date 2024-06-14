@@ -21,7 +21,6 @@ ifeq ($(origin ROOT_DIR),undefined)
 ROOT_DIR := $(abspath $(shell cd $(COMMON_SELF_DIR) && pwd -P))
 endif
 
-
 .PHONY: copyright.verify
 copyright.verify: tools.verify.licctl
 	@echo "===========> Verifying the boilerplate headers for all files"
@@ -46,6 +45,9 @@ tools.install.%:
 tools.verify.%:
 	@if ! which $* &>/dev/null; then $(MAKE) tools.install.$*; fi
 
+.PHONY: tidy
+tidy:
+	@$(GO) mod tidy
 
 ## help: Show this help info.
 .PHONY: help

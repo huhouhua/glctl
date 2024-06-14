@@ -14,6 +14,13 @@
 
 package main
 
-func main() {
+import (
+	"github.com/huhouhua/gitlab-repo-operator/cmd"
+	"os"
+)
 
+func main() {
+	if err := cmd.Execute(); err != nil {
+		os.Exit(1)
+	}
 }
