@@ -15,27 +15,32 @@
 package cmd
 
 import (
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"io"
 )
 
-var globalUsage = `the gitlab repository operator
-
-Common actions for grepo
-
-- grepo insert:   start insert file
-`
-
-func NewRootCmd(out io.Writer) (*cobra.Command, error) {
-	cmd := &cobra.Command{
-		Use:           "grepo",
-		Short:         "the gitlab repository operator",
-		Long:          globalUsage,
-		SilenceErrors: true,
+// RequiresMaxArgs returns an error if there is not at most max args
+func RequiresMaxArgs(max int) cobra.PositionalArgs {
+	return func(cmd *cobra.Command, args []string) error {
+		if len(args) <= max {
+			return nil
+		}
+		return errors.Errorf(
+			"%q requires at most %d %s.\nSee '%s --help'.\n\nUsage:  %s\n\n%s",
+			cmd.CommandPath(),
+			max,
+			pluralize("argument", max),
+			cmd.CommandPath(),
+			cmd.UseLine(),
+			cmd.Short,
+		)
 	}
-	//flags := cmd.PersistentFlags()
-	cmd.AddCommand(
-		newLoginCmd(),
-		newInsertCmd(out))
-	return cmd, nil
+}
+
+//nolint:unparam
+func pluralize(word string, number int) string {
+	if number == 1 {
+		return word
+	}
+	return word + "s"
 }

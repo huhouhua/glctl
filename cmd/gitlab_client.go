@@ -13,29 +13,3 @@
 // limitations under the License.
 
 package cmd
-
-import (
-	"github.com/spf13/cobra"
-	"io"
-)
-
-var globalUsage = `the gitlab repository operator
-
-Common actions for grepo
-
-- grepo insert:   start insert file
-`
-
-func NewRootCmd(out io.Writer) (*cobra.Command, error) {
-	cmd := &cobra.Command{
-		Use:           "grepo",
-		Short:         "the gitlab repository operator",
-		Long:          globalUsage,
-		SilenceErrors: true,
-	}
-	//flags := cmd.PersistentFlags()
-	cmd.AddCommand(
-		newLoginCmd(),
-		newInsertCmd(out))
-	return cmd, nil
-}

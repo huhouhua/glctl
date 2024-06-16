@@ -15,7 +15,7 @@
 # Build all by default, even if it's not first
 
 GO := go
-NAME = gitrepo
+NAME = grepo
 OS = linux darwin
 architecture = amd64 arm6
 # include the common make file
