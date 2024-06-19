@@ -13,3 +13,41 @@
 // limitations under the License.
 
 package cmd
+
+import (
+	"fmt"
+	"github.com/xanzy/go-gitlab"
+	"strings"
+)
+
+func newClient() (*gitlab.Client, error) {
+	oathInfoCfg, err := withReadOathInfoConfig()
+	if err != nil {
+		return nil, err
+	}
+	oathInfoEnvCfg, err := withReadOathEnvConfig()
+	if err != nil {
+		return nil, err
+	}
+	authorization := newGitLabAuthorization(oathInfoCfg, oathInfoEnvCfg)
+	switch {
+	case authorization.HasAuth():
+		return gitlab.NewOAuthClient(oathInfoCfg.AccessToken, gitlab.WithBaseURL(withApiUrl(oathInfoCfg.HostUrl)))
+	case authorization.HasPasswordAuth():
+		return gitlab.NewBasicAuthClient(oathInfoEnvCfg.UserName, oathInfoEnvCfg.Password, gitlab.WithBaseURL(withApiUrl(oathInfoEnvCfg.URL)))
+	case authorization.HasBasicAuth():
+		return gitlab.NewClient(oathInfoEnvCfg.PrivateToken, gitlab.WithBaseURL(oathInfoEnvCfg.URL))
+	case authorization.HasOathAuth():
+		return gitlab.NewOAuthClient(oathInfoEnvCfg.OauthToken, gitlab.WithBaseURL(oathInfoEnvCfg.URL))
+	default:
+		return nil, fmt.Errorf("no client was created. "+
+			"gitlab configuration was not set properly. \n %s", authDoc)
+	}
+}
+
+func withApiUrl(url string) string {
+	if strings.HasSuffix(url, "/api") {
+		return fmt.Sprintf("%s/v4", url)
+	}
+	return url
+}

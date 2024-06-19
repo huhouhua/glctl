@@ -15,27 +15,91 @@
 package cmd
 
 import (
+	"fmt"
+	"github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"io"
+	"strings"
 )
 
-var globalUsage = `the gitlab repository operator
+var authDoc = `
+There are two options to authenticate the command-line client to Gitlab interface:
 
-Common actions for grepo
+1.) Using the 'login' command by passing the host url, username and password.
 
-- grepo insert:   start insert file
+$ grepo login
+
+The login token will be saved in $HOME/.grepo.yaml file.
+
+2.) Using Environment variables.
+
+* Basic Authentication (if using a username and password)
+    - GITLAB_USERNAME
+    - GITLAB_PASSWORD
+    - GITLAB_HTTP_URL
+
+* Private Token (if using a private token)
+    - GITLAB_PRIVATE_TOKEN
+    - GITLAB_API_HTTP_URL
+
+* OAuth Token (if using an oauth token)
+    - GITLAB_OAUTH_TOKEN
+    - GITLAB_API_HTTP_URL`
+
+var cfgFile string
+var globalUsage = `The gitlab repository operator for the command-line.
+
+This client helps you view, update, create, and delete Gitlab resources from the
+command-line interface.
 `
 
 func NewRootCmd(out io.Writer) (*cobra.Command, error) {
 	cmd := &cobra.Command{
 		Use:           "grepo",
 		Short:         "the gitlab repository operator",
-		Long:          globalUsage,
+		Long:          fmt.Sprintf("%s\n%s", globalUsage, authDoc),
 		SilenceErrors: true,
 	}
-	//flags := cmd.PersistentFlags()
+	flags := cmd.PersistentFlags()
+	flags.StringVarP(&cfgFile, "config", "c", "", "config file (default is $HOME/.grepo.yaml)")
+
 	cmd.AddCommand(
 		newLoginCmd(),
-		newInsertCmd(out))
+		newGetCmd())
 	return cmd, nil
+}
+
+func init() {
+	cobra.OnInitialize(initConfig)
+}
+
+// initConfig reads in config file and ENV variables if set.
+func initConfig() {
+	if cfgFile != "" {
+		// Use config file from the flag.
+		viper.SetConfigFile(cfgFile)
+	} else {
+		// Find home directory.
+		home, err := homedir.Dir()
+		if err != nil {
+			util.Error(err)
+		}
+
+		// Search config in home directory with name ".grepo" (without extension).
+		viper.AddConfigPath(home)
+		viper.SetConfigName(".grepo")
+	}
+
+	viper.AutomaticEnv() // read in environment variables that match
+
+	// If a config file is found, read it in.
+	if err := viper.ReadInConfig(); err != nil {
+		// NOTE: the config file is not required to exists
+		// raise an error if error is other than config file not found
+		if !strings.Contains(err.Error(), `Config File ".grepo" Not Found`) {
+			util.Error(err)
+		}
+	}
 }

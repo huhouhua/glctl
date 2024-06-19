@@ -20,7 +20,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/howeyc/gopass"
+	"github.com/huhouhua/gitlab-repo-operator/cmd/require"
+	"github.com/huhouhua/gitlab-repo-operator/cmd/types"
 	"github.com/mitchellh/go-homedir"
+	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 	"io"
@@ -44,7 +47,7 @@ func newLoginCmd() *cobra.Command {
 		Short:             "Login to gitlab",
 		Long:              loginDesc,
 		Example:           `grepo login http://localhost:8080`,
-		Args:              RequiresMaxArgs(1),
+		Args:              require.RequiresMaxArgs(1),
 		SilenceErrors:     true,
 		SilenceUsage:      true,
 		DisableAutoGenTag: true,
@@ -103,10 +106,15 @@ func runLogin(ctx context.Context, opts loginOptions) error {
 	if err != nil {
 		return err
 	}
+	var cfg = types.GitLabOauthInfo{}
+	err = mapstructure.Decode(cfgMap, &cfg)
+	if err != nil {
+		return err
+	}
 	cfgFile := fmt.Sprintf("%s/.grepo.yaml", home)
 	// add host_url and user to config file
-	cfgMap["host_url"] = opts.serverAddress
-	cfgMap["user"] = opts.user
+	cfg.HostUrl = opts.serverAddress
+	cfg.UserName = opts.user
 	b, err = yaml.Marshal(cfgMap)
 	if err != nil {
 		return err

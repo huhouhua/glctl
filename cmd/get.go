@@ -15,32 +15,27 @@
 package cmd
 
 import (
-	"github.com/pkg/errors"
+	"github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	"github.com/huhouhua/gitlab-repo-operator/cmd/validate"
 	"github.com/spf13/cobra"
 )
 
-// RequiresMaxArgs returns an error if there is not at most max args
-func RequiresMaxArgs(max int) cobra.PositionalArgs {
-	return func(cmd *cobra.Command, args []string) error {
-		if len(args) <= max {
-			return nil
-		}
-		return errors.Errorf(
-			"%q requires at most %d %s.\nSee '%s --help'.\n\nUsage:  %s\n\n%s",
-			cmd.CommandPath(),
-			max,
-			pluralize("argument", max),
-			cmd.CommandPath(),
-			cmd.UseLine(),
-			cmd.Short,
-		)
-	}
-}
+var getDesc = "Get Gitlab resources"
 
-//nolint:unparam
-func pluralize(word string, number int) string {
-	if number == 1 {
-		return word
+func newGetCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:               "get",
+		Aliases:           []string{"g"},
+		Short:             getDesc,
+		SilenceErrors:     true,
+		SilenceUsage:      true,
+		DisableAutoGenTag: true,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return validate.ValidateOutFlagValue(cmd)
+		},
 	}
-	return word + "s"
+	util.AddOutFlag(cmd)
+	util.AddPaginationFlags(cmd)
+	cmd.AddCommand(newGetProjectsCmd())
+	return cmd
 }

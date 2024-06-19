@@ -12,19 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cmd
+package types
 
-import (
-	"github.com/spf13/cobra"
-	"io"
-)
-
-const createDesc = `dada`
-
-func newInsertCmd(out io.Writer) *cobra.Command {
-	cmd := &cobra.Command{
-		Use: "insert ",
-	}
-
-	return cmd
+type GitLabOathFormEnv struct {
+	URL          string `json:"URL"`
+	UserName     string `json:"USERNAME"`
+	Password     string `json:"PASSWORD"`
+	PrivateToken string `json:"PRIVATE_TOKEN"`
+	OauthToken   string `json:"OAUTH_TOKEN"`
 }
