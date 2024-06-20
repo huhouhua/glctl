@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cmd
+package util
 
 import (
 	"bytes"
@@ -24,46 +24,54 @@ import (
 )
 
 // cmdTestCase describes a test case that works with releases.
-type cmdTestCase struct {
-	name      string
-	cmd       string
-	wantError bool
+type CmdTestCase struct {
+	Name      string
+	Cmd       string
+	WantError bool
 }
 
-func tInfo(msg interface{}) {
+func NewTestFactory() Factory {
+	configFlags := NewConfigFlags(false)
+	return NewFactory(configFlags)
+}
+
+func TInfo(msg interface{}) {
 	fmt.Println("--- INFO:", msg)
 }
-func tOut(msg interface{}) {
+func TOut(msg interface{}) {
 	fmt.Println("--- OUTPUT:", msg)
 }
 
+type TestCmdFunc = func(buffer *bytes.Buffer) (*cobra.Command, error)
+
 // A helper to ignore os.Exit(1) errors when running a cobra Command
-func executeCommand(cmd string) (stdout string, err error) {
+func ExecuteCommand(cmdFunc TestCmdFunc, cmd string) (stdout string, err error) {
 	args, err := shellwords.Parse(cmd)
 	if err != nil {
 		return "", err
 	}
-	return executeCommandOfArgs(args...)
+	return ExecuteCommandOfArgs(cmdFunc, args...)
 }
 
-func executeCommandOfArgs(args ...string) (stdout string, err error) {
+func ExecuteCommandOfArgs(cmdFunc TestCmdFunc, args ...string) (stdout string, err error) {
 	buf := new(bytes.Buffer)
-	root, err := NewRootCmd(buf)
+	//root, err := NewRootCmd(buf)
+	cmd, err := cmdFunc(buf)
 	if err != nil {
 		return "", err
 	}
 	for i, arg := range args {
-		tInfo(fmt.Sprintf("(%d) %s", i, arg))
+		TInfo(fmt.Sprintf("(%d) %s", i, arg))
 	}
 	// programs can exit with error here..
-	stdout, _, err = executeCommandC(root, args...)
-	tInfo("The command successfully returned values for assertion.")
+	stdout, _, err = ExecuteCommandC(cmd, args...)
+	TInfo("The command successfully returned values for assertion.")
 	return stdout, err
 
 }
 
 // A helper to ignore os.Exit(1) errors when running a cobra Command
-func executeCommandC(root *cobra.Command, args ...string) (stdout string, output string, err error) {
+func ExecuteCommandC(root *cobra.Command, args ...string) (stdout string, output string, err error) {
 	buf := new(bytes.Buffer)
 	root.SetOut(buf)
 	root.SetErr(buf)
@@ -88,7 +96,7 @@ func executeCommandC(root *cobra.Command, args ...string) (stdout string, output
 
 	// back to normal state
 	if err := w.Close(); err != nil {
-		tInfo(err)
+		TInfo(err)
 	}
 	os.Stdout = old // restoring the real stdout
 	stdout = <-outC

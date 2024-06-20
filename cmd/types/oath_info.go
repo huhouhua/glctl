@@ -15,11 +15,11 @@
 package types
 
 type GitLabOauthInfo struct {
-	AccessToken  string `json:"access_token"`
-	CreatedAt    string `json:"created_at"`
-	HostUrl      string `json:"host_url"`
-	RefreshToken string `json:"refresh_token"`
-	Scope        string `json:"scope"`
-	TokenType    string `json:"token_type"`
-	UserName     string `json:"user_name"`
+	AccessToken  *string `json:"access_token"`
+	CreatedAt    *string `json:"created_at"`
+	HostUrl      *string `json:"host_url"`
+	RefreshToken *string `json:"refresh_token"`
+	Scope        *string `json:"scope"`
+	TokenType    *string `json:"token_type"`
+	UserName     *string `json:"user_name"`
 }

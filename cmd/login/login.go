@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cmd
+package login
 
 import (
 	"bufio"
@@ -40,7 +40,7 @@ type loginOptions struct {
 	password      string
 }
 
-func newLoginCmd() *cobra.Command {
+func NewLoginCmd() *cobra.Command {
 	var opts loginOptions
 	cmd := &cobra.Command{
 		Use:               "login [OPTIONS] [SERVER]",
@@ -62,6 +62,10 @@ func newLoginCmd() *cobra.Command {
 	flags.StringVarP(&opts.user, "username", "u", "", "Username")
 	flags.StringVarP(&opts.password, "password", "p", "", "Password")
 	return cmd
+}
+
+func (o *loginOptions) Complete() {
+
 }
 
 func runLogin(ctx context.Context, opts loginOptions) error {
@@ -113,8 +117,8 @@ func runLogin(ctx context.Context, opts loginOptions) error {
 	}
 	cfgFile := fmt.Sprintf("%s/.grepo.yaml", home)
 	// add host_url and user to config file
-	cfg.HostUrl = opts.serverAddress
-	cfg.UserName = opts.user
+	cfg.HostUrl = &opts.serverAddress
+	cfg.UserName = &opts.user
 	b, err = yaml.Marshal(cfgMap)
 	if err != nil {
 		return err

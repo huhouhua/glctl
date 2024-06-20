@@ -16,7 +16,9 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	"github.com/huhouhua/gitlab-repo-operator/cmd/get"
+	"github.com/huhouhua/gitlab-repo-operator/cmd/login"
+	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -24,7 +26,7 @@ import (
 	"strings"
 )
 
-var authDoc = `
+var AuthDoc = `
 There are two options to authenticate the command-line client to Gitlab interface:
 
 1.) Using the 'login' command by passing the host url, username and password.
@@ -59,15 +61,20 @@ func NewRootCmd(out io.Writer) (*cobra.Command, error) {
 	cmd := &cobra.Command{
 		Use:           "grepo",
 		Short:         "the gitlab repository operator",
-		Long:          fmt.Sprintf("%s\n%s", globalUsage, authDoc),
+		Long:          fmt.Sprintf("%s\n%s", globalUsage, AuthDoc),
 		SilenceErrors: true,
+		Run:           runHelp,
 	}
 	flags := cmd.PersistentFlags()
 	flags.StringVarP(&cfgFile, "config", "c", "", "config file (default is $HOME/.grepo.yaml)")
 
+	configFlags := cmdutil.NewConfigFlags(false)
+	configFlags.AddFlags(flags)
+	f := cmdutil.NewFactory(configFlags)
+
 	cmd.AddCommand(
-		newLoginCmd(),
-		newGetCmd())
+		login.NewLoginCmd(),
+		get.NewGetCmd(f))
 	return cmd, nil
 }
 
@@ -84,7 +91,7 @@ func initConfig() {
 		// Find home directory.
 		home, err := homedir.Dir()
 		if err != nil {
-			util.Error(err)
+			cmdutil.Error(err)
 		}
 
 		// Search config in home directory with name ".grepo" (without extension).
@@ -99,7 +106,10 @@ func initConfig() {
 		// NOTE: the config file is not required to exists
 		// raise an error if error is other than config file not found
 		if !strings.Contains(err.Error(), `Config File ".grepo" Not Found`) {
-			util.Error(err)
+			cmdutil.Error(err)
 		}
 	}
+}
+func runHelp(cmd *cobra.Command, args []string) {
+	_ = cmd.Help()
 }

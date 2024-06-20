@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cmd
+package get
 
 import (
-	"github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
 	"github.com/huhouhua/gitlab-repo-operator/cmd/validate"
 	"github.com/spf13/cobra"
 )
 
 var getDesc = "Get Gitlab resources"
 
-func newGetCmd() *cobra.Command {
+func NewGetCmd(f cmdutil.Factory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:               "get",
 		Aliases:           []string{"g"},
@@ -34,8 +34,8 @@ func newGetCmd() *cobra.Command {
 			return validate.ValidateOutFlagValue(cmd)
 		},
 	}
-	util.AddOutFlag(cmd)
-	util.AddPaginationFlags(cmd)
-	cmd.AddCommand(newGetProjectsCmd())
+	cmdutil.AddOutFlag(cmd)
+	//util.AddPaginationFlags(cmd)
+	//cmd.AddCommand(project.NewGetProjectsCmd(f))
 	return cmd
 }

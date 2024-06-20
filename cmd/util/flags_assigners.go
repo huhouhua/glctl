@@ -126,7 +126,3 @@ func AddOutFlag(cmd *cobra.Command) {
 		"Print the command output to the "+
 			"desired format. (json, yaml, simple)")
 }
-func AddPaginationFlags(cmd *cobra.Command) {
-	cmd.PersistentFlags().Int("page", 0, "Page of results to retrieve")
-	cmd.PersistentFlags().Int("per-page", 0, "The number of results to include per page")
-}

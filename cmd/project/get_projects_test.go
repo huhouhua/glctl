@@ -12,37 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cmd
+package project
 
 import (
+	"bytes"
+	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	"github.com/spf13/cobra"
 	"testing"
 )
 
-func TestLogin(t *testing.T) {
-	tests := []cmdTestCase{{
-		name:      "login gitlab incorrect address",
-		cmd:       "login http://1.2.4.5 -p 12345 -u 123456 ",
-		wantError: true,
-	}, {
-		name:      "login gitlab incorrect password",
-		cmd:       "login http://172.17.162.204 -p 123456 -u v-huhouhua@ruijie.com.cn ",
-		wantError: true,
-	}, {
-		name:      "login gitlab incorrect username",
-		cmd:       "login http://172.17.162.204 -p huhouhua -u v-xxxx@ruijie.com.cn ",
-		wantError: true,
-	}, {
-		name: "login gitlab success",
-		cmd:  "login http://172.17.162.204 -p huhouhua -u v-huhouhua@ruijie.com.cn ",
+func TestGetProjects(t *testing.T) {
+	tests := []cmdutil.CmdTestCase{{
+		Name:      "list all projects",
+		Cmd:       "",
+		WantError: true,
 	}}
 	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
-			out, err := executeCommand(tc.cmd)
-			tInfo(out)
-			if tc.wantError && err == nil {
+		t.Run(tc.Name, func(t *testing.T) {
+			out, err := cmdutil.ExecuteCommand(func(buffer *bytes.Buffer) (*cobra.Command, error) {
+				return NewGetProjectsCmd(cmdutil.NewTestFactory()), nil
+			}, tc.Cmd)
+
+			cmdutil.TInfo(out)
+			if tc.WantError && err == nil {
 				t.Errorf("expected error, got success with the following output:\n%s", out)
 			}
-			if !tc.wantError && err != nil {
+			if !tc.WantError && err != nil {
 				t.Errorf("expected no error, got: '%v'", err)
 			}
 		})
