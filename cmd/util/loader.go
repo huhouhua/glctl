@@ -15,6 +15,7 @@
 package util
 
 import (
+	"github.com/AlekSi/pointer"
 	"github.com/huhouhua/gitlab-repo-operator/cmd/types"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v3"
@@ -47,13 +48,13 @@ func LoadOathWithInfoConfig() (*types.GitLabOauthInfo, error) {
 }
 
 func LoadOathWithEnvConfig() (*types.GitLabOathFormEnv, error) {
-	var oathEnvInfo types.GitLabOathFormEnv
-	viper.SetEnvPrefix("GITLAB")
-	err := viper.Unmarshal(&oathEnvInfo)
-	if err != nil {
-		return nil, err
-	}
-	return &oathEnvInfo, nil
+	return &types.GitLabOathFormEnv{
+		Url:          pointer.ToString(viper.GetString("URL")),
+		UserName:     pointer.ToString(viper.GetString("USERNAME")),
+		Password:     pointer.ToString(viper.GetString("PASSWORD")),
+		PrivateToken: pointer.ToString(viper.GetString("PRIVATE_TOKEN")),
+		OauthToken:   pointer.ToString(viper.GetString("OAUTH_TOKEN")),
+	}, nil
 }
 
 type GitLabAuthorization struct {
@@ -88,7 +89,7 @@ func (g *GitLabAuthorization) HasPasswordAuth() bool {
 	if env == nil {
 		return false
 	}
-	if strings.TrimSpace(*env.URL) == "" {
+	if strings.TrimSpace(*env.Url) == "" {
 		return false
 	}
 	if strings.TrimSpace(*env.UserName) == "" {
@@ -104,7 +105,7 @@ func (g *GitLabAuthorization) HasBasicAuth() bool {
 	if env == nil {
 		return false
 	}
-	if strings.TrimSpace(*env.URL) == "" {
+	if strings.TrimSpace(*env.Url) == "" {
 		return false
 	}
 	if strings.TrimSpace(*env.PrivateToken) == "" {
@@ -117,7 +118,7 @@ func (g *GitLabAuthorization) HasOathAuth() bool {
 	if env == nil {
 		return false
 	}
-	if strings.TrimSpace(*env.URL) == "" {
+	if strings.TrimSpace(*env.Url) == "" {
 		return false
 	}
 	if strings.TrimSpace(*env.OauthToken) == "" {

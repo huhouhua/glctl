@@ -28,11 +28,11 @@ func NewForConfig(config *types.Config) (*gitlab.Client, error) {
 	case authorization.HasAuth():
 		return gitlab.NewOAuthClient(*authorization.OathInfo.AccessToken, gitlab.WithBaseURL(withApiUrl(*authorization.OathInfo.HostUrl)))
 	case authorization.HasPasswordAuth():
-		return gitlab.NewBasicAuthClient(*authorization.OathEnv.UserName, *authorization.OathEnv.Password, gitlab.WithBaseURL(withApiUrl(*authorization.OathEnv.URL)))
+		return gitlab.NewBasicAuthClient(*authorization.OathEnv.UserName, *authorization.OathEnv.Password, gitlab.WithBaseURL(withApiUrl(*authorization.OathEnv.Url)))
 	case authorization.HasBasicAuth():
-		return gitlab.NewClient(*authorization.OathEnv.PrivateToken, gitlab.WithBaseURL(*authorization.OathEnv.URL))
+		return gitlab.NewClient(*authorization.OathEnv.PrivateToken, gitlab.WithBaseURL(*authorization.OathEnv.Url))
 	case authorization.HasOathAuth():
-		return gitlab.NewOAuthClient(*authorization.OathEnv.OauthToken, gitlab.WithBaseURL(*authorization.OathEnv.URL))
+		return gitlab.NewOAuthClient(*authorization.OathEnv.OauthToken, gitlab.WithBaseURL(*authorization.OathEnv.Url))
 	default:
 		return nil, fmt.Errorf("no client was created. "+
 			"gitlab configuration was not set properly. \n %s", "")

@@ -85,13 +85,10 @@ func printTable(header []string, rows [][]string) {
 	table.SetCenterSeparator("")
 	table.SetColumnSeparator("")
 	table.SetRowSeparator("")
-	table.SetHeaderLine(true)
+	table.SetHeaderLine(false)
 	table.SetBorder(false)
 	table.SetNoWhiteSpace(true)
-
 	table.SetTablePadding("\t") // pad with tabs
 	table.AppendBulk(rows)
-	table.SetCaption(true,
-		"Note: Use --out=json or --out=yaml to get more resource details.")
 	table.Render()
 }

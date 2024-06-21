@@ -21,6 +21,7 @@ import (
 	"github.com/huhouhua/gitlab-repo-operator/cmd/validate"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
+	"strings"
 )
 
 type ListOptions struct {
@@ -144,7 +145,7 @@ func (o *ListOptions) Validate(cmd *cobra.Command, args []string) error {
 func (o *ListOptions) Run(args []string) error {
 	var projects []*gitlab.Project
 	var err error
-	if o.FromGroup != "" {
+	if strings.TrimSpace(o.FromGroup) != "" {
 		projects, _, err = o.gitlabClient.Groups.ListGroupProjects(o.FromGroup, o.group)
 	} else {
 		projects, _, err = o.gitlabClient.Projects.ListProjects(o.project)

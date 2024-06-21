@@ -15,9 +15,9 @@
 package types
 
 type GitLabOathFormEnv struct {
-	URL          *string `json:"URL"`
-	UserName     *string `json:"USERNAME"`
-	Password     *string `json:"PASSWORD"`
-	PrivateToken *string `json:"PRIVATE_TOKEN"`
-	OauthToken   *string `json:"OAUTH_TOKEN"`
+	Url          *string `json:"url"`
+	UserName     *string `json:"user_name"`
+	Password     *string `json:"password"`
+	PrivateToken *string `json:"private_token"`
+	OauthToken   *string `json:"oauth_token"`
 }

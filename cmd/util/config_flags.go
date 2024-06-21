@@ -74,7 +74,7 @@ func (f *ConfigFlags) toRawGrepoPersistentConfigLoader() ClientConfig {
 func (f *ConfigFlags) toRawGrepoConfigLoader() ClientConfig {
 	oathInfoCfg, infoErr := LoadOathWithInfoConfig()
 	oathInfoEnvCfg, envErr := LoadOathWithEnvConfig()
-	if infoErr == nil && envErr == nil {
+	if infoErr != nil && envErr != nil {
 		panic(errors.Join(infoErr, envErr))
 	}
 	return NewClientConfigFromConfig(oathInfoCfg, oathInfoEnvCfg)
@@ -84,7 +84,7 @@ func (f *ConfigFlags) toRawGrepoConfigLoader() ClientConfig {
 func NewConfigFlags(usePersistentConfig bool) *ConfigFlags {
 	return &ConfigFlags{
 		Env: &types.GitLabOathFormEnv{
-			URL:          pointer.ToString(""),
+			Url:          pointer.ToString(""),
 			UserName:     pointer.ToString(""),
 			Password:     pointer.ToString(""),
 			PrivateToken: pointer.ToString(""),
@@ -92,7 +92,7 @@ func NewConfigFlags(usePersistentConfig bool) *ConfigFlags {
 		},
 		Oath: &types.GitLabOauthInfo{
 			AccessToken:  pointer.ToString(""),
-			CreatedAt:    pointer.ToString(""),
+			CreatedAt:    pointer.ToFloat64(0),
 			HostUrl:      pointer.ToString(""),
 			RefreshToken: pointer.ToString(""),
 			Scope:        pointer.ToString(""),

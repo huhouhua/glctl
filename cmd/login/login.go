@@ -16,12 +16,12 @@ package login
 
 import (
 	"bufio"
-	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/howeyc/gopass"
 	"github.com/huhouhua/gitlab-repo-operator/cmd/require"
 	"github.com/huhouhua/gitlab-repo-operator/cmd/types"
+	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
 	"github.com/mitchellh/go-homedir"
 	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/cobra"
@@ -35,13 +35,13 @@ import (
 var loginDesc = "This command authenticates you to a Gitlab server, retrieves your OAuth Token and then save it to $HOME/.grepo.yaml file."
 
 type loginOptions struct {
-	serverAddress string
-	user          string
-	password      string
+	ServerAddress string
+	User          string
+	Password      string
 }
 
 func NewLoginCmd() *cobra.Command {
-	var opts loginOptions
+	var o loginOptions
 	cmd := &cobra.Command{
 		Use:               "login [OPTIONS] [SERVER]",
 		Short:             "Login to gitlab",
@@ -51,42 +51,49 @@ func NewLoginCmd() *cobra.Command {
 		SilenceErrors:     true,
 		SilenceUsage:      true,
 		DisableAutoGenTag: true,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			if len(args) > 0 {
-				opts.serverAddress = args[0]
-			}
-			return runLogin(cmd.Context(), opts)
+		Run: func(cmd *cobra.Command, args []string) {
+			cmdutil.CheckErr(o.Complete(cmd, args))
+			cmdutil.CheckErr(o.Validate(cmd, args))
+			cmdutil.CheckErr(o.Run(args))
 		},
 	}
 	flags := cmd.Flags()
-	flags.StringVarP(&opts.user, "username", "u", "", "Username")
-	flags.StringVarP(&opts.password, "password", "p", "", "Password")
+	flags.StringVarP(&o.User, "username", "u", "", "Username")
+	flags.StringVarP(&o.Password, "password", "p", "", "Password")
 	return cmd
 }
 
-func (o *loginOptions) Complete() {
-
+// Complete completes all the required options.
+func (o *loginOptions) Complete(cmd *cobra.Command, args []string) error {
+	if len(args) > 0 {
+		o.ServerAddress = args[0]
+	}
+	if strings.TrimSpace(o.User) == "" {
+		o.User = promptUserNameInput()
+	}
+	if strings.TrimSpace(o.Password) == "" {
+		o.Password = promptPasswordInput()
+	}
+	return nil
 }
 
-func runLogin(ctx context.Context, opts loginOptions) error {
-	if opts.serverAddress == "" {
+// Validate makes sure there is no discrepency in command options.
+func (o *loginOptions) Validate(cmd *cobra.Command, args []string) error {
+	if strings.TrimSpace(o.ServerAddress) == "" {
 		return fmt.Errorf("please enter the gitlab url")
 	}
-	if opts.user == "" {
-		u, err := promptStringInput("Username")
-		if err != nil {
-			return err
-		}
-		opts.user = u
+	if strings.TrimSpace(o.User) == "" {
+		return fmt.Errorf("please enter the username ")
 	}
-	if opts.password == "" {
-		p, err := promptPasswordInput()
-		if err != nil {
-			return err
-		}
-		opts.password = p
+	if strings.TrimSpace(o.Password) == "" {
+		return fmt.Errorf("please enter the password ")
 	}
-	uri := fmt.Sprintf("%s/oauth/token?grant_type=password&username=%s&password=%s", opts.serverAddress, opts.user, opts.password)
+	return nil
+}
+
+// Run executes a create subcommand using the specified options.
+func (o *loginOptions) Run(args []string) error {
+	uri := fmt.Sprintf("%s/oauth/token?grant_type=password&username=%s&password=%s", o.ServerAddress, o.User, o.Password)
 	resp, err := http.Post(uri, "application/json", nil)
 	if err != nil {
 		return err
@@ -117,9 +124,9 @@ func runLogin(ctx context.Context, opts loginOptions) error {
 	}
 	cfgFile := fmt.Sprintf("%s/.grepo.yaml", home)
 	// add host_url and user to config file
-	cfg.HostUrl = &opts.serverAddress
-	cfg.UserName = &opts.user
-	b, err = yaml.Marshal(cfgMap)
+	cfg.HostUrl = &o.ServerAddress
+	cfg.UserName = &o.User
+	b, err = yaml.Marshal(cfg)
 	if err != nil {
 		return err
 	}
@@ -131,19 +138,35 @@ func runLogin(ctx context.Context, opts loginOptions) error {
 	return nil
 }
 
-func promptPasswordInput() (string, error) {
-	fmt.Print("Password: ")
-	password, err := gopass.GetPasswd()
-	return strings.TrimSpace(string(password)), err
+func promptPasswordInput() string {
+	for i := 0; i < 3; i++ {
+		fmt.Print("Password: ")
+		input, err := gopass.GetPasswd()
+		if err != nil {
+			fmt.Println(err.Error())
+			continue
+		}
+		password := strings.TrimSpace(string(input))
+		if password != "" {
+			return password
+		}
+	}
+	return ""
 }
 
-func promptStringInput(askFor string) (string, error) {
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Printf("%s: ", askFor)
-	username, err := reader.ReadString('\n')
-	if err != nil {
-		return "", err
+func promptUserNameInput() string {
+	for i := 0; i < 3; i++ {
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Printf("%s: ", "Username")
+		input, err := reader.ReadString('\n')
+		if err != nil {
+			fmt.Println(err.Error())
+			continue
+		}
+		username := strings.Replace(input, "\n", "", -1)
+		if strings.TrimSpace(username) != "" {
+			return username
+		}
 	}
-	// convert CRLF to LF
-	return strings.Replace(username, "\n", "", -1), nil
+	return ""
 }

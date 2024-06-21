@@ -68,6 +68,7 @@ func NewRootCmd(out io.Writer) (*cobra.Command, error) {
 	flags := cmd.PersistentFlags()
 	flags.StringVarP(&cfgFile, "config", "c", "", "config file (default is $HOME/.grepo.yaml)")
 
+	cobra.OnInitialize(initConfig)
 	configFlags := cmdutil.NewConfigFlags(false)
 	configFlags.AddFlags(flags)
 	f := cmdutil.NewFactory(configFlags)
@@ -76,10 +77,6 @@ func NewRootCmd(out io.Writer) (*cobra.Command, error) {
 		login.NewLoginCmd(),
 		get.NewGetCmd(f))
 	return cmd, nil
-}
-
-func init() {
-	cobra.OnInitialize(initConfig)
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -100,7 +97,7 @@ func initConfig() {
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
-
+	viper.SetEnvPrefix("GITLAB")
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err != nil {
 		// NOTE: the config file is not required to exists
@@ -109,6 +106,7 @@ func initConfig() {
 			cmdutil.Error(err)
 		}
 	}
+
 }
 func runHelp(cmd *cobra.Command, args []string) {
 	_ = cmd.Help()
