@@ -78,9 +78,19 @@ func printTable(header []string, rows [][]string) {
 	}
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader(header)
-	for _, row := range rows {
-		table.Append(row)
-	}
+	table.SetAutoWrapText(false)
+	table.SetAutoFormatHeaders(true)
+	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
+	table.SetCenterSeparator("")
+	table.SetColumnSeparator("")
+	table.SetRowSeparator("")
+	table.SetHeaderLine(true)
+	table.SetBorder(false)
+	table.SetNoWhiteSpace(true)
+
+	table.SetTablePadding("\t") // pad with tabs
+	table.AppendBulk(rows)
 	table.SetCaption(true,
 		"Note: Use --out=json or --out=yaml to get more resource details.")
 	table.Render()

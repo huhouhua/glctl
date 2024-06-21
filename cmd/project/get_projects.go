@@ -16,33 +16,18 @@ package project
 
 import (
 	"encoding/json"
+	"github.com/AlekSi/pointer"
 	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
 	"github.com/huhouhua/gitlab-repo-operator/cmd/validate"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 )
 
-type GetProjectFlags struct {
-	Page                     int
-	PerPage                  int
-	FromGroup                string
-	OrderBy                  string
-	Sort                     string
-	Search                   string
-	Statistics               bool
-	Visibility               string
-	Owned                    bool
-	archived                 bool
-	simple                   bool
-	membership               bool
-	starred                  bool
-	WithIssuesEnabled        bool
-	WithMergeRequestsEnabled bool
-	FromProject              string
-	Out                      string
-}
 type ListOptions struct {
 	gitlabClient *gitlab.Client
+	Visibility   string
+	FromGroup    string
+	Out          string
 	group        *gitlab.ListGroupProjectsOptions
 	project      *gitlab.ListProjectsOptions
 }
@@ -57,13 +42,29 @@ grepo get projects
 grepo get projects --from-group=Group1`
 )
 
-func NewGetProjectFlags() *GetProjectFlags {
-	return &GetProjectFlags{
-		Page:    0,
-		PerPage: 0,
+func NewListOptions() *ListOptions {
+	return &ListOptions{
+		Visibility: string(gitlab.PrivateVisibility),
+		group:      &gitlab.ListGroupProjectsOptions{},
+		project: &gitlab.ListProjectsOptions{
+			OrderBy:                  pointer.ToString("created_at"),
+			Sort:                     pointer.ToString("asc"),
+			Search:                   pointer.ToString(""),
+			Statistics:               pointer.ToBool(false),
+			Owned:                    pointer.ToBool(false),
+			Archived:                 pointer.ToBool(false),
+			Simple:                   pointer.ToBool(false),
+			Membership:               pointer.ToBool(false),
+			Starred:                  pointer.ToBool(false),
+			WithIssuesEnabled:        pointer.ToBool(false),
+			WithMergeRequestsEnabled: pointer.ToBool(false),
+			ListOptions: gitlab.ListOptions{
+				Page:    0,
+				PerPage: 0,
+			},
+		},
 	}
 }
-
 func NewGetProjectsCmd(f cmdutil.Factory) *cobra.Command {
 	o := NewListOptions()
 	cmd := &cobra.Command{
@@ -80,16 +81,34 @@ func NewGetProjectsCmd(f cmdutil.Factory) *cobra.Command {
 		},
 		SuggestFor: []string{},
 	}
-	flags := cmd.Flags()
-	flags.IntVarP(&o.Page, "page", "p", o.Page, "Page of results to retrieve")
-	flags.IntVarP(&o.PerPage, "per-page", "", o.PerPage, "The number of results to include per page")
-
-	cmdutil.AddOutFlag(cmd)
+	o.AddFlags(cmd)
 	return cmd
 }
 
-func (receiver) name() {
-
+// AddFlags registers flags for a cli
+func (o *ListOptions) AddFlags(cmd *cobra.Command) {
+	cmdutil.AddFromGroupVarFlag(cmd, &o.FromGroup)
+	cmdutil.AddProjectOrderByVarFlag(cmd, o.project.OrderBy)
+	cmdutil.AddSortVarFlag(cmd, o.project.Sort)
+	cmdutil.AddSearchVarFlag(cmd, o.project.Search)
+	cmdutil.AddStatisticsVarFlag(cmd, o.project.Statistics)
+	cmdutil.AddVisibilityVarFlag(cmd, &o.Visibility)
+	cmdutil.AddOwnedVarFlag(cmd, o.project.Owned)
+	cmdutil.AddPaginationVarFlags(cmd, &o.project.ListOptions)
+	cmdutil.AddOutFlag(cmd)
+	f := cmd.Flags()
+	f.BoolVar(o.project.Archived, "archived", *o.project.Archived,
+		"Limit by archived status")
+	f.BoolVar(o.project.Simple, "simple", *o.project.Simple,
+		"Return only the ID, URL, name, and path of each project")
+	f.BoolVar(o.project.Membership, "membership", *o.project.Membership,
+		"Limit by projects that the current user is a member of")
+	f.BoolVar(o.project.Starred, "starred", *o.project.Starred,
+		"Limit by projects starred by the current user")
+	f.BoolVar(o.project.WithIssuesEnabled, "with-issues-enabled", *o.project.WithIssuesEnabled,
+		"Limit by enabled issues feature")
+	f.BoolVar(o.project.WithMergeRequestsEnabled, "with-merge-requests-enabled", *o.project.WithMergeRequestsEnabled,
+		"Limit by enabled merge requests feature")
 }
 
 // Complete completes all the required options.
@@ -99,8 +118,7 @@ func (o *ListOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []str
 	if err != nil {
 		return err
 	}
-	o.Out = cmdutil.GetFlagString(cmd, "out")
-	o.project = cmdutil.AssignListProjectOptions(cmd)
+	o.project.Visibility = gitlab.Ptr(gitlab.VisibilityValue(o.Visibility))
 	opt, err := json.Marshal(o.project)
 	if err != nil {
 		return err

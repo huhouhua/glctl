@@ -17,7 +17,6 @@ package util
 import (
 	"github.com/golang/glog"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 	gitlab "github.com/xanzy/go-gitlab"
 )
 
@@ -27,63 +26,6 @@ const (
 	// YAML is used as a constant of word "yaml" for out flag
 	YAML = "yaml"
 )
-
-// AssignListProjectOptions assigns the validate' values to gitlab.ListProjectsOptions fields.
-// If a flag's default value is not changed by the caller,
-// it's value will not be assigned to the associated gitlab.ListProjectsOptions field.
-func AssignListProjectOptions(cmd *cobra.Command) *gitlab.ListProjectsOptions {
-	opts := new(gitlab.ListProjectsOptions)
-	if isChanged(cmd.Flag("page")) {
-		opts.Page = GetFlagInt(cmd, "page")
-	}
-	if isChanged(cmd.Flag("per-page")) {
-		opts.PerPage = GetFlagInt(cmd, "per-page")
-	}
-	if isChanged(cmd.Flag("archived")) {
-		opts.Archived = gitlab.Ptr(GetFlagBool(cmd, "archived"))
-	}
-	if isChanged(cmd.Flag("order-by")) {
-		opts.OrderBy = gitlab.Ptr(GetFlagString(cmd, "order-by"))
-	}
-	if isChanged(cmd.Flag("sort")) {
-		opts.Sort = gitlab.Ptr(GetFlagString(cmd, "sort"))
-	}
-	if isChanged(cmd.Flag("search")) {
-		opts.Search = gitlab.Ptr(GetFlagString(cmd, "search"))
-	}
-	if isChanged(cmd.Flag("simple")) {
-		opts.Simple = gitlab.Ptr(GetFlagBool(cmd, "simple"))
-	}
-	if isChanged(cmd.Flag("owned")) {
-		opts.Owned = gitlab.Ptr(GetFlagBool(cmd, "owned"))
-	}
-	if isChanged(cmd.Flag("membership")) {
-		opts.Membership = gitlab.Ptr(GetFlagBool(cmd, "membership"))
-	}
-	if isChanged(cmd.Flag("starred")) {
-		opts.Starred = gitlab.Ptr(GetFlagBool(cmd, "starred"))
-	}
-	if isChanged(cmd.Flag("statistics")) {
-		opts.Statistics = gitlab.Ptr(GetFlagBool(cmd, "statistics"))
-	}
-	if isChanged(cmd.Flag("with-merge-requests-enabled")) {
-		v := GetFlagVisibility(cmd)
-		opts.Visibility = v
-	}
-	if isChanged(cmd.Flag("with-issues-enabled")) {
-		opts.WithIssuesEnabled = gitlab.Ptr(
-			GetFlagBool(cmd, "with-issues-enabled"))
-	}
-	if isChanged(cmd.Flag("with-merge-requests-enabled")) {
-		opts.WithMergeRequestsEnabled = gitlab.Ptr(GetFlagBool(cmd,
-			"with-merge-requests-enabled"))
-	}
-	return opts
-}
-
-func isChanged(flag *pflag.Flag) bool {
-	return flag != nil && flag.Changed
-}
 
 // GetFlagVisibility converts the string flag visiblity to gitlab.VisibilityValue.
 func GetFlagVisibility(cmd *cobra.Command) *gitlab.VisibilityValue {
@@ -124,10 +66,4 @@ func GetFlagString(cmd *cobra.Command, flag string) string {
 			flag, cmd.Name(), err)
 	}
 	return s
-}
-
-func AddOutFlag(cmd *cobra.Command) {
-	cmd.PersistentFlags().StringP("out", "o", "simple",
-		"Print the command output to the "+
-			"desired format. (json, yaml, simple)")
 }

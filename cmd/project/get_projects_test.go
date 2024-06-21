@@ -26,7 +26,7 @@ func TestGetProjects(t *testing.T) {
 	tests := []cmdutil.CmdTestCase{{
 		Name:      "list all projects",
 		Cmd:       "",
-		WantError: true,
+		WantError: false,
 	}}
 	factory := cmdutil.NewFactory(fake.NewFakeRESTClientGetter())
 	for _, tc := range tests {
