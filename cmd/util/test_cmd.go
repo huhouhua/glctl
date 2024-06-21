@@ -30,11 +30,6 @@ type CmdTestCase struct {
 	WantError bool
 }
 
-func NewTestFactory() Factory {
-	configFlags := NewConfigFlags(false)
-	return NewFactory(configFlags)
-}
-
 func TInfo(msg interface{}) {
 	fmt.Println("--- INFO:", msg)
 }

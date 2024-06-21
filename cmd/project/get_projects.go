@@ -22,26 +22,43 @@ import (
 	"github.com/xanzy/go-gitlab"
 )
 
-var getProjectsDesc = "List projects of the authenticated user or of a group"
-
-var getProjectsExample = `# get all projects
-grepo get projects
-
-# get all projects from a group
-grepo get projects --from-group=Group1`
-
+type GetProjectFlags struct {
+	Page                     int
+	PerPage                  int
+	FromGroup                string
+	OrderBy                  string
+	Sort                     string
+	Search                   string
+	Statistics               bool
+	Visibility               string
+	Owned                    bool
+	archived                 bool
+	simple                   bool
+	membership               bool
+	starred                  bool
+	WithIssuesEnabled        bool
+	WithMergeRequestsEnabled bool
+	FromProject              string
+	Out                      string
+}
 type ListOptions struct {
-	Page         int
-	PerPage      int
-	FromGroup    string
-	Out          string
 	gitlabClient *gitlab.Client
 	group        *gitlab.ListGroupProjectsOptions
 	project      *gitlab.ListProjectsOptions
 }
 
-func NewListOptions() *ListOptions {
-	return &ListOptions{
+var (
+	getProjectsDesc = "List projects of the authenticated user or of a group"
+
+	getProjectsExample = `# get all projects
+grepo get projects
+
+# get all projects from a group
+grepo get projects --from-group=Group1`
+)
+
+func NewGetProjectFlags() *GetProjectFlags {
+	return &GetProjectFlags{
 		Page:    0,
 		PerPage: 0,
 	}
@@ -69,6 +86,10 @@ func NewGetProjectsCmd(f cmdutil.Factory) *cobra.Command {
 
 	cmdutil.AddOutFlag(cmd)
 	return cmd
+}
+
+func (receiver) name() {
+
 }
 
 // Complete completes all the required options.

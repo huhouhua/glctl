@@ -16,6 +16,7 @@ package project
 
 import (
 	"bytes"
+	"github.com/huhouhua/gitlab-repo-operator/cmd/fake"
 	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
 	"github.com/spf13/cobra"
 	"testing"
@@ -27,10 +28,11 @@ func TestGetProjects(t *testing.T) {
 		Cmd:       "",
 		WantError: true,
 	}}
+	factory := cmdutil.NewFactory(fake.NewFakeRESTClientGetter())
 	for _, tc := range tests {
 		t.Run(tc.Name, func(t *testing.T) {
 			out, err := cmdutil.ExecuteCommand(func(buffer *bytes.Buffer) (*cobra.Command, error) {
-				return NewGetProjectsCmd(cmdutil.NewTestFactory()), nil
+				return NewGetProjectsCmd(factory), nil
 			}, tc.Cmd)
 
 			cmdutil.TInfo(out)
