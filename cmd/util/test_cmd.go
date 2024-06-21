@@ -17,10 +17,14 @@ package util
 import (
 	"bytes"
 	"fmt"
-	shellwords "github.com/mattn/go-shellwords"
+	"github.com/mattn/go-shellwords"
+	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"io"
 	"os"
+	"os/signal"
+	"syscall"
 )
 
 // cmdTestCase describes a test case that works with releases.
@@ -41,11 +45,28 @@ type TestCmdFunc = func(buffer *bytes.Buffer) (*cobra.Command, error)
 
 // A helper to ignore os.Exit(1) errors when running a cobra Command
 func ExecuteCommand(cmdFunc TestCmdFunc, cmd string) (stdout string, err error) {
-	args, err := shellwords.Parse(cmd)
-	if err != nil {
-		return "", err
-	}
-	return ExecuteCommandOfArgs(cmdFunc, args...)
+	testCh := make(chan func() (string, error), 1)
+	defer func() {
+		close(testCh)
+	}()
+	//go func(ch chan func() (string, error)) {
+	//	addSignal(ch)
+	//}(testCh)
+	addSignal(testCh, cmdFunc, cmd, func(f TestCmdFunc, c string, ch chan func() (string, error)) {
+		args, err := shellwords.Parse(c)
+		if err != nil {
+			ch <- func() (string, error) {
+				return "", err
+			}
+			return
+		}
+		std, err := ExecuteCommandOfArgs(f, args...)
+		ch <- func() (string, error) {
+			return std, err
+		}
+	})
+	resultFunc := <-testCh
+	return resultFunc()
 }
 
 func ExecuteCommandOfArgs(cmdFunc TestCmdFunc, args ...string) (stdout string, err error) {
@@ -97,4 +118,28 @@ func ExecuteCommandC(root *cobra.Command, args ...string) (stdout string, output
 	stdout = <-outC
 
 	return stdout, buf.String(), err
+}
+
+func addSignal(testCh chan func() (string, error), cmdFunc TestCmdFunc, cmd string,
+	test func(cmdFunc TestCmdFunc, cmd string, testCh chan func() (string, error))) {
+	// 注册信号处理器
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
+	defer func() {
+		close(sigCh)
+	}()
+	go test(cmdFunc, cmd, testCh)
+	for {
+		select {
+		case sig := <-sigCh:
+			logrus.Infof("Received signal: %s\n", sig.String())
+			testCh <- func() (string, error) {
+				return "", errors.New(fmt.Sprintf("exit:%s", sig.String()))
+			}
+			//case <-time.After(time.Minute * 3): //等待ret返回结果，超时为3分钟
+			//	testCh <- func() (string, error) {
+			//		return "", errors.New("time out!")
+			//	}
+		}
+	}
 }

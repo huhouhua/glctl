@@ -15,9 +15,8 @@
 package util
 
 import (
-	"context"
 	"fmt"
-	"google.golang.org/appengine/log"
+	"github.com/sirupsen/logrus"
 	"net/url"
 	"os"
 	"strings"
@@ -91,14 +90,12 @@ func checkErr(err error, handleErr func(string, int)) {
 // This method is generic to the command in use and may be used by non-IAM
 // commands.
 func StandardErrorMessage(err error) (string, bool) {
-	ctx := context.TODO()
-
 	if debugErr, ok := err.(debugError); ok {
 		f, a := debugErr.DebugError()
-		log.Infof(ctx, f, a)
+		logrus.Infof(f, a)
 	}
 	if t, ok := err.(*url.Error); ok {
-		log.Infof(ctx, "Connection error: %s %s: %v", t.Op, t.URL, t.Err)
+		logrus.Infof("Connection error: %s %s: %v", t.Op, t.URL, t.Err)
 		if strings.Contains(t.Err.Error(), "connection refused") {
 			host := t.URL
 			if server, err := url.Parse(t.URL); err == nil {
