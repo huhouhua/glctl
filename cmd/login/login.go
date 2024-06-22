@@ -43,14 +43,11 @@ type loginOptions struct {
 func NewLoginCmd() *cobra.Command {
 	var o loginOptions
 	cmd := &cobra.Command{
-		Use:               "login [OPTIONS] [SERVER]",
-		Short:             "Login to gitlab",
-		Long:              loginDesc,
-		Example:           `grepo login http://localhost:8080`,
-		Args:              require.RequiresMaxArgs(1),
-		SilenceErrors:     true,
-		SilenceUsage:      true,
-		DisableAutoGenTag: true,
+		Use:     "login [OPTIONS] [SERVER]",
+		Short:   "Login to gitlab",
+		Long:    loginDesc,
+		Example: `grepo login http://localhost:8080`,
+		Args:    require.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			cmdutil.CheckErr(o.Complete(cmd, args))
 			cmdutil.CheckErr(o.Validate(cmd, args))
