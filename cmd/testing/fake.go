@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package fake
+package testing
 
 import (
 	"github.com/AlekSi/pointer"
@@ -38,7 +38,7 @@ func (f FakeRESTClientGetter) ToRawGrepoConfigLoader() cmdutil.ClientConfig {
 func NewFakeRESTClientGetter() *FakeRESTClientGetter {
 	cfg := types.Config{
 		OathEnv: &types.GitLabOathFormEnv{
-			URL:          pointer.ToString(""),
+			Url:          pointer.ToString(""),
 			UserName:     pointer.ToString(""),
 			Password:     pointer.ToString(""),
 			PrivateToken: pointer.ToString(""),
@@ -46,7 +46,7 @@ func NewFakeRESTClientGetter() *FakeRESTClientGetter {
 		},
 		OathInfo: &types.GitLabOauthInfo{
 			AccessToken:  pointer.ToString("86e2f1f41672758ebcdb1c5ffe17ee463809b6c84aa8ddfa050eee7f0fa4756f"),
-			CreatedAt:    pointer.ToString("1.693392912e+09"),
+			CreatedAt:    pointer.ToFloat64(1.693392912e+09),
 			HostUrl:      pointer.ToString("http://172.17.162.204"),
 			RefreshToken: pointer.ToString("b1b1f718927007332bcc19b120a8a7e268aa91a5892a411a890682cc3e5692fc"),
 			Scope:        pointer.ToString("api"),

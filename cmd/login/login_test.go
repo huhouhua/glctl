@@ -16,40 +16,165 @@ package login
 
 import (
 	"bytes"
-	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
-	"github.com/spf13/cobra"
+	"fmt"
+	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/testing"
+	"strings"
 	"testing"
 )
 
 func TestLogin(t *testing.T) {
-	tests := []cmdutil.CmdTestCase{{
-		Name:      "login gitlab incorrect address",
-		Cmd:       "http://1.2.4.5 -p 12345 -u 123456 ",
-		WantError: true,
-	}, {
-		Name:      "login gitlab incorrect password",
-		Cmd:       "http://172.17.162.204 -p 123456 -u v-huhouhua@ruijie.com.cn ",
-		WantError: true,
-	}, {
-		Name:      "login gitlab incorrect username",
-		Cmd:       "http://172.17.162.204 -p huhouhua -u v-xxxx@ruijie.com.cn ",
-		WantError: true,
-	}, {
-		Name: "login gitlab success",
-		Cmd:  "http://172.17.162.204 -p huhouhua -u v-huhouhua@ruijie.com.cn ",
-	}}
+	tests := []struct {
+		name           string
+		options        *loginOptions
+		args           []string
+		expectedOutput string
+	}{
+		{
+			name:           "login incorrect password",
+			args:           []string{"http://172.17.162.204"},
+			options:        &loginOptions{User: "v-huhouhua@ruijie.com.cn", Password: "12345"},
+			expectedOutput: "Login failed!\nThe provided authorization grant is invalid, expired, revoked, does not match the redirection URI used in the authorization request, or was issued to another client.",
+		}, {
+			name:           "login incorrect address",
+			args:           []string{"http://1.3.4.5"},
+			options:        &loginOptions{User: "12345", Password: "12345"},
+			expectedOutput: "dial tcp 1.3.4.5:80: i/o timeout",
+		},
+		{
+			name:           "login success",
+			args:           []string{"http://172.17.162.204"},
+			options:        &loginOptions{User: "v-huhouhua@ruijie.com.cn", Password: "huhouhua"},
+			expectedOutput: "\nLogin Succeeded",
+		}}
 	for _, tc := range tests {
-		t.Run(tc.Name, func(t *testing.T) {
-			out, err := cmdutil.ExecuteCommand(func(buffer *bytes.Buffer) (*cobra.Command, error) {
-				return NewLoginCmd(), nil
-			}, tc.Cmd)
-			cmdutil.TInfo(out)
-			if tc.WantError && err == nil {
-				t.Errorf("expected error, got success with the following output:\n%s", out)
+		t.Run(tc.name, func(t *testing.T) {
+			cmd := NewLoginCmd()
+			var cmdOptions *loginOptions
+			if tc.options != nil {
+				cmdOptions = tc.options
+			} else {
+				cmdOptions = &loginOptions{}
 			}
-			if !tc.WantError && err != nil {
-				t.Errorf("expected no error, got: '%v'", err)
+			out := cmdutil.RunTestForStdout(func() {
+				var err error
+				if err = cmdOptions.Complete(cmd, tc.args); err != nil {
+					fmt.Print(err)
+					return
+				}
+				if err = cmdOptions.Validate(cmd, tc.args); err != nil {
+					fmt.Print(err)
+					return
+				}
+				if err = cmdOptions.Run(tc.args); err != nil {
+					fmt.Print(err)
+					return
+				}
+			})
+			cmdutil.TInfo(out)
+			if tc.expectedOutput == "" {
+				t.Errorf("%s: Invalid test case. Specify expected result.\n", tc.name)
+			}
+			if !strings.Contains(out, tc.expectedOutput) {
+				t.Errorf("%s: Unexpected output! Expected\n%s\ngot\n%s", tc.name, tc.expectedOutput, out)
 			}
 		})
 	}
+}
+
+func TestValidate(t *testing.T) {
+	tests := []struct {
+		name           string
+		options        *loginOptions
+		args           []string
+		expectedOutput string
+	}{
+		{
+			name:           "login address is empty",
+			args:           []string{""},
+			options:        &loginOptions{User: "v-huhouhua@ruijie.com.cn", Password: "12345"},
+			expectedOutput: "please enter the gitlab url",
+		}, {
+			name:           "login username is empty",
+			args:           []string{"http://172.17.162.204"},
+			options:        &loginOptions{User: "", Password: "12345"},
+			expectedOutput: "please enter the username",
+		},
+		{
+			name:           "login password is empty",
+			args:           []string{"http://172.17.162.204"},
+			options:        &loginOptions{User: "v-huhouhua@ruijie.com.cn", Password: ""},
+			expectedOutput: "please enter the password",
+		}}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			cmd := NewLoginCmd()
+			var cmdOptions *loginOptions
+			if tc.options != nil {
+				cmdOptions = tc.options
+			} else {
+				cmdOptions = &loginOptions{}
+			}
+			out := cmdutil.RunTestForStdout(func() {
+				var err error
+				if err = cmdOptions.Complete(cmd, tc.args); err != nil {
+					fmt.Print(err)
+					return
+				}
+				if err = cmdOptions.Validate(cmd, tc.args); err != nil {
+					fmt.Print(err)
+					return
+				}
+			})
+			cmdutil.TInfo(out)
+			if tc.expectedOutput == "" {
+				t.Errorf("%s: Invalid test case. Specify expected result.\n", tc.name)
+			}
+			if !strings.Contains(out, tc.expectedOutput) {
+				t.Errorf("%s: Unexpected output! Expected\n%s\ngot\n%s", tc.name, tc.expectedOutput, out)
+			}
+		})
+	}
+}
+
+func TestRunLogin(t *testing.T) {
+	tests := []struct {
+		name           string
+		args           []string
+		flags          map[string]string
+		expectedOutput string
+	}{
+		{
+			name:           "login gitlab success",
+			args:           []string{"http://172.17.162.204"},
+			flags:          map[string]string{"username": "v-huhouhua@ruijie.com.cn", "password": "huhouhua"},
+			expectedOutput: "Login Succeeded",
+		}}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			for i, arg := range tc.args {
+				cmdutil.TInfo(fmt.Sprintf("(%d) %s", i, arg))
+			}
+			buf := new(bytes.Buffer)
+			cmd := NewLoginCmd()
+			cmd.SetOut(buf)
+			cmd.SetErr(buf)
+			for flag, value := range tc.flags {
+				err := cmd.Flags().Set(flag, value)
+				if err != nil {
+					t.Errorf("set %s flag error", err.Error())
+				}
+			}
+			cmd.Run(cmd, tc.args)
+			out := buf.String()
+			cmdutil.TInfo(out)
+			if tc.expectedOutput == "" {
+				t.Errorf("%s: Invalid test case. Specify expected result.\n", tc.name)
+			}
+			if !strings.Contains(out, tc.expectedOutput) {
+				t.Errorf("%s: Unexpected output! Expected\n%s\ngot\n%s", tc.name, tc.expectedOutput, out)
+			}
+		})
+	}
+
 }

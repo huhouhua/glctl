@@ -15,32 +15,46 @@
 package project
 
 import (
-	"bytes"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/fake"
+	cmdtesting "github.com/huhouhua/gitlab-repo-operator/cmd/testing"
 	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
-	"github.com/spf13/cobra"
+	"github.com/pkg/errors"
 	"testing"
 )
 
 func TestGetProjects(t *testing.T) {
-	tests := []cmdutil.CmdTestCase{{
-		Name:      "list all projects",
-		Cmd:       "",
-		WantError: false,
+	tests := []struct {
+		name           string
+		args           []string
+		options        *ListOptions
+		expectedOutput string
+		wantError      error
+	}{{
+		name:      "list all projects",
+		args:      []string{},
+		wantError: nil,
 	}}
-	factory := cmdutil.NewFactory(fake.NewFakeRESTClientGetter())
+	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
-		t.Run(tc.Name, func(t *testing.T) {
-			out, err := cmdutil.ExecuteCommand(func(buffer *bytes.Buffer) (*cobra.Command, error) {
-				return NewGetProjectsCmd(factory), nil
-			}, tc.Cmd)
-
-			cmdutil.TInfo(out)
-			if tc.WantError && err == nil {
-				t.Errorf("expected error, got success with the following output:\n%s", out)
+		t.Run(tc.name, func(t *testing.T) {
+			cmd := NewGetProjectsCmd(factory)
+			var cmdOptions *ListOptions
+			if tc.options != nil {
+				cmdOptions = tc.options
+			} else {
+				cmdOptions = NewListOptions()
 			}
-			if !tc.WantError && err != nil {
-				t.Errorf("expected no error, got: '%v'", err)
+			var err error
+			if err = cmdOptions.Complete(factory, cmd, tc.args); !errors.Is(err, tc.wantError) {
+				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
+				return
+			}
+			if err = cmdOptions.Validate(cmd, tc.args); !errors.Is(err, tc.wantError) {
+				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
+				return
+			}
+			if err = cmdOptions.Run(tc.args); !errors.Is(err, tc.wantError) {
+				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
+				return
 			}
 		})
 	}

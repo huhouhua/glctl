@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"bytes"
-	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/testing"
 	"github.com/spf13/cobra"
 	"testing"
 )
