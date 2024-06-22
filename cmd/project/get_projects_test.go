@@ -15,6 +15,7 @@
 package project
 
 import (
+	"github.com/AlekSi/pointer"
 	cmdtesting "github.com/huhouhua/gitlab-repo-operator/cmd/testing"
 	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
 	"github.com/pkg/errors"
@@ -25,12 +26,31 @@ func TestGetProjects(t *testing.T) {
 	tests := []struct {
 		name           string
 		args           []string
-		options        *ListOptions
+		optionsFunc    func() *ListOptions
 		expectedOutput string
 		wantError      error
 	}{{
 		name:      "list all projects",
 		args:      []string{},
+		wantError: nil,
+	}, {
+		name: "list all projects with page",
+		args: []string{},
+		optionsFunc: func() *ListOptions {
+			opt := NewListOptions()
+			opt.project.ListOptions.Page = 1
+			opt.project.ListOptions.PerPage = 100
+			return opt
+		},
+		wantError: nil,
+	}, {
+		name: "desc sort",
+		args: []string{},
+		optionsFunc: func() *ListOptions {
+			opt := NewListOptions()
+			opt.project.Sort = pointer.ToString("desc")
+			return opt
+		},
 		wantError: nil,
 	}}
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
@@ -38,8 +58,8 @@ func TestGetProjects(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			cmd := NewGetProjectsCmd(factory)
 			var cmdOptions *ListOptions
-			if tc.options != nil {
-				cmdOptions = tc.options
+			if tc.optionsFunc != nil {
+				cmdOptions = tc.optionsFunc()
 			} else {
 				cmdOptions = NewListOptions()
 			}
@@ -58,4 +78,8 @@ func TestGetProjects(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestValidate(t *testing.T) {
+
 }

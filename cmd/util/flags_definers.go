@@ -17,7 +17,7 @@ func AddOutFlag(cmd *cobra.Command) {
 			"desired format. (json, yaml, simple)")
 }
 func AddFromGroupVarFlag(cmd *cobra.Command, p *string) {
-	cmd.Flags().StringVarP(p, "from-group", "G", "",
+	cmd.Flags().StringVarP(p, "group", "G", "",
 		"Use a group as the target namespace when performing the command")
 }
 
