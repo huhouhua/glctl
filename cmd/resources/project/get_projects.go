@@ -16,11 +16,13 @@ package project
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/AlekSi/pointer"
 	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
 	"github.com/huhouhua/gitlab-repo-operator/cmd/validate"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
+	"strconv"
 	"strings"
 )
 
@@ -31,6 +33,7 @@ type ListOptions struct {
 	Out          string
 	group        *gitlab.ListGroupProjectsOptions
 	project      *gitlab.ListProjectsOptions
+	ProjectId    *int
 	AllGroups    bool
 }
 
@@ -72,7 +75,7 @@ func NewGetProjectsCmd(f cmdutil.Factory) *cobra.Command {
 	o := NewListOptions()
 	cmd := &cobra.Command{
 		Use:                   "projects",
-		Aliases:               []string{},
+		Aliases:               []string{"p"},
 		Short:                 getProjectsDesc,
 		Example:               getProjectsExample,
 		DisableFlagsInUseLine: true,
@@ -82,7 +85,7 @@ func NewGetProjectsCmd(f cmdutil.Factory) *cobra.Command {
 			cmdutil.CheckErr(o.Validate(cmd, args))
 			cmdutil.CheckErr(o.Run(args))
 		},
-		SuggestFor: []string{},
+		SuggestFor: []string{"project"},
 	}
 	o.AddFlags(cmd)
 	return cmd
@@ -118,6 +121,14 @@ func (o *ListOptions) AddFlags(cmd *cobra.Command) {
 // Complete completes all the required options.
 func (o *ListOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []string) error {
 	var err error
+	if len(args) > 0 {
+		var id int
+		id, err = strconv.Atoi(args[0])
+		if err != nil {
+			return fmt.Errorf("error from server (NotFound): project %s not found", args[0])
+		}
+		o.ProjectId = pointer.ToInt(id)
+	}
 	o.gitlabClient, err = f.GitlabClient()
 	if err != nil {
 		return err
@@ -146,8 +157,17 @@ func (o *ListOptions) Validate(cmd *cobra.Command, args []string) error {
 
 // Run executes a list subcommand using the specified options.
 func (o *ListOptions) Run(args []string) error {
+	if o.ProjectId != nil {
+		project, _, err := o.gitlabClient.Projects.GetProject(*o.ProjectId, &gitlab.GetProjectOptions{})
+		if err != nil {
+			return err
+		}
+		cmdutil.PrintProjectsOut(o.Out, project)
+		return nil
+	}
 	var projects []*gitlab.Project
 	var err error
+
 	if strings.TrimSpace(o.FromGroup) != "" {
 		projects, _, err = o.gitlabClient.Groups.ListGroupProjects(o.FromGroup, o.group)
 	} else {

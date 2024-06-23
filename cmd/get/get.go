@@ -15,7 +15,7 @@
 package get
 
 import (
-	"github.com/huhouhua/gitlab-repo-operator/cmd/project"
+	"github.com/huhouhua/gitlab-repo-operator/cmd/resources/project"
 	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
 	"github.com/huhouhua/gitlab-repo-operator/cmd/validate"
 	"github.com/spf13/cobra"

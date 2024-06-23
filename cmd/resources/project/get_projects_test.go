@@ -39,6 +39,12 @@ func TestGetProjects(t *testing.T) {
 		},
 		wantError: nil,
 	}, {
+		name: "project by id",
+		args: []string{
+			"6",
+		},
+		wantError: nil,
+	}, {
 		name: "list all projects with page",
 		args: []string{},
 		optionsFunc: func() *ListOptions {
