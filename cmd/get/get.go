@@ -15,6 +15,7 @@
 package get
 
 import (
+	"github.com/huhouhua/gitlab-repo-operator/cmd/resources/group"
 	"github.com/huhouhua/gitlab-repo-operator/cmd/resources/project"
 	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
 	"github.com/huhouhua/gitlab-repo-operator/cmd/validate"
@@ -38,5 +39,6 @@ func NewGetCmd(f cmdutil.Factory) *cobra.Command {
 	cmdutil.AddOutFlag(cmd)
 	//util.AddPaginationFlags(cmd)
 	cmd.AddCommand(project.NewGetProjectsCmd(f))
+	cmd.AddCommand(group.NewGetGroupsCmd(f))
 	return cmd
 }

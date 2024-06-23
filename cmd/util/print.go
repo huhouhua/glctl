@@ -55,7 +55,30 @@ func PrintProjectsOut(format string, projects ...*gitlab.Project) {
 		printTable(header, rows)
 	}
 }
-
+func PrintGroupsOut(format string, groups ...*gitlab.Group) {
+	switch format {
+	case JSON:
+		printJSON(groups)
+	case YAML:
+		printYAML(groups)
+	default:
+		if len(groups) == 0 {
+			fmt.Println(noResultMsg)
+			return
+		}
+		header := []string{"ID", "PATH", "URL", "PARENT ID"}
+		var rows [][]string
+		for _, v := range groups {
+			rows = append(rows, []string{
+				strconv.Itoa(v.ID),
+				v.FullPath,
+				v.WebURL,
+				strconv.Itoa(v.ParentID),
+			})
+		}
+		printTable(header, rows)
+	}
+}
 func printJSON(v interface{}) {
 	b, err := json.MarshalIndent(v, "", " ")
 	if err != nil {

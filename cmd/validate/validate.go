@@ -42,6 +42,11 @@ func ValidateOutFlagValue(cmd *cobra.Command) error {
 		cmd, "out")
 }
 
+func ValidateGroupOrderByFlagValue(cmd *cobra.Command) error {
+	return ValidateFlagStringValue([]string{"path", "name"},
+		cmd, "order-by")
+}
+
 func ValidateFlagStringValue(stringSlice []string,
 	cmd *cobra.Command, fName string) error {
 	fValue := cmdutil.GetFlagString(cmd, fName)
