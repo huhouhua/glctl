@@ -30,8 +30,13 @@ func TestGetProjects(t *testing.T) {
 		expectedOutput string
 		wantError      error
 	}{{
-		name:      "list all projects",
-		args:      []string{},
+		name: "list all projects",
+		args: []string{},
+		optionsFunc: func() *ListOptions {
+			opt := NewListOptions()
+			opt.AllGroups = true
+			return opt
+		},
 		wantError: nil,
 	}, {
 		name: "list all projects with page",

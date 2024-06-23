@@ -31,6 +31,7 @@ type ListOptions struct {
 	Out          string
 	group        *gitlab.ListGroupProjectsOptions
 	project      *gitlab.ListProjectsOptions
+	AllGroups    bool
 }
 
 var (
@@ -64,6 +65,7 @@ func NewListOptions() *ListOptions {
 				PerPage: 0,
 			},
 		},
+		AllGroups: false,
 	}
 }
 func NewGetProjectsCmd(f cmdutil.Factory) *cobra.Command {
@@ -110,6 +112,7 @@ func (o *ListOptions) AddFlags(cmd *cobra.Command) {
 		"Limit by enabled issues feature")
 	f.BoolVar(o.project.WithMergeRequestsEnabled, "with-merge-requests-enabled", *o.project.WithMergeRequestsEnabled,
 		"Limit by enabled merge requests feature")
+	f.BoolVarP(&o.AllGroups, "all-groups", "A", o.AllGroups, "If present, list the requested object(s) across all groups. group in current context is ignored even if specified with --group.")
 }
 
 // Complete completes all the required options.
@@ -148,7 +151,21 @@ func (o *ListOptions) Run(args []string) error {
 	if strings.TrimSpace(o.FromGroup) != "" {
 		projects, _, err = o.gitlabClient.Groups.ListGroupProjects(o.FromGroup, o.group)
 	} else {
-		projects, _, err = o.gitlabClient.Projects.ListProjects(o.project)
+		if o.AllGroups {
+			o.project.ListOptions.PerPage = 100
+			o.project.ListOptions.Page = 1
+		}
+		for {
+			list, _, err := o.gitlabClient.Projects.ListProjects(o.project)
+			if err != nil {
+				return nil
+			}
+			projects = append(projects, list...)
+			if cap(list) == 0 || !o.AllGroups {
+				break
+			}
+			o.project.Page++
+		}
 	}
 	if err != nil {
 		return nil
