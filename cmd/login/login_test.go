@@ -163,6 +163,7 @@ func TestRunLogin(t *testing.T) {
 				err := cmd.Flags().Set(flag, value)
 				if err != nil {
 					t.Errorf("set %s flag error", err.Error())
+					return
 				}
 			}
 			cmd.Run(cmd, tc.args)

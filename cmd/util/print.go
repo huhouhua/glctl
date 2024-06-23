@@ -79,6 +79,30 @@ func PrintGroupsOut(format string, groups ...*gitlab.Group) {
 		printTable(header, rows)
 	}
 }
+func PrintBranchOut(format string, branches ...*gitlab.Branch) {
+	switch format {
+	case YAML:
+		printYAML(branches)
+	case JSON:
+		printJSON(branches)
+	default:
+		if len(branches) == 0 {
+			fmt.Println(noResultMsg)
+			return
+		}
+		header := []string{"NAME", "PROTECTED", "DEVELOPERS CAN PUSH", "DEVELOPERS CAN MERGE"}
+		var rows [][]string
+		for _, v := range branches {
+			rows = append(rows, []string{
+				v.Name,
+				strconv.FormatBool(v.Protected),
+				strconv.FormatBool(v.DevelopersCanPush),
+				strconv.FormatBool(v.DevelopersCanMerge),
+			})
+		}
+		printTable(header, rows)
+	}
+}
 func printJSON(v interface{}) {
 	b, err := json.MarshalIndent(v, "", " ")
 	if err != nil {

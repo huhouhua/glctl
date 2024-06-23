@@ -44,7 +44,7 @@ var (
 grepo get projects
 
 # get all projects from a group
-grepo get projects --from-group=Group1`
+grepo get projects --all-groups=Group1`
 )
 
 func NewListOptions() *ListOptions {
