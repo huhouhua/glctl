@@ -17,7 +17,7 @@ package login
 import (
 	"bytes"
 	"fmt"
-	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/testing"
+	cmdtesting "github.com/huhouhua/gitlab-repo-operator/cmd/testing"
 	"strings"
 	"testing"
 )
@@ -55,7 +55,7 @@ func TestLogin(t *testing.T) {
 			} else {
 				cmdOptions = &loginOptions{}
 			}
-			out := cmdutil.RunTestForStdout(func() {
+			out := cmdtesting.RunTestForStdout(func() {
 				var err error
 				if err = cmdOptions.Complete(cmd, tc.args); err != nil {
 					fmt.Print(err)
@@ -70,7 +70,7 @@ func TestLogin(t *testing.T) {
 					return
 				}
 			})
-			cmdutil.TInfo(out)
+			cmdtesting.TInfo(out)
 			if tc.expectedOutput == "" {
 				t.Errorf("%s: Invalid test case. Specify expected result.\n", tc.name)
 			}
@@ -114,7 +114,7 @@ func TestValidate(t *testing.T) {
 			} else {
 				cmdOptions = &loginOptions{}
 			}
-			out := cmdutil.RunTestForStdout(func() {
+			out := cmdtesting.RunTestForStdout(func() {
 				var err error
 				if err = cmdOptions.Complete(cmd, tc.args); err != nil {
 					fmt.Print(err)
@@ -125,7 +125,7 @@ func TestValidate(t *testing.T) {
 					return
 				}
 			})
-			cmdutil.TInfo(out)
+			cmdtesting.TInfo(out)
 			if tc.expectedOutput == "" {
 				t.Errorf("%s: Invalid test case. Specify expected result.\n", tc.name)
 			}
@@ -153,7 +153,7 @@ func TestRunLogin(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			for i, arg := range tc.args {
-				cmdutil.TInfo(fmt.Sprintf("(%d) %s", i, arg))
+				cmdtesting.TInfo(fmt.Sprintf("(%d) %s", i, arg))
 			}
 			buf := new(bytes.Buffer)
 			cmd := NewLoginCmd()
@@ -166,9 +166,11 @@ func TestRunLogin(t *testing.T) {
 					return
 				}
 			}
-			cmd.Run(cmd, tc.args)
-			out := buf.String()
-			cmdutil.TInfo(out)
+
+			out := cmdtesting.RunTestForStdout(func() {
+				cmd.Run(cmd, tc.args)
+			})
+			cmdtesting.TInfo(out)
 			if tc.expectedOutput == "" {
 				t.Errorf("%s: Invalid test case. Specify expected result.\n", tc.name)
 			}
