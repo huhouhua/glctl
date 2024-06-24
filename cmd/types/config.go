@@ -14,10 +14,14 @@
 
 package types
 
-type GitLabOathFormEnv struct {
-	Url          *string `json:"url"`
-	UserName     *string `json:"user_name"`
-	Password     *string `json:"password"`
-	PrivateToken *string `json:"private_token"`
-	OauthToken   *string `json:"oauth_token"`
+type Config struct {
+	OathInfo *GitLabOauthInfo
+	OathEnv  *GitLabOathFormEnv
+}
+
+func NewConfig() *Config {
+	return &Config{
+		OathEnv:  &GitLabOathFormEnv{},
+		OathInfo: &GitLabOauthInfo{},
+	}
 }

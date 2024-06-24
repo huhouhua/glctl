@@ -12,14 +12,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package util
-
-import (
-	"fmt"
-	"os"
-)
-
-func Error(msg interface{}) {
-	fmt.Println("Error:", msg)
-	os.Exit(1)
-}
+package completion

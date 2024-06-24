@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package types
+package util
 
-type GitLabOathFormEnv struct {
-	Url          *string `json:"url"`
-	UserName     *string `json:"user_name"`
-	Password     *string `json:"password"`
-	PrivateToken *string `json:"private_token"`
-	OauthToken   *string `json:"oauth_token"`
+import "github.com/xanzy/go-gitlab"
+
+type Factory interface {
+
+	// GitlabClient gives you back an external gitlabClient
+	GitlabClient() (*gitlab.Client, error)
 }

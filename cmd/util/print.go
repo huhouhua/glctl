@@ -55,7 +55,54 @@ func PrintProjectsOut(format string, projects ...*gitlab.Project) {
 		printTable(header, rows)
 	}
 }
-
+func PrintGroupsOut(format string, groups ...*gitlab.Group) {
+	switch format {
+	case JSON:
+		printJSON(groups)
+	case YAML:
+		printYAML(groups)
+	default:
+		if len(groups) == 0 {
+			fmt.Println(noResultMsg)
+			return
+		}
+		header := []string{"ID", "PATH", "URL", "PARENT ID"}
+		var rows [][]string
+		for _, v := range groups {
+			rows = append(rows, []string{
+				strconv.Itoa(v.ID),
+				v.FullPath,
+				v.WebURL,
+				strconv.Itoa(v.ParentID),
+			})
+		}
+		printTable(header, rows)
+	}
+}
+func PrintBranchOut(format string, branches ...*gitlab.Branch) {
+	switch format {
+	case YAML:
+		printYAML(branches)
+	case JSON:
+		printJSON(branches)
+	default:
+		if len(branches) == 0 {
+			fmt.Println(noResultMsg)
+			return
+		}
+		header := []string{"NAME", "PROTECTED", "DEVELOPERS CAN PUSH", "DEVELOPERS CAN MERGE"}
+		var rows [][]string
+		for _, v := range branches {
+			rows = append(rows, []string{
+				v.Name,
+				strconv.FormatBool(v.Protected),
+				strconv.FormatBool(v.DevelopersCanPush),
+				strconv.FormatBool(v.DevelopersCanMerge),
+			})
+		}
+		printTable(header, rows)
+	}
+}
 func printJSON(v interface{}) {
 	b, err := json.MarshalIndent(v, "", " ")
 	if err != nil {
@@ -78,10 +125,17 @@ func printTable(header []string, rows [][]string) {
 	}
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader(header)
-	for _, row := range rows {
-		table.Append(row)
-	}
-	table.SetCaption(true,
-		"Note: Use --out=json or --out=yaml to get more resource details.")
+	table.SetAutoWrapText(false)
+	table.SetAutoFormatHeaders(true)
+	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
+	table.SetCenterSeparator("")
+	table.SetColumnSeparator("")
+	table.SetRowSeparator("")
+	table.SetHeaderLine(false)
+	table.SetBorder(false)
+	table.SetNoWhiteSpace(true)
+	table.SetTablePadding("\t") // pad with tabs
+	table.AppendBulk(rows)
 	table.Render()
 }

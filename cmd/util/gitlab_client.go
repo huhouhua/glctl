@@ -12,36 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cmd
+package util
 
 import (
 	"fmt"
+	//root "github.com/huhouhua/gitlab-repo-operator/cmd"
+	"github.com/huhouhua/gitlab-repo-operator/cmd/types"
 	"github.com/xanzy/go-gitlab"
 	"strings"
 )
 
-func newClient() (*gitlab.Client, error) {
-	oathInfoCfg, err := withReadOathInfoConfig()
-	if err != nil {
-		return nil, err
-	}
-	oathInfoEnvCfg, err := withReadOathEnvConfig()
-	if err != nil {
-		return nil, err
-	}
-	authorization := newGitLabAuthorization(oathInfoCfg, oathInfoEnvCfg)
+func NewForConfig(config *types.Config) (*gitlab.Client, error) {
+	authorization := newGitLabAuthorization(config.OathInfo, config.OathEnv)
 	switch {
 	case authorization.HasAuth():
-		return gitlab.NewOAuthClient(oathInfoCfg.AccessToken, gitlab.WithBaseURL(withApiUrl(oathInfoCfg.HostUrl)))
+		return gitlab.NewOAuthClient(*authorization.OathInfo.AccessToken, gitlab.WithBaseURL(withApiUrl(*authorization.OathInfo.HostUrl)))
 	case authorization.HasPasswordAuth():
-		return gitlab.NewBasicAuthClient(oathInfoEnvCfg.UserName, oathInfoEnvCfg.Password, gitlab.WithBaseURL(withApiUrl(oathInfoEnvCfg.URL)))
+		return gitlab.NewBasicAuthClient(*authorization.OathEnv.UserName, *authorization.OathEnv.Password, gitlab.WithBaseURL(withApiUrl(*authorization.OathEnv.Url)))
 	case authorization.HasBasicAuth():
-		return gitlab.NewClient(oathInfoEnvCfg.PrivateToken, gitlab.WithBaseURL(oathInfoEnvCfg.URL))
+		return gitlab.NewClient(*authorization.OathEnv.PrivateToken, gitlab.WithBaseURL(*authorization.OathEnv.Url))
 	case authorization.HasOathAuth():
-		return gitlab.NewOAuthClient(oathInfoEnvCfg.OauthToken, gitlab.WithBaseURL(oathInfoEnvCfg.URL))
+		return gitlab.NewOAuthClient(*authorization.OathEnv.OauthToken, gitlab.WithBaseURL(*authorization.OathEnv.Url))
 	default:
 		return nil, fmt.Errorf("no client was created. "+
-			"gitlab configuration was not set properly. \n %s", authDoc)
+			"gitlab configuration was not set properly. \n %s", "")
 	}
 }
 

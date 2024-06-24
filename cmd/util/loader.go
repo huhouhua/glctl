@@ -12,15 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cmd
+package util
 
 import (
+	"github.com/AlekSi/pointer"
 	"github.com/huhouhua/gitlab-repo-operator/cmd/types"
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v3"
 	"strings"
 )
 
-func withReadOathInfoConfig() (*types.GitLabOauthInfo, error) {
+// Load takes a byte slice and deserializes the contents into Config object.
+// Encapsulates deserialization without assuming the source is a file.
+func Load(data []byte) (*types.Config, error) {
+	config := types.NewConfig()
+	// if there's no data in a file, return the default object instead of failing (DecodeInto reject empty input)
+	if len(data) == 0 {
+		return config, nil
+	}
+
+	if err := yaml.Unmarshal(data, config); err != nil {
+		return nil, err
+	}
+
+	return config, nil
+}
+
+func LoadOathWithInfoConfig() (*types.GitLabOauthInfo, error) {
 	var oathUserInfo types.GitLabOauthInfo
 	err := viper.Unmarshal(&oathUserInfo)
 	if err != nil {
@@ -29,80 +47,81 @@ func withReadOathInfoConfig() (*types.GitLabOauthInfo, error) {
 	return &oathUserInfo, nil
 }
 
-func withReadOathEnvConfig() (*types.GitLabOathFormEnv, error) {
-	var oathEnvInfo types.GitLabOathFormEnv
-	viper.SetEnvPrefix("GITLAB")
-	err := viper.Unmarshal(&oathEnvInfo)
-	if err != nil {
-		return nil, err
-	}
-	return &oathEnvInfo, nil
+func LoadOathWithEnvConfig() (*types.GitLabOathFormEnv, error) {
+	return &types.GitLabOathFormEnv{
+		Url:          pointer.ToString(viper.GetString("URL")),
+		UserName:     pointer.ToString(viper.GetString("USERNAME")),
+		Password:     pointer.ToString(viper.GetString("PASSWORD")),
+		PrivateToken: pointer.ToString(viper.GetString("PRIVATE_TOKEN")),
+		OauthToken:   pointer.ToString(viper.GetString("OAUTH_TOKEN")),
+	}, nil
 }
 
 type GitLabAuthorization struct {
-	oathInfo *types.GitLabOauthInfo
-	oathEnv  *types.GitLabOathFormEnv
+	*types.Config
 }
 
 func newGitLabAuthorization(info *types.GitLabOauthInfo, env *types.GitLabOathFormEnv) *GitLabAuthorization {
 	return &GitLabAuthorization{
-		oathInfo: info,
-		oathEnv:  env,
+		Config: &types.Config{
+			OathInfo: info,
+			OathEnv:  env,
+		},
 	}
 }
 
 func (g *GitLabAuthorization) HasAuth() bool {
-	info := g.oathInfo
+	info := g.OathInfo
 	if info == nil {
 		return false
 	}
-	if strings.TrimSpace(info.AccessToken) == "" {
+	if strings.TrimSpace(*info.AccessToken) == "" {
 		return false
 	}
-	if strings.TrimSpace(info.HostUrl) == "" {
+	if strings.TrimSpace(*info.HostUrl) == "" {
 		return false
 	}
 	return true
 }
 
 func (g *GitLabAuthorization) HasPasswordAuth() bool {
-	env := g.oathEnv
+	env := g.OathEnv
 	if env == nil {
 		return false
 	}
-	if strings.TrimSpace(env.URL) == "" {
+	if strings.TrimSpace(*env.Url) == "" {
 		return false
 	}
-	if strings.TrimSpace(env.UserName) == "" {
+	if strings.TrimSpace(*env.UserName) == "" {
 		return false
 	}
-	if strings.TrimSpace(env.Password) == "" {
+	if strings.TrimSpace(*env.Password) == "" {
 		return false
 	}
 	return true
 }
 func (g *GitLabAuthorization) HasBasicAuth() bool {
-	env := g.oathEnv
+	env := g.OathEnv
 	if env == nil {
 		return false
 	}
-	if strings.TrimSpace(env.URL) == "" {
+	if strings.TrimSpace(*env.Url) == "" {
 		return false
 	}
-	if strings.TrimSpace(env.PrivateToken) == "" {
+	if strings.TrimSpace(*env.PrivateToken) == "" {
 		return false
 	}
 	return true
 }
 func (g *GitLabAuthorization) HasOathAuth() bool {
-	env := g.oathEnv
+	env := g.OathEnv
 	if env == nil {
 		return false
 	}
-	if strings.TrimSpace(env.URL) == "" {
+	if strings.TrimSpace(*env.Url) == "" {
 		return false
 	}
-	if strings.TrimSpace(env.OauthToken) == "" {
+	if strings.TrimSpace(*env.OauthToken) == "" {
 		return false
 	}
 	return true
