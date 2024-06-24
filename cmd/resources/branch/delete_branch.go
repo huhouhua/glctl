@@ -58,7 +58,7 @@ func NewDeleteBranchCmd(f cmdutil.Factory) *cobra.Command {
 		},
 		SuggestFor: []string{},
 	}
-	cmdutil.AddProjectVarFlag(cmd, &o.project)
+	cmdutil.AddProjectVarPFlag(cmd, &o.project)
 	validate.VerifyMarkFlagRequired(cmd, "project")
 	return cmd
 }

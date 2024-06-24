@@ -37,8 +37,6 @@ func NewGetCmd(f cmdutil.Factory) *cobra.Command {
 			return validate.ValidateOutFlagValue(cmd)
 		},
 	}
-	cmdutil.AddOutFlag(cmd)
-	//util.AddPaginationFlags(cmd)
 	cmd.AddCommand(project.NewGetProjectsCmd(f))
 	cmd.AddCommand(group.NewGetGroupsCmd(f))
 	cmd.AddCommand(branch.NewGetBranchesCmd(f))

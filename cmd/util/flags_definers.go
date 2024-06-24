@@ -25,12 +25,12 @@ func AddPaginationVarFlags(cmd *cobra.Command, page *gitlab.ListOptions) {
 	flags.IntVarP(&page.PerPage, "per-page", "", page.PerPage, "The number of results to include per page")
 }
 
-func AddOutFlag(cmd *cobra.Command) {
-	cmd.PersistentFlags().StringP("out", "o", "simple",
+func AddOutFlag(cmd *cobra.Command, p *string) {
+	cmd.PersistentFlags().StringVarP(p, "out", "o", *p,
 		"Print the command output to the "+
 			"desired format. (json, yaml, simple)")
 }
-func AddFromGroupVarFlag(cmd *cobra.Command, p *string) {
+func AddFromGroupVarPFlag(cmd *cobra.Command, p *string) {
 	cmd.Flags().StringVarP(p, "group", "G", "",
 		"Use a group as the target namespace when performing the command")
 }
@@ -45,12 +45,20 @@ func AddProjectOrderByVarFlag(cmd *cobra.Command, p *string) {
 			"or last_activity_at fields. Default is created_at")
 }
 
-func AddProjectVarFlag(cmd *cobra.Command, p *string) {
+func AddProjectVarPFlag(cmd *cobra.Command, p *string) {
 	cmd.Flags().StringVarP(p, "project", "p", *p, "The name or ID of the project")
 }
 
 func AddDescriptionVarFlag(cmd *cobra.Command, p *string) {
 	cmd.Flags().StringVar(p, "desc", "", "The description of the resource")
+}
+
+func AddLFSenabledVarPFlag(cmd *cobra.Command, p *bool) {
+	cmd.Flags().BoolVar(p, "lfs-enabled", *p, "Enable LFS")
+}
+
+func AddRequestAccessEnabledVarFlag(cmd *cobra.Command, p *bool) {
+	cmd.Flags().BoolVar(p, "request-access-enabled", *p, "Enable request access")
 }
 
 func AddSearchVarFlag(cmd *cobra.Command, p *string) {

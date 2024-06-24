@@ -32,8 +32,6 @@ func NewDeleteCmd(f cmdutil.Factory) *cobra.Command {
 		SilenceUsage:      true,
 		DisableAutoGenTag: true,
 	}
-	cmdutil.AddOutFlag(cmd)
-	//util.AddPaginationFlags(cmd)
 	cmd.AddCommand(project.NewDeleteProjectCmd(f))
 	cmd.AddCommand(branch.NewDeleteBranchCmd(f))
 	return cmd

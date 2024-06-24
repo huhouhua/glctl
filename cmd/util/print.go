@@ -55,6 +55,7 @@ func PrintProjectsOut(format string, projects ...*gitlab.Project) {
 		printTable(header, rows)
 	}
 }
+
 func PrintGroupsOut(format string, groups ...*gitlab.Group) {
 	switch format {
 	case JSON:

@@ -53,12 +53,13 @@ func NewListOptions() *ListOptions {
 			},
 		},
 		All: false,
+		Out: "simple",
 	}
 }
 func NewGetBranchesCmd(f cmdutil.Factory) *cobra.Command {
 	o := NewListOptions()
 	cmd := &cobra.Command{
-		Use:                   "branchs",
+		Use:                   "branch",
 		Aliases:               []string{"b"},
 		Short:                 getBranchsDesc,
 		Example:               getBranchsExample,
@@ -79,9 +80,9 @@ func NewGetBranchesCmd(f cmdutil.Factory) *cobra.Command {
 // AddFlags registers flags for a cli
 func (o *ListOptions) AddFlags(cmd *cobra.Command) {
 	cmdutil.AddPaginationVarFlags(cmd, &o.branch.ListOptions)
+	cmdutil.AddOutFlag(cmd, &o.Out)
 	f := cmd.Flags()
 	f.BoolVarP(&o.All, "all", "A", o.All, "If present, list the across all project branch. branch in current context is ignored even if specified with --all.")
-	cmdutil.AddOutFlag(cmd)
 }
 
 // Complete completes all the required options.

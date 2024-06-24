@@ -61,6 +61,7 @@ func NewListOptions() *ListOptions {
 		},
 		groupId:   nil,
 		AllGroups: false,
+		Out:       "simple",
 	}
 }
 
@@ -90,8 +91,8 @@ func (o *ListOptions) AddFlags(cmd *cobra.Command) {
 	cmdutil.AddSortVarFlag(cmd, o.group.Sort)
 	cmdutil.AddStatisticsVarFlag(cmd, o.group.Statistics)
 	cmdutil.AddSearchVarFlag(cmd, o.group.Search)
-	cmdutil.AddFromGroupVarFlag(cmd, &o.FromGroup)
-	cmdutil.AddOutFlag(cmd)
+	cmdutil.AddFromGroupVarPFlag(cmd, &o.FromGroup)
+	cmdutil.AddOutFlag(cmd, &o.Out)
 	f := cmd.Flags()
 	f.BoolVar(o.group.AllAvailable, "all-available", *o.group.AllAvailable, "Show all the groups you have access to "+
 		"(defaults to false for authenticated users, true for admin)")

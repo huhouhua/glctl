@@ -32,7 +32,6 @@ func NewCreateCmd(f cmdutil.Factory) *cobra.Command {
 		SilenceUsage:      true,
 		DisableAutoGenTag: true,
 	}
-	cmdutil.AddOutFlag(cmd)
 	cmd.AddCommand(project.NewCreateProjectCmd(f))
 	cmd.AddCommand(branch.NewCreateBranchCmd(f))
 	return cmd

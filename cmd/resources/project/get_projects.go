@@ -69,6 +69,7 @@ func NewListOptions() *ListOptions {
 			},
 		},
 		AllGroups: false,
+		Out:       "simple",
 	}
 }
 func NewGetProjectsCmd(f cmdutil.Factory) *cobra.Command {
@@ -93,7 +94,7 @@ func NewGetProjectsCmd(f cmdutil.Factory) *cobra.Command {
 
 // AddFlags registers flags for a cli
 func (o *ListOptions) AddFlags(cmd *cobra.Command) {
-	cmdutil.AddFromGroupVarFlag(cmd, &o.FromGroup)
+	cmdutil.AddFromGroupVarPFlag(cmd, &o.FromGroup)
 	cmdutil.AddProjectOrderByVarFlag(cmd, o.project.OrderBy)
 	cmdutil.AddSortVarFlag(cmd, o.project.Sort)
 	cmdutil.AddSearchVarFlag(cmd, o.project.Search)
@@ -101,7 +102,7 @@ func (o *ListOptions) AddFlags(cmd *cobra.Command) {
 	cmdutil.AddVisibilityVarFlag(cmd, &o.Visibility)
 	cmdutil.AddOwnedVarFlag(cmd, o.project.Owned)
 	cmdutil.AddPaginationVarFlags(cmd, &o.project.ListOptions)
-	cmdutil.AddOutFlag(cmd)
+	cmdutil.AddOutFlag(cmd, &o.Out)
 	f := cmd.Flags()
 	f.BoolVar(o.project.Archived, "archived", *o.project.Archived,
 		"Limit by archived status")

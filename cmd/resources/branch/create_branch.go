@@ -16,6 +16,7 @@ package branch
 
 import (
 	"fmt"
+	"github.com/AlekSi/pointer"
 	"github.com/huhouhua/gitlab-repo-operator/cmd/require"
 	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
 	"github.com/huhouhua/gitlab-repo-operator/cmd/validate"
@@ -26,8 +27,9 @@ import (
 
 type CreateOptions struct {
 	gitlabClient *gitlab.Client
+	branch       *gitlab.CreateBranchOptions
 	project      string
-	branch       string
+	Out          string
 }
 
 var (
@@ -38,16 +40,22 @@ grepo create branch develop --project=group/myapp --ref=master`
 )
 
 func NewCreateOptions() *CreateOptions {
-	return &CreateOptions{}
+	return &CreateOptions{
+		branch: &gitlab.CreateBranchOptions{
+			Ref:    pointer.ToString(""),
+			Branch: pointer.ToString(""),
+		},
+		Out: "simple",
+	}
 }
 
 func NewCreateBranchCmd(f cmdutil.Factory) *cobra.Command {
-	o := NewDeleteOptions()
+	o := NewCreateOptions()
 	cmd := &cobra.Command{
 		Use:                   "branch",
 		Aliases:               []string{"b"},
-		Short:                 deleteBranchDesc,
-		Example:               deleteBranchExample,
+		Short:                 createBranchDesc,
+		Example:               createBranchExample,
 		Args:                  require.ExactArgs(1),
 		DisableFlagsInUseLine: true,
 		TraverseChildren:      true,
@@ -58,9 +66,19 @@ func NewCreateBranchCmd(f cmdutil.Factory) *cobra.Command {
 		},
 		SuggestFor: []string{},
 	}
-	cmdutil.AddProjectVarFlag(cmd, &o.project)
-	validate.VerifyMarkFlagRequired(cmd, "project")
+	o.AddFlags(cmd)
 	return cmd
+}
+
+// AddFlags registers flags for a cli
+func (o *CreateOptions) AddFlags(cmd *cobra.Command) {
+	cmdutil.AddProjectVarPFlag(cmd, &o.project)
+	cmdutil.AddOutFlag(cmd, &o.Out)
+	validate.VerifyMarkFlagRequired(cmd, "project")
+	f := cmd.Flags()
+	f.StringVarP(o.branch.Ref, "ref", "r", *o.branch.Ref,
+		"The branch name or commit SHA to create branch from")
+	validate.VerifyMarkFlagRequired(cmd, "ref")
 }
 
 // Complete completes all the required options.
@@ -68,7 +86,7 @@ func (o *CreateOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []s
 	var err error
 	o.gitlabClient, err = f.GitlabClient()
 	if len(args) > 0 {
-		o.branch = args[0]
+		o.branch.Branch = pointer.ToString(args[0])
 	}
 	return err
 }
@@ -81,7 +99,7 @@ func (o *CreateOptions) Validate(cmd *cobra.Command, args []string) error {
 	if strings.TrimSpace(args[0]) == "" {
 		return fmt.Errorf("error from server (NotFound): project %s not found", args[0])
 	}
-	if strings.TrimSpace(o.project) == "" {
+	if strings.TrimSpace(o.project) == "" || strings.TrimSpace(*o.branch.Ref) == "" {
 		return cmd.Usage()
 	}
 	return nil
@@ -89,10 +107,10 @@ func (o *CreateOptions) Validate(cmd *cobra.Command, args []string) error {
 
 // Run executes a list subcommand using the specified options.
 func (o *CreateOptions) Run(args []string) error {
-	_, err := o.gitlabClient.Branches.DeleteBranch(o.project, o.branch)
+	branch, _, err := o.gitlabClient.Branches.CreateBranch(o.project, o.branch)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Branch (%s) from project (%s) has been deleted\n", o.branch, o.project)
+	cmdutil.PrintBranchOut(o.Out, branch)
 	return nil
 }
