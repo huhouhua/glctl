@@ -13,3 +13,86 @@
 // limitations under the License.
 
 package branch
+
+import (
+	"fmt"
+	"github.com/huhouhua/gitlab-repo-operator/cmd/require"
+	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	"github.com/huhouhua/gitlab-repo-operator/cmd/validate"
+	"github.com/spf13/cobra"
+	"github.com/xanzy/go-gitlab"
+	"strings"
+)
+
+type CreateOptions struct {
+	gitlabClient *gitlab.Client
+	project      string
+	branch       string
+}
+
+var (
+	createBranchDesc = "Create a new branch for a specified project"
+
+	createBranchExample = `# create a develop branch from master branch for project group/myapp
+grepo create branch develop --project=group/myapp --ref=master`
+)
+
+func NewCreateOptions() *CreateOptions {
+	return &CreateOptions{}
+}
+
+func NewCreateBranchCmd(f cmdutil.Factory) *cobra.Command {
+	o := NewDeleteOptions()
+	cmd := &cobra.Command{
+		Use:                   "branch",
+		Aliases:               []string{"b"},
+		Short:                 deleteBranchDesc,
+		Example:               deleteBranchExample,
+		Args:                  require.ExactArgs(1),
+		DisableFlagsInUseLine: true,
+		TraverseChildren:      true,
+		Run: func(cmd *cobra.Command, args []string) {
+			cmdutil.CheckErr(o.Complete(f, cmd, args))
+			cmdutil.CheckErr(o.Validate(cmd, args))
+			cmdutil.CheckErr(o.Run(args))
+		},
+		SuggestFor: []string{},
+	}
+	cmdutil.AddProjectVarFlag(cmd, &o.project)
+	validate.VerifyMarkFlagRequired(cmd, "project")
+	return cmd
+}
+
+// Complete completes all the required options.
+func (o *CreateOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []string) error {
+	var err error
+	o.gitlabClient, err = f.GitlabClient()
+	if len(args) > 0 {
+		o.branch = args[0]
+	}
+	return err
+}
+
+// Validate makes sure there is no discrepency in command options.
+func (o *CreateOptions) Validate(cmd *cobra.Command, args []string) error {
+	if len(args) == 0 {
+		return fmt.Errorf("please enter branch")
+	}
+	if strings.TrimSpace(args[0]) == "" {
+		return fmt.Errorf("error from server (NotFound): project %s not found", args[0])
+	}
+	if strings.TrimSpace(o.project) == "" {
+		return cmd.Usage()
+	}
+	return nil
+}
+
+// Run executes a list subcommand using the specified options.
+func (o *CreateOptions) Run(args []string) error {
+	_, err := o.gitlabClient.Branches.DeleteBranch(o.project, o.branch)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Branch (%s) from project (%s) has been deleted\n", o.branch, o.project)
+	return nil
+}

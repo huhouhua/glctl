@@ -13,3 +13,27 @@
 // limitations under the License.
 
 package create
+
+import (
+	"github.com/huhouhua/gitlab-repo-operator/cmd/resources/branch"
+	"github.com/huhouhua/gitlab-repo-operator/cmd/resources/project"
+	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	"github.com/spf13/cobra"
+)
+
+var getDesc = "Create a Gitlab resource"
+
+func NewCreateCmd(f cmdutil.Factory) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:               "create",
+		Aliases:           []string{"c"},
+		Short:             getDesc,
+		SilenceErrors:     true,
+		SilenceUsage:      true,
+		DisableAutoGenTag: true,
+	}
+	cmdutil.AddOutFlag(cmd)
+	cmd.AddCommand(project.NewCreateProjectCmd(f))
+	cmd.AddCommand(branch.NewCreateBranchCmd(f))
+	return cmd
+}
