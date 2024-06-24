@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/huhouhua/gitlab-repo-operator/cmd/delete"
 	"github.com/huhouhua/gitlab-repo-operator/cmd/get"
 	"github.com/huhouhua/gitlab-repo-operator/cmd/login"
 	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
@@ -75,7 +76,8 @@ func NewRootCmd(out io.Writer) (*cobra.Command, error) {
 
 	cmd.AddCommand(
 		login.NewLoginCmd(),
-		get.NewGetCmd(f))
+		get.NewGetCmd(f),
+		delete.NewDeleteCmd(f))
 	return cmd, nil
 }
 

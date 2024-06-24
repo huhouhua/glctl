@@ -13,3 +13,28 @@
 // limitations under the License.
 
 package delete
+
+import (
+	"github.com/huhouhua/gitlab-repo-operator/cmd/resources/branch"
+	"github.com/huhouhua/gitlab-repo-operator/cmd/resources/project"
+	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	"github.com/spf13/cobra"
+)
+
+var getDesc = "Delete a Gitlab resource"
+
+func NewDeleteCmd(f cmdutil.Factory) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:               "delete",
+		Aliases:           []string{"d"},
+		Short:             getDesc,
+		SilenceErrors:     true,
+		SilenceUsage:      true,
+		DisableAutoGenTag: true,
+	}
+	cmdutil.AddOutFlag(cmd)
+	//util.AddPaginationFlags(cmd)
+	cmd.AddCommand(project.NewDeleteProjectCmd(f))
+	cmd.AddCommand(branch.NewDeleteBranchCmd(f))
+	return cmd
+}
