@@ -16,6 +16,7 @@ package validate
 
 import (
 	"fmt"
+	"github.com/golang/glog"
 	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
 	"github.com/spf13/cobra"
 	"strings"
@@ -58,4 +59,10 @@ func ValidateFlagStringValue(stringSlice []string,
 	return fmt.Errorf("'%s' is not a recognized value of '%s' flag. "+
 		"Please choose from: [%s]\n",
 		fValue, fName, strings.Join(stringSlice, ", "))
+}
+func VerifyMarkFlagRequired(cmd *cobra.Command, fName string) {
+	if err := cmd.MarkFlagRequired(fName); err != nil {
+		glog.Fatalf("error marking %s flag as required for command %s: %v",
+			fName, cmd.Name(), err)
+	}
 }

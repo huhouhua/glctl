@@ -45,6 +45,10 @@ func AddProjectOrderByVarFlag(cmd *cobra.Command, p *string) {
 			"or last_activity_at fields. Default is created_at")
 }
 
+func AddProjectVarFlag(cmd *cobra.Command, p *string) {
+	cmd.Flags().StringVarP(p, "project", "p", *p, "The name or ID of the project")
+}
+
 func AddDescriptionVarFlag(cmd *cobra.Command, p *string) {
 	cmd.Flags().StringVar(p, "desc", "", "The description of the resource")
 }
