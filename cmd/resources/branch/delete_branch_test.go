@@ -25,7 +25,7 @@ import (
 	"testing"
 )
 
-func TestDeleteProject(t *testing.T) {
+func TestDeleteBranch(t *testing.T) {
 	tests := []struct {
 		name        string
 		args        []string
