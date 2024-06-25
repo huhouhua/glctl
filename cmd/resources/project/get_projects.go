@@ -16,13 +16,11 @@ package project
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/AlekSi/pointer"
 	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
 	"github.com/huhouhua/gitlab-repo-operator/cmd/validate"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
-	"strconv"
 	"strings"
 )
 
@@ -33,7 +31,7 @@ type ListOptions struct {
 	Out          string
 	group        *gitlab.ListGroupProjectsOptions
 	project      *gitlab.ListProjectsOptions
-	ProjectId    *int
+	ProjectId    *string
 	AllGroups    bool
 }
 
@@ -123,12 +121,7 @@ func (o *ListOptions) AddFlags(cmd *cobra.Command) {
 func (o *ListOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []string) error {
 	var err error
 	if len(args) > 0 {
-		var id int
-		id, err = strconv.Atoi(args[0])
-		if err != nil {
-			return fmt.Errorf("error from server (NotFound): project %s not found", args[0])
-		}
-		o.ProjectId = pointer.ToInt(id)
+		o.ProjectId = pointer.ToString(args[0])
 	}
 	o.gitlabClient, err = f.GitlabClient()
 	if err != nil {

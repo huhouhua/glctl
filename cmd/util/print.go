@@ -104,6 +104,30 @@ func PrintBranchOut(format string, branches ...*gitlab.Branch) {
 		printTable(header, rows)
 	}
 }
+
+func PrintFilesOut(format string, trees ...*gitlab.TreeNode) {
+	switch format {
+	case JSON:
+		printJSON(trees)
+	case YAML:
+		printYAML(trees)
+	default:
+		if len(trees) == 0 {
+			fmt.Println(noResultMsg)
+			return
+		}
+		header := []string{"PATH", "TYPE"}
+		var rows [][]string
+		for _, v := range trees {
+			rows = append(rows, []string{
+				v.Path,
+				v.Type,
+			})
+		}
+		printTable(header, rows)
+	}
+}
+
 func printJSON(v interface{}) {
 	b, err := json.MarshalIndent(v, "", " ")
 	if err != nil {

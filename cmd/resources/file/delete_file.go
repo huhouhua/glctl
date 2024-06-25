@@ -13,3 +13,12 @@
 // limitations under the License.
 
 package file
+
+import (
+	"github.com/xanzy/go-gitlab"
+)
+
+type DeleteOptions struct {
+	gitlabClient *gitlab.Client
+	file         *gitlab.DeleteFileOptions
+}
