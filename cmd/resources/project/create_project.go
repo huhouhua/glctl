@@ -10,7 +10,6 @@ import (
 
 type CreateOptions struct {
 	gitlabClient *gitlab.Client
-	Visibility   string
 	project      *gitlab.CreateProjectOptions
 	Out          string
 }
@@ -35,6 +34,17 @@ func NewCreateOptions() *CreateOptions {
 			PublicBuilds:                              pointer.ToBool(false),
 			OnlyAllowMergeIfPipelineSucceeds:          pointer.ToBool(false),
 			OnlyAllowMergeIfAllDiscussionsAreResolved: pointer.ToBool(false),
+			Visibility:                                pointer.To(gitlab.PublicVisibility),
+			IssuesAccessLevel:                         pointer.To(gitlab.EnabledAccessControl),
+			MergeRequestsAccessLevel:                  pointer.To(gitlab.EnabledAccessControl),
+			BuildsAccessLevel:                         pointer.To(gitlab.EnabledAccessControl),
+			WikiAccessLevel:                           pointer.To(gitlab.EnabledAccessControl),
+			SnippetsAccessLevel:                       pointer.To(gitlab.EnabledAccessControl),
+			ContainerRegistryAccessLevel:              pointer.To(gitlab.DisabledAccessControl),
+			MergeMethod:                               pointer.To(gitlab.NoFastForwardMerge),
+			Topics:                                    pointer.To([]string{}),
+			PrintingMergeRequestLinkEnabled:           pointer.ToBool(false),
+			CIConfigPath:                              pointer.ToString(""),
 		},
 		Out: "simple",
 	}
@@ -65,7 +75,7 @@ func (o *CreateOptions) AddFlags(cmd *cobra.Command) {
 	cmdutil.AddDescriptionVarFlag(cmd, o.project.Description)
 	cmdutil.AddLFSenabledVarPFlag(cmd, o.project.LFSEnabled)
 	cmdutil.AddRequestAccessEnabledVarFlag(cmd, o.project.RequestAccessEnabled)
-	cmdutil.AddVisibilityVarFlag(cmd, &o.Visibility)
+	cmdutil.AddVisibilityVarFlag(cmd, (*string)(o.project.Visibility))
 	// unique flags for projects
 	f := cmd.Flags()
 	f.StringVar((*string)(o.project.IssuesAccessLevel), "issues_access_level", (string)(*o.project.IssuesAccessLevel), "issues access level "+
@@ -85,8 +95,6 @@ func (o *CreateOptions) AddFlags(cmd *cobra.Command) {
 		"(disabled,enabled,private,public)")
 	f.BoolVar(o.project.SharedRunnersEnabled, "shared-runners-enabled", *o.project.SharedRunnersEnabled,
 		"Enable shared runners for this project")
-	f.StringVar((*string)(o.project.BuildsAccessLevel), "builds_access_level", (string)(*o.project.BuildsAccessLevel), "builds access level"+
-		"(disabled,enabled,private,public)")
 	f.BoolVar(o.project.PublicBuilds, "public_builds", *o.project.PublicBuilds,
 		"enable public builds")
 	f.BoolVar(o.project.OnlyAllowMergeIfPipelineSucceeds, "only-allow-merge-if-pipeline-succeeds", *o.project.OnlyAllowMergeIfPipelineSucceeds,
@@ -110,7 +118,6 @@ func (o *CreateOptions) AddFlags(cmd *cobra.Command) {
 func (o *CreateOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []string) error {
 	var err error
 	o.gitlabClient, err = f.GitlabClient()
-
 	return err
 }
 
