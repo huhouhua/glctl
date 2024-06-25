@@ -16,25 +16,32 @@ type CreateOptions struct {
 }
 
 var (
-	createProjectDesc = "Create a new branch for a specified project"
+	createProjectDesc = "Create a new project by specifying the project name as the first argument"
 
-	createProjectExample = `# create a develop branch from master branch for project group/myapp
-grepo create branch develop --project=group/myapp --ref=master`
+	createProjectExample = `# create a new project
+grepo new project ProjectX --desc="Project X is party!"
+# create a new project under a group
+grepo new project ProjectY --namespace=GroupY`
 )
 
 func NewCreateOptions() *CreateOptions {
 	return &CreateOptions{
 		project: &gitlab.CreateProjectOptions{
-			Description:          pointer.ToString(""),
-			LFSEnabled:           pointer.ToBool(false),
-			RequestAccessEnabled: pointer.ToBool(false),
+			Description:                               pointer.ToString(""),
+			LFSEnabled:                                pointer.ToBool(false),
+			RequestAccessEnabled:                      pointer.ToBool(false),
+			ResolveOutdatedDiffDiscussions:            pointer.ToBool(false),
+			SharedRunnersEnabled:                      pointer.ToBool(false),
+			PublicBuilds:                              pointer.ToBool(false),
+			OnlyAllowMergeIfPipelineSucceeds:          pointer.ToBool(false),
+			OnlyAllowMergeIfAllDiscussionsAreResolved: pointer.ToBool(false),
 		},
 		Out: "simple",
 	}
 }
 
 func NewCreateProjectCmd(f cmdutil.Factory) *cobra.Command {
-	o := NewDeleteOptions()
+	o := NewCreateOptions()
 	cmd := &cobra.Command{
 		Use:                   "project",
 		Aliases:               []string{"p"},
@@ -61,34 +68,59 @@ func (o *CreateOptions) AddFlags(cmd *cobra.Command) {
 	cmdutil.AddVisibilityVarFlag(cmd, &o.Visibility)
 	// unique flags for projects
 	f := cmd.Flags()
-
-	f.Bool("issues-enabled", true, "Enable issues")
-	f.Bool("merge-requests-enabled", true, "Enable merge requests")
-	f.Bool("jobs-enabled", true, "Enable jobs")
-	f.Bool("wiki-enabled", true, "Enable wiki")
-	f.Bool("snippets-enabled", true, "Enable snippets")
-	f.Bool("resolve-outdated-diff-discussions", false,
+	f.StringVar((*string)(o.project.IssuesAccessLevel), "issues_access_level", (string)(*o.project.IssuesAccessLevel), "issues access level "+
+		"(disabled,enabled,private,public)")
+	f.StringVar((*string)(o.project.MergeRequestsAccessLevel), "merge_requests_access_level", (string)(*o.project.MergeRequestsAccessLevel), "merge requests access level "+
+		"(disabled,enabled,private,public)")
+	f.StringVar((*string)(o.project.BuildsAccessLevel), "builds_access_level", (string)(*o.project.BuildsAccessLevel), "builds access level "+
+		"(disabled,enabled,private,public)")
+	f.StringVar((*string)(o.project.WikiAccessLevel), "wiki_access_level", (string)(*o.project.WikiAccessLevel), "wiki access level "+
+		"(disabled,enabled,private,public)")
+	f.StringVar((*string)(o.project.SnippetsAccessLevel), "snippets_access_level", (string)(*o.project.SnippetsAccessLevel), "snippets access level "+
+		"(disabled,enabled,private,public)")
+	f.BoolVar(o.project.ResolveOutdatedDiffDiscussions, "resolve-outdated-diff-discussions", *o.project.ResolveOutdatedDiffDiscussions,
 		"Automatically resolve merge request diffs discussions on lines "+
 			"changed with a push")
-	f.Bool("container-registry-enabled", false,
-		"Enable container registry for this project")
-	f.Bool("shared-runners-enabled", false,
+	f.StringVar((*string)(o.project.ContainerRegistryAccessLevel), "container_registry_access_level", (string)(*o.project.ContainerRegistryAccessLevel), "container registry access level for this project "+
+		"(disabled,enabled,private,public)")
+	f.BoolVar(o.project.SharedRunnersEnabled, "shared-runners-enabled", *o.project.SharedRunnersEnabled,
 		"Enable shared runners for this project")
-	f.Bool("public-jobs", false, "If true, jobs can be viewed "+
-		"by non-project-members")
-	f.Bool("only-allow-merge-if-pipeline-succeeds", false,
+	f.StringVar((*string)(o.project.BuildsAccessLevel), "builds_access_level", (string)(*o.project.BuildsAccessLevel), "builds access level"+
+		"(disabled,enabled,private,public)")
+	f.BoolVar(o.project.PublicBuilds, "public_builds", *o.project.PublicBuilds,
+		"enable public builds")
+	f.BoolVar(o.project.OnlyAllowMergeIfPipelineSucceeds, "only-allow-merge-if-pipeline-succeeds", *o.project.OnlyAllowMergeIfPipelineSucceeds,
 		"Set whether merge requests can only be merged with successful jobs")
-	f.Bool("only-allow-merge-if-discussion-are-resolved", false,
+	f.BoolVar(o.project.OnlyAllowMergeIfAllDiscussionsAreResolved, "only-allow-merge-if-discussion-are-resolved", *o.project.OnlyAllowMergeIfAllDiscussionsAreResolved,
 		"Set whether merge requests can only be merged "+
 			"when all the discussions are resolved")
-	f.String("merge-method", "merge",
+	f.StringVar((*string)(o.project.MergeMethod), "merge-method", (string)(*o.project.MergeMethod),
 		"Set the merge method used. (available: 'merge', 'rebase_merge', 'ff')")
-	f.StringSlice("tag-list", []string{},
+	f.StringSliceVar(o.project.Topics, "tag-list", *o.project.Topics,
 		"The list of tags for a project; put array of tags, "+
 			"that should be finally assigned to a project.\n"+
 			"Example: --tag-list='tag1,tag2'")
-	f.Bool("printing-merge-request-link-enabled", true,
+	f.BoolVar(o.project.PrintingMergeRequestLinkEnabled, "printing-merge-request-link-enabled", *o.project.PrintingMergeRequestLinkEnabled,
 		"Show link to create/view merge request "+
 			"when pushing from the command line")
-	f.String("ci-config-path", "", "The path to CI config file")
+	f.StringVar(o.project.CIConfigPath, "ci-config-path", *o.project.CIConfigPath, "The path to CI config file")
+}
+
+// Complete completes all the required options.
+func (o *CreateOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []string) error {
+	var err error
+	o.gitlabClient, err = f.GitlabClient()
+
+	return err
+}
+
+// Validate makes sure there is no discrepency in command options.
+func (o *CreateOptions) Validate(cmd *cobra.Command, args []string) error {
+
+	return nil
+}
+
+// Run executes a list subcommand using the specified options.
+func (o *CreateOptions) Run(args []string) error {
+	return nil
 }
