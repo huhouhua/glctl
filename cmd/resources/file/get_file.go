@@ -30,6 +30,7 @@ type ListOptions struct {
 	path         string
 	Out          string
 	All          bool
+	Raw          bool
 }
 
 func NewListOptions() *ListOptions {
@@ -80,6 +81,7 @@ func (o *ListOptions) AddFlags(cmd *cobra.Command) {
 	f.StringVar(o.file.Ref, "ref", "", "The name of a repository branch or tag or, if not given, the default branch.")
 	f.StringVarP(o.file.Path, "path", "p", *o.file.Path, "The path inside the repository. Used to get content of subdirectories.")
 	f.BoolVarP(o.file.Recursive, "recursive", "r", *o.file.Recursive, "Boolean value used to get a recursive tree. Default is true.")
+	f.BoolVar(&o.Raw, "raw", o.Raw, "read to receive the raw file in repository.")
 	f.BoolVarP(&o.All, "all", "A", o.All, "If present, list the across all project file. file in current context is ignored even if specified with --all.")
 }
 
@@ -101,11 +103,24 @@ func (o *ListOptions) Validate(cmd *cobra.Command, args []string) error {
 	if len(args) == 0 || strings.TrimSpace(args[0]) == "" {
 		return fmt.Errorf("please enter project name and id")
 	}
+	if o.Raw && strings.TrimSpace(*o.file.Path) == "" {
+		return cmd.Usage()
+	}
 	return nil
 }
 
 // Run executes a list subcommand using the specified options.
 func (o *ListOptions) Run(args []string) error {
+	if o.Raw {
+		file, _, err := o.gitlabClient.RepositoryFiles.GetRawFile(o.project, o.path, &gitlab.GetRawFileOptions{
+			Ref: o.file.Ref,
+		})
+		if err != nil {
+			return err
+		}
+		fmt.Println(string(file))
+		return nil
+	}
 	var list []*gitlab.TreeNode
 	if o.All {
 		o.file.ListOptions.PerPage = 100

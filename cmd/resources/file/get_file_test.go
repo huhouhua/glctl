@@ -50,6 +50,19 @@ func TestGetFiles(t *testing.T) {
 		},
 		wantError: nil,
 	}, {
+		name: "read to receive the raw file in repository",
+		args: []string{
+			"70",
+		},
+		optionsFunc: func() *ListOptions {
+			opt := NewListOptions()
+			opt.file.Ref = pointer.ToString("develop")
+			opt.path = "clusters/devops/manifests/local-path-provisioner.yaml"
+			opt.Raw = true
+			return opt
+		},
+		wantError: nil,
+	}, {
 		name: "Get specified directory",
 		args: []string{"70"},
 		optionsFunc: func() *ListOptions {
