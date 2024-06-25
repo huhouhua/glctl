@@ -13,3 +13,64 @@
 // limitations under the License.
 
 package file
+
+import (
+	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	"github.com/spf13/cobra"
+	"github.com/xanzy/go-gitlab"
+)
+
+type ListOptions struct {
+	gitlabClient *gitlab.Client
+	file         *gitlab.GetRawFileOptions
+	project      string
+	fileName     string
+}
+
+func NewListOptions() *ListOptions {
+	return &ListOptions{}
+}
+
+var (
+	getFilesDesc = "get project "
+
+	getFilesExample = `# list all groups
+grepo get groups
+
+# list all subgroups of GroupX
+grepo get groups --all-groups=GroupX`
+)
+
+func NewGetFilesCmd(f cmdutil.Factory) *cobra.Command {
+	o := NewListOptions()
+	cmd := &cobra.Command{
+		Use:                   "files",
+		Aliases:               []string{"f"},
+		Short:                 getFilesDesc,
+		Example:               getFilesExample,
+		DisableFlagsInUseLine: true,
+		TraverseChildren:      true,
+		Run: func(cmd *cobra.Command, args []string) {
+			cmdutil.CheckErr(o.Complete(f, cmd, args))
+			cmdutil.CheckErr(o.Validate(cmd, args))
+			cmdutil.CheckErr(o.Run(args))
+		},
+		SuggestFor: []string{"file"},
+	}
+	return cmd
+}
+
+// Complete completes all the required options.
+func (o *ListOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []string) error {
+	return nil
+}
+
+// Validate makes sure there is no discrepency in command options.
+func (o *ListOptions) Validate(cmd *cobra.Command, args []string) error {
+	return nil
+}
+
+// Run executes a list subcommand using the specified options.
+func (o *ListOptions) Run(args []string) error {
+	return nil
+}
