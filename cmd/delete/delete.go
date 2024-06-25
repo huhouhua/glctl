@@ -16,6 +16,7 @@ package delete
 
 import (
 	"github.com/huhouhua/gitlab-repo-operator/cmd/resources/branch"
+	"github.com/huhouhua/gitlab-repo-operator/cmd/resources/file"
 	"github.com/huhouhua/gitlab-repo-operator/cmd/resources/project"
 	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
 	"github.com/spf13/cobra"
@@ -34,5 +35,6 @@ func NewDeleteCmd(f cmdutil.Factory) *cobra.Command {
 	}
 	cmd.AddCommand(project.NewDeleteProjectCmd(f))
 	cmd.AddCommand(branch.NewDeleteBranchCmd(f))
+	cmd.AddCommand(file.NewDeleteFilesCmd(f))
 	return cmd
 }

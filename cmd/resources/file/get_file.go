@@ -98,11 +98,8 @@ func (o *ListOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []str
 
 // Validate makes sure there is no discrepency in command options.
 func (o *ListOptions) Validate(cmd *cobra.Command, args []string) error {
-	if len(args) == 0 {
+	if len(args) == 0 || strings.TrimSpace(args[0]) == "" {
 		return fmt.Errorf("please enter project name and id")
-	}
-	if strings.TrimSpace(args[0]) == "" {
-		return fmt.Errorf("error from server (NotFound): project %s not found", args[0])
 	}
 	return nil
 }
