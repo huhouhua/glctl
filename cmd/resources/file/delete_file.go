@@ -33,7 +33,12 @@ type DeleteOptions struct {
 func NewDeleteOptions() *DeleteOptions {
 	return &DeleteOptions{
 		file: &gitlab.DeleteFileOptions{
-			Branch: pointer.ToString(""),
+			Branch:        pointer.ToString("main"),
+			CommitMessage: pointer.ToString(""),
+			AuthorName:    nil,
+			AuthorEmail:   nil,
+			LastCommitID:  nil,
+			StartBranch:   nil,
 		},
 	}
 }
@@ -50,8 +55,8 @@ func NewDeleteFilesCmd(f cmdutil.Factory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "files",
 		Aliases:               []string{"f"},
-		Short:                 getFilesDesc,
-		Example:               getFilesExample,
+		Short:                 deleteFilesDesc,
+		Example:               deleteFilesExample,
 		DisableFlagsInUseLine: true,
 		TraverseChildren:      true,
 		Run: func(cmd *cobra.Command, args []string) {
@@ -66,7 +71,7 @@ func NewDeleteFilesCmd(f cmdutil.Factory) *cobra.Command {
 func (o *DeleteOptions) AddFlags(cmd *cobra.Command) {
 	cmdutil.AddProjectVarPFlag(cmd, &o.project)
 	f := cmd.Flags()
-	f.StringVarP(o.file.Branch, "branch", "b", *o.file.Branch, "Name of the new branch to create. The commit is added to this branch.")
+	f.StringVarP(o.file.Branch, "branch", "b", *o.file.Branch, "Name of the new branch to create. The commit is added to this branch.(default main)")
 	f.StringVarP(o.file.CommitMessage, "message", "m", *o.file.CommitMessage, "The commit message.(default delete file_path)")
 	f.StringVar(o.file.AuthorEmail, "author_email", *o.file.AuthorEmail, "The commit author’s email address.")
 	f.StringVar(o.file.AuthorName, "author_name", *o.file.AuthorName, "The commit author’s name.")
@@ -79,6 +84,9 @@ func (o *DeleteOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []s
 	var err error
 	if len(args) > 0 {
 		o.FileName = args[0]
+	}
+	if strings.TrimSpace(*o.file.CommitMessage) == "" {
+		o.file.CommitMessage = pointer.ToString(fmt.Sprintf("delete %s file!", o.FileName))
 	}
 	o.gitlabClient, err = f.GitlabClient()
 	return err
@@ -97,6 +105,7 @@ func (o *DeleteOptions) Validate(cmd *cobra.Command, args []string) error {
 
 // Run executes a list subcommand using the specified options.
 func (o *DeleteOptions) Run(args []string) error {
+	o.gitlabClient.RepositoryFiles.GetFileMetaData()
 	_, err := o.gitlabClient.RepositoryFiles.DeleteFile(o.project, o.FileName, o.file)
 	if err != nil {
 		return err

@@ -13,3 +13,106 @@
 // limitations under the License.
 
 package file
+
+import (
+	"fmt"
+	"github.com/AlekSi/pointer"
+	cmdtesting "github.com/huhouhua/gitlab-repo-operator/cmd/testing"
+	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+	"strings"
+	"testing"
+)
+
+func TestDeleteFile(t *testing.T) {
+	tests := []struct {
+		name        string
+		args        []string
+		optionsFunc func() *DeleteOptions
+		validate    func(opt *DeleteOptions, cmd *cobra.Command, args []string) error
+		run         func(opt *DeleteOptions, args []string) error
+		wantError   error
+	}{{
+		name: "delete by file",
+		args: []string{"delete.yaml"},
+		optionsFunc: func() *DeleteOptions {
+			opt := NewDeleteOptions()
+			opt.project = "223"
+			opt.file.Branch = pointer.ToString("main")
+			return opt
+		},
+		run: func(opt *DeleteOptions, args []string) error {
+			var err error
+			out := cmdtesting.RunTestForStdout(func() {
+				err = opt.Run(args)
+			})
+			expectedOutput := fmt.Sprintf("file (%s) for %s branch with project id (%s) has been deleted", opt.FileName, *opt.file.Branch, opt.project)
+			if !strings.Contains(out, expectedOutput) {
+				err = errors.New(fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out))
+			}
+			return err
+		},
+		wantError: nil,
+	}, { //to do
+		name: "delete by dir",
+		args: []string{"/weqwee"},
+		optionsFunc: func() *DeleteOptions {
+			opt := NewDeleteOptions()
+			opt.project = "223"
+			opt.file.Branch = pointer.ToString("main")
+			return opt
+		},
+		run: func(opt *DeleteOptions, args []string) error {
+			var err error
+			out := cmdtesting.RunTestForStdout(func() {
+				err = opt.Run(args)
+			})
+			expectedOutput := fmt.Sprintf("file (%s) for %s branch with project id (%s) has been deleted", opt.FileName, *opt.file.Branch, opt.project)
+			if !strings.Contains(out, expectedOutput) {
+				err = errors.New(fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out))
+			}
+			return err
+		},
+		wantError: nil,
+	}}
+	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			cmd := NewDeleteFilesCmd(factory)
+			var cmdOptions *DeleteOptions
+			if tc.optionsFunc != nil {
+				cmdOptions = tc.optionsFunc()
+			} else {
+				cmdOptions = NewDeleteOptions()
+			}
+			var err error
+			if err = cmdOptions.Complete(factory, cmd, tc.args); err != nil && !errors.Is(err, tc.wantError) {
+				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
+				return
+			}
+			if tc.validate != nil {
+				err = tc.validate(cmdOptions, cmd, tc.args)
+				if err != nil {
+					return
+				}
+			} else {
+				if err = cmdOptions.Validate(cmd, tc.args); err != nil && !errors.Is(err, tc.wantError) {
+					t.Errorf("expected %v, got: '%v'", tc.wantError, err)
+					return
+				}
+			}
+			if tc.run != nil {
+				err = tc.run(cmdOptions, tc.args)
+				if err != nil {
+					t.Error(err)
+				}
+				return
+			}
+			if err = cmdOptions.Run(tc.args); !errors.Is(err, tc.wantError) {
+				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
+				return
+			}
+		})
+	}
+}
