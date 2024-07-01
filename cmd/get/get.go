@@ -28,12 +28,10 @@ var getDesc = "Get Gitlab resources"
 
 func NewGetCmd(f cmdutil.Factory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:               "get",
-		Aliases:           []string{"g"},
-		Short:             getDesc,
-		SilenceErrors:     true,
-		SilenceUsage:      true,
-		DisableAutoGenTag: true,
+		Use:                   "get",
+		Aliases:               []string{"g"},
+		Short:                 getDesc,
+		DisableFlagsInUseLine: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return validate.ValidateOutFlagValue(cmd)
 		},
