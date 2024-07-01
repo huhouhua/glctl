@@ -57,6 +57,8 @@ func NewLoginCmd() *cobra.Command {
 	flags := cmd.Flags()
 	flags.StringVarP(&o.User, "username", "u", "", "Username")
 	flags.StringVarP(&o.Password, "password", "p", "", "Password")
+	//cmdutil.VerifyMarkFlagRequired(cmd, "project")
+
 	return cmd
 }
 

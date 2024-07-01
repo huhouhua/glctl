@@ -148,6 +148,12 @@ func TestRunLogin(t *testing.T) {
 			args:           []string{"http://172.17.162.204"},
 			flags:          map[string]string{"username": "v-huhouhua@ruijie.com.cn", "password": "huhouhua"},
 			expectedOutput: "Login Succeeded",
+		},
+		{
+			name:           "login gitlab error",
+			args:           []string{},
+			flags:          map[string]string{},
+			expectedOutput: "Login error",
 		}}
 
 	for _, tc := range tests {
@@ -166,7 +172,6 @@ func TestRunLogin(t *testing.T) {
 					return
 				}
 			}
-
 			out := cmdtesting.RunTestForStdout(func() {
 				cmd.Run(cmd, tc.args)
 			})

@@ -28,7 +28,7 @@ func main() {
 		os.Exit(1)
 	}
 	if err := cmd.Execute(); err != nil {
-		debug("%+v", err)
+		debug("%+v", err.Error())
 		os.Exit(1)
 	}
 }

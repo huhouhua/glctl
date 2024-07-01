@@ -22,6 +22,13 @@ import (
 	"strings"
 )
 
+func VerifyMarkFlagRequired(cmd *cobra.Command, fName string) {
+	if err := cmd.MarkFlagRequired(fName); err != nil {
+		glog.Fatalf("error marking %s flag as required for command %s: %v",
+			fName, cmd.Name(), err)
+	}
+}
+
 func AddPaginationVarFlags(cmd *cobra.Command, page *gitlab.ListOptions) {
 	flags := cmd.Flags()
 	flags.IntVarP(&page.Page, "page", "p", page.Page, "Page of results to retrieve")

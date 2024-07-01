@@ -105,7 +105,7 @@ func (o *DeleteOptions) Validate(cmd *cobra.Command, args []string) error {
 
 // Run executes a list subcommand using the specified options.
 func (o *DeleteOptions) Run(args []string) error {
-	o.gitlabClient.RepositoryFiles.GetFileMetaData()
+	//o.gitlabClient.RepositoryFiles.GetFileMetaData()
 	_, err := o.gitlabClient.RepositoryFiles.DeleteFile(o.project, o.FileName, o.file)
 	if err != nil {
 		return err
