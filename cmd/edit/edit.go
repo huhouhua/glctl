@@ -19,13 +19,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var getDesc = "edit a Gitlab resource"
+var editDesc = "edit a Gitlab resource"
 
 func NewEditCmd(f cmdutil.Factory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:               "edit",
 		Aliases:           []string{"e"},
-		Short:             getDesc,
+		Short:             editDesc,
 		SilenceErrors:     true,
 		SilenceUsage:      true,
 		DisableAutoGenTag: true,

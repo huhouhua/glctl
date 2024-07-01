@@ -22,13 +22,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var getDesc = "Delete a Gitlab resource"
+var deleteDesc = "Delete a Gitlab resource"
 
 func NewDeleteCmd(f cmdutil.Factory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:               "delete",
 		Aliases:           []string{"d"},
-		Short:             getDesc,
+		Short:             deleteDesc,
 		SilenceErrors:     true,
 		SilenceUsage:      true,
 		DisableAutoGenTag: true,

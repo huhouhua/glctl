@@ -21,13 +21,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var getDesc = "Create a Gitlab resource"
+var createDesc = "Create a Gitlab resource"
 
 func NewCreateCmd(f cmdutil.Factory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:               "create",
 		Aliases:           []string{"c"},
-		Short:             getDesc,
+		Short:             createDesc,
 		SilenceErrors:     true,
 		SilenceUsage:      true,
 		DisableAutoGenTag: true,
