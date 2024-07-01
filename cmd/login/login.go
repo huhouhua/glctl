@@ -43,7 +43,7 @@ type loginOptions struct {
 func NewLoginCmd() *cobra.Command {
 	var o loginOptions
 	cmd := &cobra.Command{
-		Use:     "login [OPTIONS] [SERVER]",
+		Use:     "login",
 		Short:   "Login to gitlab",
 		Long:    loginDesc,
 		Example: `grepo login http://localhost:8080`,
