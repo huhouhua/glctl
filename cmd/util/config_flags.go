@@ -26,8 +26,8 @@ type RESTClientGetter interface {
 	// ToRESTConfig returns restconfig
 	ToRESTConfig() (*types.Config, error)
 
-	// ToRawGrepoConfigLoader return grepoconfig loader as-is
-	ToRawGrepoConfigLoader() ClientConfig
+	// ToRawGLConfigLoader return GLconfig loader as-is
+	ToRawGLConfigLoader() ClientConfig
 }
 
 var _ RESTClientGetter = &ConfigFlags{}
@@ -44,34 +44,34 @@ type ConfigFlags struct {
 }
 
 func (f *ConfigFlags) ToRESTConfig() (*types.Config, error) {
-	return f.ToRawGrepoConfigLoader().ClientConfig()
+	return f.ToRawGLConfigLoader().ClientConfig()
 }
 
-// ToRawGrepoConfigLoader binds config flag values to config overrides
+// ToRawGLConfigLoader binds config flag values to config overrides
 // Returns an interactive clientConfig if the password flag is enabled,
 // or a non-interactive clientConfig otherwise.
-func (f *ConfigFlags) ToRawGrepoConfigLoader() ClientConfig {
+func (f *ConfigFlags) ToRawGLConfigLoader() ClientConfig {
 	if f.usePersistentConfig {
-		return f.toRawGrepoPersistentConfigLoader()
+		return f.toRawGLPersistentConfigLoader()
 	}
 
-	return f.toRawGrepoConfigLoader()
+	return f.toRawGLConfigLoader()
 }
 
-// toRawGrepoPersistentConfigLoader binds config flag values to config overrides
+// toRawGLPersistentConfigLoader binds config flag values to config overrides
 // Returns a persistent clientConfig for propagation.
-func (f *ConfigFlags) toRawGrepoPersistentConfigLoader() ClientConfig {
+func (f *ConfigFlags) toRawGLPersistentConfigLoader() ClientConfig {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 
 	if f.clientConfig == nil {
-		f.clientConfig = f.toRawGrepoConfigLoader()
+		f.clientConfig = f.toRawGLConfigLoader()
 	}
 
 	return f.clientConfig
 }
 
-func (f *ConfigFlags) toRawGrepoConfigLoader() ClientConfig {
+func (f *ConfigFlags) toRawGLConfigLoader() ClientConfig {
 	oathInfoCfg, infoErr := LoadOathWithInfoConfig()
 	oathInfoEnvCfg, envErr := LoadOathWithEnvConfig()
 	if infoErr != nil && envErr != nil {

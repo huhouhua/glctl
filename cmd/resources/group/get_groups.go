@@ -39,10 +39,10 @@ var (
 	getGroupsDesc = "List groups and subgroups"
 
 	getGroupsExample = `# list all groups
-grepo get groups
+gl get groups
 
 # list all subgroups of GroupX
-grepo get groups --all-groups=GroupX`
+gl get groups --all-groups=GroupX`
 )
 
 func NewListOptions() *ListOptions {

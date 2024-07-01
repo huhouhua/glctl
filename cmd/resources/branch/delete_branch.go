@@ -34,7 +34,7 @@ var (
 	deleteBranchDesc = "Delete a project branch"
 
 	deleteBranchExample = `# delete a develop branch from project group/myapp
-grepo delete branch develop --project=group/myapp`
+gl delete branch develop --project=group/myapp`
 )
 
 func NewDeleteOptions() *DeleteOptions {

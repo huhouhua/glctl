@@ -28,10 +28,10 @@ type FakeRESTClientGetter struct {
 }
 
 func (f FakeRESTClientGetter) ToRESTConfig() (*types.Config, error) {
-	return f.ToRawGrepoConfigLoader().ClientConfig()
+	return f.ToRawGLConfigLoader().ClientConfig()
 }
 
-func (f FakeRESTClientGetter) ToRawGrepoConfigLoader() cmdutil.ClientConfig {
+func (f FakeRESTClientGetter) ToRawGLConfigLoader() cmdutil.ClientConfig {
 	return f.clientCfg
 }
 

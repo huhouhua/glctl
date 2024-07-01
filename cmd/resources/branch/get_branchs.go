@@ -34,13 +34,13 @@ var (
 	getBranchsDesc = "List all branches of a repository"
 
 	getBranchsExample = `# get all branch from project
-grepo get branchs
+gl get branchs
 
 # get all branch
-grepo get branchs group1/devops
+gl get branchs group1/devops
 
 # get all branch with project id
-grepo get branchs 100
+gl get branchs 100
 `
 )
 

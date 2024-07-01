@@ -38,8 +38,8 @@ func (f *factoryImpl) ToRESTConfig() (*types.Config, error) {
 	return f.clientGetter.ToRESTConfig()
 }
 
-func (f *factoryImpl) ToRawGrepoConfigLoader() ClientConfig {
-	return f.clientGetter.ToRawGrepoConfigLoader()
+func (f *factoryImpl) ToRawGLConfigLoader() ClientConfig {
+	return f.clientGetter.ToRawGLConfigLoader()
 }
 
 func (f *factoryImpl) GitlabClient() (*gitlab.Client, error) {

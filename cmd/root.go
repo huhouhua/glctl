@@ -37,9 +37,9 @@ There are two options to authenticate the command-line client to Gitlab interfac
 
 1.) Using the 'login' command by passing the host url, username and password.
 
-$ grepo login
+$ gl login
 
-The login token will be saved in $HOME/.grepo.yaml file.
+The login token will be saved in $HOME/.gl.yaml file.
 
 2.) Using Environment variables.
 
@@ -65,7 +65,7 @@ command-line interface.
 
 func NewRootCmd(out io.Writer) (*cobra.Command, error) {
 	cmd := &cobra.Command{
-		Use:           "grepo",
+		Use:           "gl",
 		Short:         "the gitlab repository operator",
 		Long:          fmt.Sprintf("%s\n%s", globalUsage, AuthDoc),
 		SilenceErrors: true,
@@ -80,7 +80,7 @@ func NewRootCmd(out io.Writer) (*cobra.Command, error) {
 		},
 	}
 	flags := cmd.PersistentFlags()
-	flags.StringVarP(&cfgFile, "config", "c", "", "config file (default is $HOME/.grepo.yaml)")
+	flags.StringVarP(&cfgFile, "config", "c", "", "config file (default is $HOME/.gl.yaml)")
 	flags.SetNormalizeFunc(cmdutil.WarnWordSepNormalizeFunc) // Warn for "_" flags
 
 	// Normalize all flags that are coming from other packages or pre-configurations
@@ -140,9 +140,9 @@ func initConfig() {
 			cmdutil.Error(err)
 		}
 
-		// Search config in home directory with name ".grepo" (without extension).
+		// Search config in home directory with name ".gl" (without extension).
 		viper.AddConfigPath(home)
-		viper.SetConfigName(".grepo")
+		viper.SetConfigName(".gl")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
@@ -151,7 +151,7 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err != nil {
 		// NOTE: the config file is not required to exists
 		// raise an error if error is other than config file not found
-		if !strings.Contains(err.Error(), `Config File ".grepo" Not Found`) {
+		if !strings.Contains(err.Error(), `Config File ".gl" Not Found`) {
 			cmdutil.Error(err)
 		}
 	}

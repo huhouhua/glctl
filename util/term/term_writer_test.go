@@ -20,7 +20,7 @@ import (
 	"testing"
 )
 
-const test = "Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo Grepo"
+const test = "GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL"
 
 func TestWordWrapWriter(t *testing.T) {
 	testcases := map[string]struct {
@@ -40,8 +40,8 @@ func TestWordWrapWriter(t *testing.T) {
 			t.Errorf("%s: Unexpected error: %v", k, err)
 		}
 		result := b.String()
-		if !strings.Contains(result, "Grepo") {
-			t.Errorf("%s: Expected to contain \"Grepo\"", k)
+		if !strings.Contains(result, "GL") {
+			t.Errorf("%s: Expected to contain \"GL\"", k)
 		}
 		if len(result) < len(tc.input) {
 			t.Errorf(
@@ -58,7 +58,7 @@ func TestWordWrapWriter(t *testing.T) {
 			}
 		}
 		for _, word := range strings.Split(result, " ") {
-			if !strings.Contains(word, "Grepo") {
+			if !strings.Contains(word, "GL") {
 				t.Errorf("%s: Unexpected broken word: %q", k, word)
 			}
 		}
@@ -83,8 +83,8 @@ func TestMaxWidthWriter(t *testing.T) {
 			t.Errorf("%s: Unexpected error: %v", k, err)
 		}
 		result := b.String()
-		if !strings.Contains(result, "Grepo") {
-			t.Errorf("%s: Expected to contain \"Grepo\"", k)
+		if !strings.Contains(result, "GL") {
+			t.Errorf("%s: Expected to contain \"GL\"", k)
 		}
 		if len(result) < len(tc.input) {
 			t.Errorf(

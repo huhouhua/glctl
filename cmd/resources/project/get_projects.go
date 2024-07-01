@@ -39,10 +39,10 @@ var (
 	getProjectsDesc = "List projects of the authenticated user or of a group"
 
 	getProjectsExample = `# get all projects
-grepo get projects
+gl get projects
 
 # get all projects from a group
-grepo get projects --all-groups=Group1`
+gl get projects --all-groups=Group1`
 )
 
 func NewListOptions() *ListOptions {

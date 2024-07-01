@@ -22,7 +22,7 @@ import (
 
 var versionExample = templates.Examples(`
 		# Print the client and server versions for the current context
-		grepo version`)
+		gl version`)
 
 // NewCmdVersion returns a cobra command for fetching versions.
 func NewCmdVersion(f cmdutil.Factory) *cobra.Command {

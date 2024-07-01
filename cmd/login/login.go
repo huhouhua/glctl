@@ -32,7 +32,7 @@ import (
 	"strings"
 )
 
-var loginDesc = "This command authenticates you to a Gitlab server, retrieves your OAuth Token and then save it to $HOME/.grepo.yaml file."
+var loginDesc = "This command authenticates you to a Gitlab server, retrieves your OAuth Token and then save it to $HOME/.gl.yaml file."
 
 type loginOptions struct {
 	ServerAddress string
@@ -47,7 +47,7 @@ func NewLoginCmd() *cobra.Command {
 		Short:                 "Login to gitlab",
 		Long:                  loginDesc,
 		DisableFlagsInUseLine: true,
-		Example:               `grepo login http://localhost:8080`,
+		Example:               `gl login http://localhost:8080`,
 		Args:                  require.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			cmdutil.CheckErr(o.Complete(cmd, args))
@@ -122,7 +122,7 @@ func (o *loginOptions) Run(args []string) error {
 	if err != nil {
 		return err
 	}
-	cfgFile := fmt.Sprintf("%s/.grepo.yaml", home)
+	cfgFile := fmt.Sprintf("%s/.gl.yaml", home)
 	// add host_url and user to config file
 	cfg.HostUrl = &o.ServerAddress
 	cfg.UserName = &o.User

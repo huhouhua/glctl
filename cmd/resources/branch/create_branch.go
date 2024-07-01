@@ -36,7 +36,7 @@ var (
 	createBranchDesc = "Create a new branch for a specified project"
 
 	createBranchExample = `# create a develop branch from master branch for project group/myapp
-grepo create branch develop --project=group/myapp --ref=master`
+gl create branch develop --project=group/myapp --ref=master`
 )
 
 func NewCreateOptions() *CreateOptions {

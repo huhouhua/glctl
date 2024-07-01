@@ -51,7 +51,7 @@ var (
 	getFilesDesc = "get file for project "
 
 	getFilesExample = `# list project file
-grepo get files myProject`
+gl get files myProject`
 )
 
 func NewGetFilesCmd(f cmdutil.Factory) *cobra.Command {

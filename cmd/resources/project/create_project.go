@@ -32,9 +32,9 @@ var (
 	createProjectDesc = "Create a new project by specifying the project name as the first argument"
 
 	createProjectExample = `# create a new project
-grepo new project ProjectX --desc="Project X is party!"
+gl new project ProjectX --desc="Project X is party!"
 # create a new project under a group
-grepo new project ProjectY --namespace=GroupY`
+gl new project ProjectY --namespace=GroupY`
 )
 
 func NewCreateOptions() *CreateOptions {

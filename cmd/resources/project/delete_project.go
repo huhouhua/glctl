@@ -32,10 +32,10 @@ var (
 	deleteProjectDesc = "Delete a Gitlab project by specifying the full path"
 
 	deleteProjectExample = `# delete a project
-grepo delete project ProjectX
+gl delete project ProjectX
 
 # delete a project under a group
-grepo delete project group/project`
+gl delete project group/project`
 )
 
 func NewDeleteOptions() *DeleteOptions {
