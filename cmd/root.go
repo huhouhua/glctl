@@ -18,6 +18,9 @@ import (
 	"flag"
 	"fmt"
 	"github.com/huhouhua/gitlab-repo-operator/cmd/completion"
+	delete "github.com/huhouhua/gitlab-repo-operator/cmd/delete"
+	"github.com/huhouhua/gitlab-repo-operator/cmd/edit"
+	"github.com/huhouhua/gitlab-repo-operator/cmd/get"
 	"github.com/huhouhua/gitlab-repo-operator/cmd/login"
 	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
 	"github.com/huhouhua/gitlab-repo-operator/cmd/version"
@@ -97,7 +100,15 @@ func NewRootCmd(out io.Writer) (*cobra.Command, error) {
 
 	groups := templates.CommandGroups{
 		{
-			Message: "auth Commands:",
+			Message: "Basic Commands:",
+			Commands: []*cobra.Command{
+				get.NewGetCmd(f),
+				edit.NewEditCmd(f),
+				delete.NewDeleteCmd(f),
+			},
+		},
+		{
+			Message: "Authorization Commands:",
 			Commands: []*cobra.Command{
 				login.NewLoginCmd(),
 			},
