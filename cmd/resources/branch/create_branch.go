@@ -17,9 +17,9 @@ package branch
 import (
 	"fmt"
 	"github.com/AlekSi/pointer"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/require"
-	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/validate"
+	"github.com/huhouhua/gl/cmd/require"
+	cmdutil "github.com/huhouhua/gl/cmd/util"
+	"github.com/huhouhua/gl/cmd/validate"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -30,6 +30,7 @@ type CreateOptions struct {
 	branch       *gitlab.CreateBranchOptions
 	project      string
 	Out          string
+	ioStreams    cmdutil.IOStreams
 }
 
 var (
@@ -39,8 +40,9 @@ var (
 gl create branch develop --project=group/myapp --ref=master`
 )
 
-func NewCreateOptions() *CreateOptions {
+func NewCreateOptions(ioStreams cmdutil.IOStreams) *CreateOptions {
 	return &CreateOptions{
+		ioStreams: ioStreams,
 		branch: &gitlab.CreateBranchOptions{
 			Ref:    pointer.ToString(""),
 			Branch: pointer.ToString(""),
@@ -49,8 +51,8 @@ func NewCreateOptions() *CreateOptions {
 	}
 }
 
-func NewCreateBranchCmd(f cmdutil.Factory) *cobra.Command {
-	o := NewCreateOptions()
+func NewCreateBranchCmd(f cmdutil.Factory, ioStreams cmdutil.IOStreams) *cobra.Command {
+	o := NewCreateOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "branch",
 		Aliases:               []string{"b"},

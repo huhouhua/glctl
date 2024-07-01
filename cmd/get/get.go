@@ -15,30 +15,28 @@
 package get
 
 import (
-	"github.com/huhouhua/gitlab-repo-operator/cmd/resources/branch"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/resources/file"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/resources/group"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/resources/project"
-	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/validate"
+	"github.com/huhouhua/gl/cmd/resources/branch"
+	"github.com/huhouhua/gl/cmd/resources/file"
+	"github.com/huhouhua/gl/cmd/resources/group"
+	"github.com/huhouhua/gl/cmd/resources/project"
+	cmdutil "github.com/huhouhua/gl/cmd/util"
 	"github.com/spf13/cobra"
 )
 
 var getDesc = "Get Gitlab resources"
 
-func NewGetCmd(f cmdutil.Factory) *cobra.Command {
+func NewGetCmd(f cmdutil.Factory, ioStreams cmdutil.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "get",
 		Aliases:               []string{"g"},
 		Short:                 getDesc,
 		DisableFlagsInUseLine: true,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			return validate.ValidateOutFlagValue(cmd)
-		},
+		Run:                   cmdutil.DefaultSubCommandRun(ioStreams.ErrOut),
 	}
-	cmd.AddCommand(project.NewGetProjectsCmd(f))
-	cmd.AddCommand(group.NewGetGroupsCmd(f))
-	cmd.AddCommand(branch.NewGetBranchesCmd(f))
-	cmd.AddCommand(file.NewGetFilesCmd(f))
+
+	cmd.AddCommand(project.NewGetProjectsCmd(f, ioStreams))
+	cmd.AddCommand(group.NewGetGroupsCmd(f, ioStreams))
+	cmd.AddCommand(branch.NewGetBranchesCmd(f, ioStreams))
+	cmd.AddCommand(file.NewGetFilesCmd(f, ioStreams))
 	return cmd
 }

@@ -15,20 +15,18 @@
 package edit
 
 import (
-	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	cmdutil "github.com/huhouhua/gl/cmd/util"
 	"github.com/spf13/cobra"
 )
 
 var editDesc = "edit a Gitlab resource"
 
-func NewEditCmd(f cmdutil.Factory) *cobra.Command {
+func NewEditCmd(f cmdutil.Factory, ioStreams cmdutil.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:               "edit",
-		Aliases:           []string{"e"},
-		Short:             editDesc,
-		SilenceErrors:     true,
-		SilenceUsage:      true,
-		DisableAutoGenTag: true,
+		Use:                   "edit",
+		Aliases:               []string{"e"},
+		Short:                 editDesc,
+		DisableFlagsInUseLine: true,
 	}
 	return cmd
 }

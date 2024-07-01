@@ -16,9 +16,9 @@ package branch
 
 import (
 	"fmt"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/require"
-	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/validate"
+	"github.com/huhouhua/gl/cmd/require"
+	cmdutil "github.com/huhouhua/gl/cmd/util"
+	"github.com/huhouhua/gl/cmd/validate"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -28,6 +28,7 @@ type DeleteOptions struct {
 	gitlabClient *gitlab.Client
 	project      string
 	branch       string
+	ioStreams    cmdutil.IOStreams
 }
 
 var (
@@ -37,12 +38,14 @@ var (
 gl delete branch develop --project=group/myapp`
 )
 
-func NewDeleteOptions() *DeleteOptions {
-	return &DeleteOptions{}
+func NewDeleteOptions(ioStreams cmdutil.IOStreams) *DeleteOptions {
+	return &DeleteOptions{
+		ioStreams: ioStreams,
+	}
 }
 
-func NewDeleteBranchCmd(f cmdutil.Factory) *cobra.Command {
-	o := NewDeleteOptions()
+func NewDeleteBranchCmd(f cmdutil.Factory, ioStreams cmdutil.IOStreams) *cobra.Command {
+	o := NewDeleteOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "branch",
 		Aliases:               []string{"b"},
@@ -93,6 +96,6 @@ func (o *DeleteOptions) Run(args []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Branch (%s) from project (%s) has been deleted\n", o.branch, o.project)
+	_, _ = fmt.Fprintf(o.ioStreams.Out, "Branch (%s) from project (%s) has been deleted\n", o.branch, o.project)
 	return nil
 }

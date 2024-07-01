@@ -15,19 +15,18 @@
 package completion
 
 import (
+	cmdutil "github.com/huhouhua/gl/cmd/util"
 	"github.com/spf13/cobra"
 )
 
 var completionLong = "completion a Gitlab resource"
 
-func NewCmdCompletion() *cobra.Command {
+func NewCmdCompletion(ioStreams cmdutil.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:               "completion SHELL",
-		Aliases:           []string{"c"},
-		Short:             completionLong,
-		SilenceErrors:     true,
-		SilenceUsage:      true,
-		DisableAutoGenTag: true,
+		Use:                   "completion SHELL",
+		Aliases:               []string{"c"},
+		Short:                 completionLong,
+		DisableFlagsInUseLine: true,
 	}
 	return cmd
 }

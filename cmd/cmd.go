@@ -17,18 +17,19 @@ package cmd
 import (
 	"flag"
 	"fmt"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/completion"
-	delete "github.com/huhouhua/gitlab-repo-operator/cmd/delete"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/edit"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/get"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/login"
-	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/version"
-	"github.com/huhouhua/gitlab-repo-operator/util/templates"
+	"github.com/huhouhua/gl/cmd/completion"
+	delete "github.com/huhouhua/gl/cmd/delete"
+	"github.com/huhouhua/gl/cmd/edit"
+	"github.com/huhouhua/gl/cmd/get"
+	"github.com/huhouhua/gl/cmd/login"
+	cmdutil "github.com/huhouhua/gl/cmd/util"
+	"github.com/huhouhua/gl/cmd/version"
+	"github.com/huhouhua/gl/util/templates"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"io"
+	"os"
 	"strings"
 )
 
@@ -63,7 +64,12 @@ This client helps you view, update, create, and delete Gitlab resources from the
 command-line interface.
 `
 
-func NewRootCmd(out io.Writer) (*cobra.Command, error) {
+// NeDefaultGlCommand creates the `iamctl` command with default arguments.
+func NeDefaultGlCommand() *cobra.Command {
+	return NeGlCommand(os.Stdin, os.Stdout, os.Stderr)
+}
+
+func NeGlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           "gl",
 		Short:         "the gitlab repository operator",
@@ -97,26 +103,26 @@ func NewRootCmd(out io.Writer) (*cobra.Command, error) {
 	f := cmdutil.NewFactory(configFlags)
 	// From this point and forward we get warnings on flags that contain "_" separators
 	cmd.SetGlobalNormalizationFunc(cmdutil.WarnWordSepNormalizeFunc)
-
+	ioStreams := cmdutil.IOStreams{In: in, Out: out, ErrOut: err}
 	groups := templates.CommandGroups{
 		{
 			Message: "Basic Commands:",
 			Commands: []*cobra.Command{
-				get.NewGetCmd(f),
-				edit.NewEditCmd(f),
-				delete.NewDeleteCmd(f),
+				get.NewGetCmd(f, ioStreams),
+				edit.NewEditCmd(f, ioStreams),
+				delete.NewDeleteCmd(f, ioStreams),
 			},
 		},
 		{
 			Message: "Authorization Commands:",
 			Commands: []*cobra.Command{
-				login.NewLoginCmd(),
+				login.NewLoginCmd(ioStreams),
 			},
 		},
 		{
 			Message: "Settings Commands:",
 			Commands: []*cobra.Command{
-				completion.NewCmdCompletion(),
+				completion.NewCmdCompletion(ioStreams),
 			},
 		},
 	}
@@ -125,7 +131,7 @@ func NewRootCmd(out io.Writer) (*cobra.Command, error) {
 	filters := []string{"options"}
 	templates.ActsAsRootCommand(cmd, filters, groups...)
 	cmd.AddCommand(version.NewCmdVersion(f))
-	return cmd, nil
+	return cmd
 }
 
 // initConfig reads in config file and ENV variables if set.

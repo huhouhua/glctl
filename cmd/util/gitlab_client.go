@@ -16,8 +16,8 @@ package util
 
 import (
 	"fmt"
-	//root "github.com/huhouhua/gitlab-repo-operator/cmd"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/types"
+	//root "github.com/huhouhua/gl/cmd"
+	"github.com/huhouhua/gl/cmd/types"
 	"github.com/xanzy/go-gitlab"
 	"strings"
 )

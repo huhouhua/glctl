@@ -32,7 +32,7 @@ func TOut(msg interface{}) {
 	fmt.Println("--- OUTPUT:", msg)
 }
 
-type TestCmdFunc = func(buffer *bytes.Buffer) (*cobra.Command, error)
+type TestCmdFunc = func(buffer *bytes.Buffer) *cobra.Command
 
 // A helper to ignore os.Exit(1) errors when running a cobra Command
 func ExecuteCommand(cmdFunc TestCmdFunc, cmd string) (stdout string, err error) {
@@ -46,10 +46,7 @@ func ExecuteCommand(cmdFunc TestCmdFunc, cmd string) (stdout string, err error) 
 func ExecuteCommandOfArgs(cmdFunc TestCmdFunc, args ...string) (stdout string, err error) {
 	buf := new(bytes.Buffer)
 	//root, err := NewRootCmd(buf)
-	cmd, err := cmdFunc(buf)
-	if err != nil {
-		return "", err
-	}
+	cmd := cmdFunc(buf)
 	for i, arg := range args {
 		TInfo(fmt.Sprintf("(%d) %s", i, arg))
 	}

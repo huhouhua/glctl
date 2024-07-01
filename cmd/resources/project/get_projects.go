@@ -17,8 +17,8 @@ package project
 import (
 	"encoding/json"
 	"github.com/AlekSi/pointer"
-	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/validate"
+	cmdutil "github.com/huhouhua/gl/cmd/util"
+	"github.com/huhouhua/gl/cmd/validate"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -26,6 +26,7 @@ import (
 
 type ListOptions struct {
 	gitlabClient *gitlab.Client
+	ioStreams    cmdutil.IOStreams
 	Visibility   string
 	FromGroup    string
 	Out          string
@@ -45,8 +46,9 @@ gl get projects
 gl get projects --all-groups=Group1`
 )
 
-func NewListOptions() *ListOptions {
+func NewListOptions(ioStreams cmdutil.IOStreams) *ListOptions {
 	return &ListOptions{
+		ioStreams:  ioStreams,
 		Visibility: string(gitlab.PrivateVisibility),
 		group:      &gitlab.ListGroupProjectsOptions{},
 		project: &gitlab.ListProjectsOptions{
@@ -70,8 +72,8 @@ func NewListOptions() *ListOptions {
 		Out:       "simple",
 	}
 }
-func NewGetProjectsCmd(f cmdutil.Factory) *cobra.Command {
-	o := NewListOptions()
+func NewGetProjectsCmd(f cmdutil.Factory, ioStreams cmdutil.IOStreams) *cobra.Command {
+	o := NewListOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "projects",
 		Aliases:               []string{"p"},

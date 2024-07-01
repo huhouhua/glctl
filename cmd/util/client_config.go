@@ -14,7 +14,7 @@
 
 package util
 
-import "github.com/huhouhua/gitlab-repo-operator/cmd/types"
+import "github.com/huhouhua/gl/cmd/types"
 
 // ClientConfig is used to make it easy to get an api server client.
 type ClientConfig interface {

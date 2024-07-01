@@ -15,8 +15,8 @@
 package version
 
 import (
-	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
-	"github.com/huhouhua/gitlab-repo-operator/util/templates"
+	cmdutil "github.com/huhouhua/gl/cmd/util"
+	"github.com/huhouhua/gl/util/templates"
 	"github.com/spf13/cobra"
 )
 

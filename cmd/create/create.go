@@ -15,24 +15,22 @@
 package create
 
 import (
-	"github.com/huhouhua/gitlab-repo-operator/cmd/resources/branch"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/resources/project"
-	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	"github.com/huhouhua/gl/cmd/resources/branch"
+	"github.com/huhouhua/gl/cmd/resources/project"
+	cmdutil "github.com/huhouhua/gl/cmd/util"
 	"github.com/spf13/cobra"
 )
 
 var createDesc = "Create a Gitlab resource"
 
-func NewCreateCmd(f cmdutil.Factory) *cobra.Command {
+func NewCreateCmd(f cmdutil.Factory, ioStreams cmdutil.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:               "create",
-		Aliases:           []string{"c"},
-		Short:             createDesc,
-		SilenceErrors:     true,
-		SilenceUsage:      true,
-		DisableAutoGenTag: true,
+		Use:                   "create",
+		Aliases:               []string{"c"},
+		Short:                 createDesc,
+		DisableFlagsInUseLine: true,
 	}
-	cmd.AddCommand(project.NewCreateProjectCmd(f))
-	cmd.AddCommand(branch.NewCreateBranchCmd(f))
+	cmd.AddCommand(project.NewCreateProjectCmd(f, ioStreams))
+	cmd.AddCommand(branch.NewCreateBranchCmd(f, ioStreams))
 	return cmd
 }

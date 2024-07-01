@@ -16,8 +16,8 @@ package group
 
 import (
 	"github.com/AlekSi/pointer"
-	cmdtesting "github.com/huhouhua/gitlab-repo-operator/cmd/testing"
-	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	cmdtesting "github.com/huhouhua/gl/cmd/testing"
+	cmdutil "github.com/huhouhua/gl/cmd/util"
 	"github.com/pkg/errors"
 	"testing"
 )
@@ -26,16 +26,14 @@ func TestGetGroups(t *testing.T) {
 	tests := []struct {
 		name           string
 		args           []string
-		optionsFunc    func() *ListOptions
+		optionsFunc    func(opt *ListOptions)
 		expectedOutput string
 		wantError      error
 	}{{
 		name: "list all groups",
 		args: []string{},
-		optionsFunc: func() *ListOptions {
-			opt := NewListOptions()
+		optionsFunc: func(opt *ListOptions) {
 			opt.AllGroups = true
-			return opt
 		},
 		wantError: nil,
 	}, {
@@ -47,32 +45,27 @@ func TestGetGroups(t *testing.T) {
 	}, {
 		name: "list all groups with page",
 		args: []string{},
-		optionsFunc: func() *ListOptions {
-			opt := NewListOptions()
+		optionsFunc: func(opt *ListOptions) {
 			opt.group.ListOptions.Page = 2
 			opt.group.ListOptions.PerPage = 10
-			return opt
 		},
 		wantError: nil,
 	}, {
 		name: "desc sort",
 		args: []string{},
-		optionsFunc: func() *ListOptions {
-			opt := NewListOptions()
+		optionsFunc: func(opt *ListOptions) {
 			opt.group.Sort = pointer.ToString("desc")
-			return opt
 		},
 		wantError: nil,
 	}}
+	ioStreams := cmdutil.NewTestIOStreamsDiscard()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			cmd := NewGetGroupsCmd(factory)
-			var cmdOptions *ListOptions
+			cmd := NewGetGroupsCmd(factory, ioStreams)
+			var cmdOptions = NewListOptions(ioStreams)
 			if tc.optionsFunc != nil {
-				cmdOptions = tc.optionsFunc()
-			} else {
-				cmdOptions = NewListOptions()
+				tc.optionsFunc(cmdOptions)
 			}
 			var err error
 			if err = cmdOptions.Complete(factory, cmd, tc.args); !errors.Is(err, tc.wantError) {

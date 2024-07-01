@@ -17,7 +17,7 @@ package file
 import (
 	"fmt"
 	"github.com/AlekSi/pointer"
-	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	cmdutil "github.com/huhouhua/gl/cmd/util"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -28,10 +28,12 @@ type DeleteOptions struct {
 	file         *gitlab.DeleteFileOptions
 	project      string
 	FileName     string
+	ioStreams    cmdutil.IOStreams
 }
 
-func NewDeleteOptions() *DeleteOptions {
+func NewDeleteOptions(ioStreams cmdutil.IOStreams) *DeleteOptions {
 	return &DeleteOptions{
+		ioStreams: ioStreams,
 		file: &gitlab.DeleteFileOptions{
 			Branch:        pointer.ToString("main"),
 			CommitMessage: pointer.ToString(""),
@@ -50,8 +52,8 @@ var (
 delete get files myProject`
 )
 
-func NewDeleteFilesCmd(f cmdutil.Factory) *cobra.Command {
-	o := NewListOptions()
+func NewDeleteFilesCmd(f cmdutil.Factory, ioStreams cmdutil.IOStreams) *cobra.Command {
+	o := NewDeleteOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "files",
 		Aliases:               []string{"f"},
@@ -110,6 +112,6 @@ func (o *DeleteOptions) Run(args []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("file (%s) for %s branch with project id (%s) has been deleted\n", o.FileName, *o.file.Branch, o.project)
+	_, _ = fmt.Fprintf(o.ioStreams.Out, "file (%s) for %s branch with project id (%s) has been deleted\n", o.FileName, *o.file.Branch, o.project)
 	return nil
 }

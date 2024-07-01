@@ -16,8 +16,8 @@ package project
 
 import (
 	"fmt"
-	cmdtesting "github.com/huhouhua/gitlab-repo-operator/cmd/testing"
-	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	cmdtesting "github.com/huhouhua/gl/cmd/testing"
+	cmdutil "github.com/huhouhua/gl/cmd/util"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
@@ -84,11 +84,12 @@ func TestCreateProject(t *testing.T) {
 			return nil
 		},
 	}}
+	ioStreams := cmdutil.NewTestIOStreamsDiscard()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			cmd := NewCreateProjectCmd(factory)
-			cmdOptions := NewCreateOptions()
+			cmd := NewCreateProjectCmd(factory, ioStreams)
+			cmdOptions := NewCreateOptions(ioStreams)
 			var err error
 			if err = cmdOptions.Complete(factory, cmd, tc.args); err != nil && !errors.Is(err, tc.wantError) {
 				t.Errorf("expected %v, got: '%v'", tc.wantError, err)

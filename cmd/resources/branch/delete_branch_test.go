@@ -17,8 +17,8 @@ package branch
 import (
 	"errors"
 	"fmt"
-	cmdtesting "github.com/huhouhua/gitlab-repo-operator/cmd/testing"
-	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	cmdtesting "github.com/huhouhua/gl/cmd/testing"
+	cmdutil "github.com/huhouhua/gl/cmd/util"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -29,17 +29,15 @@ func TestDeleteBranch(t *testing.T) {
 	tests := []struct {
 		name        string
 		args        []string
-		optionsFunc func() *DeleteOptions
+		optionsFunc func(opt *DeleteOptions)
 		validate    func(opt *DeleteOptions, cmd *cobra.Command, args []string) error
 		run         func(opt *DeleteOptions, args []string) error
 		wantError   error
 	}{{
 		name: "delete by name",
 		args: []string{"develop"},
-		optionsFunc: func() *DeleteOptions {
-			opt := NewDeleteOptions()
+		optionsFunc: func(opt *DeleteOptions) {
 			opt.project = "huhouhua/gitlab-repo-branch"
-			return opt
 		},
 		run: func(opt *DeleteOptions, args []string) error {
 			var err error
@@ -56,10 +54,8 @@ func TestDeleteBranch(t *testing.T) {
 	}, {
 		name: "branch not found",
 		args: []string{"not-found"},
-		optionsFunc: func() *DeleteOptions {
-			opt := NewDeleteOptions()
+		optionsFunc: func(opt *DeleteOptions) {
 			opt.project = "huhouhua/gitlab-repo-branch"
-			return opt
 		},
 		run: func(opt *DeleteOptions, args []string) error {
 			err := opt.Run(args)
@@ -72,10 +68,8 @@ func TestDeleteBranch(t *testing.T) {
 	}, {
 		name: "project not found",
 		args: []string{"not-found"},
-		optionsFunc: func() *DeleteOptions {
-			opt := NewDeleteOptions()
+		optionsFunc: func(opt *DeleteOptions) {
 			opt.project = "not-found"
-			return opt
 		},
 		run: func(opt *DeleteOptions, args []string) error {
 			err := opt.Run(args)
@@ -96,15 +90,14 @@ func TestDeleteBranch(t *testing.T) {
 			return nil
 		},
 	}}
+	ioStreams := cmdutil.NewTestIOStreamsDiscard()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			cmd := NewDeleteBranchCmd(factory)
-			var cmdOptions *DeleteOptions
+			cmd := NewDeleteBranchCmd(factory, ioStreams)
+			var cmdOptions = NewDeleteOptions(ioStreams)
 			if tc.optionsFunc != nil {
-				cmdOptions = tc.optionsFunc()
-			} else {
-				cmdOptions = NewDeleteOptions()
+				tc.optionsFunc(cmdOptions)
 			}
 			var err error
 			if err = cmdOptions.Complete(factory, cmd, tc.args); err != nil && !errors.Is(err, tc.wantError) {

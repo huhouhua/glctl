@@ -16,7 +16,7 @@ package util
 
 import (
 	"github.com/AlekSi/pointer"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/types"
+	"github.com/huhouhua/gl/cmd/types"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v3"
 	"strings"

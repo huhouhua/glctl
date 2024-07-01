@@ -16,7 +16,7 @@ package cmd
 
 import (
 	"bytes"
-	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/testing"
+	cmdutil "github.com/huhouhua/gl/cmd/testing"
 	"github.com/spf13/cobra"
 	"testing"
 )
@@ -37,8 +37,8 @@ func TestRoot(t *testing.T) {
 	}}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			out, err := cmdutil.ExecuteCommand(func(buffer *bytes.Buffer) (*cobra.Command, error) {
-				return NewRootCmd(buffer)
+			out, err := cmdutil.ExecuteCommand(func(buffer *bytes.Buffer) *cobra.Command {
+				return NeDefaultGlCommand()
 			}, tc.cmd)
 
 			cmdutil.TInfo(out)

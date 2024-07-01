@@ -17,8 +17,8 @@ package branch
 import (
 	"fmt"
 	"github.com/AlekSi/pointer"
-	cmdtesting "github.com/huhouhua/gitlab-repo-operator/cmd/testing"
-	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	cmdtesting "github.com/huhouhua/gl/cmd/testing"
+	cmdutil "github.com/huhouhua/gl/cmd/util"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
@@ -30,18 +30,16 @@ func TestCreateBranch(t *testing.T) {
 	tests := []struct {
 		name        string
 		args        []string
-		optionsFunc func() *CreateOptions
+		optionsFunc func(opt *CreateOptions)
 		validate    func(opt *CreateOptions, cmd *cobra.Command, args []string) error
 		run         func(opt *CreateOptions, args []string) error
 		wantError   error
 	}{{
 		name: "create a new branch",
 		args: []string{"create1"},
-		optionsFunc: func() *CreateOptions {
-			opt := NewCreateOptions()
+		optionsFunc: func(opt *CreateOptions) {
 			opt.project = "huhouhua/gitlab-repo-branch"
 			opt.branch.Ref = pointer.ToString("main")
-			return opt
 		},
 		run: func(opt *CreateOptions, args []string) error {
 			var err error
@@ -57,10 +55,8 @@ func TestCreateBranch(t *testing.T) {
 	}, {
 		name: "create an existing branch",
 		args: []string{"create1"},
-		optionsFunc: func() *CreateOptions {
-			opt := NewCreateOptions()
+		optionsFunc: func(opt *CreateOptions) {
 			opt.project = "huhouhua/gitlab-repo-branch"
-			return opt
 		},
 		run: func(opt *CreateOptions, args []string) error {
 			err := opt.Run(args)
@@ -71,15 +67,14 @@ func TestCreateBranch(t *testing.T) {
 			return err
 		},
 	}}
+	ioStreams := cmdutil.NewTestIOStreamsDiscard()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			cmd := NewCreateBranchCmd(factory)
-			var cmdOptions *CreateOptions
+			cmd := NewCreateBranchCmd(factory, ioStreams)
+			cmdOptions := NewCreateOptions(ioStreams)
 			if tc.optionsFunc != nil {
-				cmdOptions = tc.optionsFunc()
-			} else {
-				cmdOptions = NewCreateOptions()
+				tc.optionsFunc(cmdOptions)
 			}
 			var err error
 			if err = cmdOptions.Complete(factory, cmd, tc.args); err != nil && !errors.Is(err, tc.wantError) {

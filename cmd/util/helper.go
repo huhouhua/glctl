@@ -17,6 +17,8 @@ package util
 import (
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
+	"io"
 	"net/url"
 	"os"
 	"strings"
@@ -115,4 +117,32 @@ func StandardErrorMessage(err error) (string, bool) {
 func Error(msg interface{}) {
 	fmt.Println("Error:", msg)
 	os.Exit(1)
+}
+
+// DefaultSubCommandRun prints a command's help string to the specified output if no
+// arguments (sub-commands) are provided, or a usage error otherwise.
+func DefaultSubCommandRun(out io.Writer) func(c *cobra.Command, args []string) {
+	return func(c *cobra.Command, args []string) {
+		c.SetOut(out)
+		c.SetErr(out)
+		RequireNoArguments(c, args)
+		err := c.Help()
+		if err != nil {
+			return
+		}
+		CheckErr(ErrExit)
+	}
+}
+
+// RequireNoArguments exits with a usage error if extra arguments are provided.
+func RequireNoArguments(c *cobra.Command, args []string) {
+	if len(args) > 0 {
+		CheckErr(UsageErrorf(c, "unknown command %q", strings.Join(args, " ")))
+	}
+}
+
+// UsageErrorf returns error with command path.
+func UsageErrorf(cmd *cobra.Command, format string, args ...interface{}) error {
+	msg := fmt.Sprintf(format, args...)
+	return fmt.Errorf("%s\nSee '%s -h' for help and examples", msg, cmd.CommandPath())
 }

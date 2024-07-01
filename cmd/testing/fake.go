@@ -16,8 +16,8 @@ package testing
 
 import (
 	"github.com/AlekSi/pointer"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/types"
-	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	"github.com/huhouhua/gl/cmd/types"
+	cmdutil "github.com/huhouhua/gl/cmd/util"
 )
 
 var _ cmdutil.RESTClientGetter = &FakeRESTClientGetter{}

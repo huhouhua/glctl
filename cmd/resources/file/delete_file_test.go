@@ -17,8 +17,8 @@ package file
 import (
 	"fmt"
 	"github.com/AlekSi/pointer"
-	cmdtesting "github.com/huhouhua/gitlab-repo-operator/cmd/testing"
-	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	cmdtesting "github.com/huhouhua/gl/cmd/testing"
+	cmdutil "github.com/huhouhua/gl/cmd/util"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"strings"
@@ -29,18 +29,16 @@ func TestDeleteFile(t *testing.T) {
 	tests := []struct {
 		name        string
 		args        []string
-		optionsFunc func() *DeleteOptions
+		optionsFunc func(opt *DeleteOptions)
 		validate    func(opt *DeleteOptions, cmd *cobra.Command, args []string) error
 		run         func(opt *DeleteOptions, args []string) error
 		wantError   error
 	}{{
 		name: "delete by file",
 		args: []string{"delete.yaml"},
-		optionsFunc: func() *DeleteOptions {
-			opt := NewDeleteOptions()
+		optionsFunc: func(opt *DeleteOptions) {
 			opt.project = "223"
 			opt.file.Branch = pointer.ToString("main")
-			return opt
 		},
 		run: func(opt *DeleteOptions, args []string) error {
 			var err error
@@ -57,11 +55,9 @@ func TestDeleteFile(t *testing.T) {
 	}, { //to do
 		name: "delete by dir",
 		args: []string{"/weqwee"},
-		optionsFunc: func() *DeleteOptions {
-			opt := NewDeleteOptions()
+		optionsFunc: func(opt *DeleteOptions) {
 			opt.project = "223"
 			opt.file.Branch = pointer.ToString("main")
-			return opt
 		},
 		run: func(opt *DeleteOptions, args []string) error {
 			var err error
@@ -76,15 +72,14 @@ func TestDeleteFile(t *testing.T) {
 		},
 		wantError: nil,
 	}}
+	ioStreams := cmdutil.NewTestIOStreamsDiscard()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			cmd := NewDeleteFilesCmd(factory)
-			var cmdOptions *DeleteOptions
+			cmd := NewDeleteFilesCmd(factory, ioStreams)
+			var cmdOptions = NewDeleteOptions(ioStreams)
 			if tc.optionsFunc != nil {
-				cmdOptions = tc.optionsFunc()
-			} else {
-				cmdOptions = NewDeleteOptions()
+				tc.optionsFunc(cmdOptions)
 			}
 			var err error
 			if err = cmdOptions.Complete(factory, cmd, tc.args); err != nil && !errors.Is(err, tc.wantError) {

@@ -17,8 +17,8 @@ package branch
 import (
 	"bytes"
 	"fmt"
-	cmdtesting "github.com/huhouhua/gitlab-repo-operator/cmd/testing"
-	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	cmdtesting "github.com/huhouhua/gl/cmd/testing"
+	cmdutil "github.com/huhouhua/gl/cmd/util"
 	"strings"
 	"testing"
 )
@@ -26,24 +26,22 @@ import (
 func TestGetBranch(t *testing.T) {
 	tests := []struct {
 		name           string
-		options        *ListOptions
+		optionsFunc    func(opt *ListOptions)
 		args           []string
 		expectedOutput string
 	}{{
 		name:           "project name is an empty string",
 		args:           []string{""},
-		options:        NewListOptions(),
 		expectedOutput: fmt.Sprintf("error from server (NotFound): project %s not found", ""),
 	}}
+	ioStreams := cmdutil.NewTestIOStreamsDiscard()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			cmd := NewGetBranchesCmd(factory)
-			var cmdOptions *ListOptions
-			if tc.options != nil {
-				cmdOptions = tc.options
-			} else {
-				cmdOptions = &ListOptions{}
+			cmd := NewGetBranchesCmd(factory, ioStreams)
+			cmdOptions := NewListOptions(ioStreams)
+			if tc.optionsFunc != nil {
+				tc.optionsFunc(cmdOptions)
 			}
 			out := cmdtesting.RunTestForStdout(func() {
 				var err error
@@ -93,6 +91,7 @@ func TestRunGetBranch(t *testing.T) {
 		flags:          map[string]string{},
 		expectedOutput: "main",
 	}}
+	ioStreams := cmdutil.NewTestIOStreamsDiscard()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
@@ -100,7 +99,7 @@ func TestRunGetBranch(t *testing.T) {
 				cmdtesting.TInfo(fmt.Sprintf("(%d) %s", i, arg))
 			}
 			buf := new(bytes.Buffer)
-			cmd := NewGetBranchesCmd(factory)
+			cmd := NewGetBranchesCmd(factory, ioStreams)
 			cmd.SetOut(buf)
 			cmd.SetErr(buf)
 			for flag, value := range tc.flags {

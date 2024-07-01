@@ -19,9 +19,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/howeyc/gopass"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/require"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/types"
-	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	"github.com/huhouhua/gl/cmd/require"
+	"github.com/huhouhua/gl/cmd/types"
+	cmdutil "github.com/huhouhua/gl/cmd/util"
 	"github.com/mitchellh/go-homedir"
 	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/cobra"
@@ -34,14 +34,20 @@ import (
 
 var loginDesc = "This command authenticates you to a Gitlab server, retrieves your OAuth Token and then save it to $HOME/.gl.yaml file."
 
-type loginOptions struct {
+type LoginOptions struct {
 	ServerAddress string
 	User          string
 	Password      string
+	ioStreams     cmdutil.IOStreams
 }
 
-func NewLoginCmd() *cobra.Command {
-	var o loginOptions
+func NewLoginOptions(ioStreams cmdutil.IOStreams) *LoginOptions {
+	return &LoginOptions{
+		ioStreams: ioStreams,
+	}
+}
+func NewLoginCmd(ioStreams cmdutil.IOStreams) *cobra.Command {
+	o := NewLoginOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "login [host]",
 		Short:                 "Login to gitlab",
@@ -64,7 +70,7 @@ func NewLoginCmd() *cobra.Command {
 }
 
 // Complete completes all the required options.
-func (o *loginOptions) Complete(cmd *cobra.Command, args []string) error {
+func (o *LoginOptions) Complete(cmd *cobra.Command, args []string) error {
 	if len(args) > 0 {
 		o.ServerAddress = args[0]
 	}
@@ -78,7 +84,7 @@ func (o *loginOptions) Complete(cmd *cobra.Command, args []string) error {
 }
 
 // Validate makes sure there is no discrepency in command options.
-func (o *loginOptions) Validate(cmd *cobra.Command, args []string) error {
+func (o *LoginOptions) Validate(cmd *cobra.Command, args []string) error {
 	if strings.TrimSpace(o.ServerAddress) == "" {
 		return fmt.Errorf("please enter the gitlab url")
 	}
@@ -92,7 +98,7 @@ func (o *loginOptions) Validate(cmd *cobra.Command, args []string) error {
 }
 
 // Run executes a create subcommand using the specified options.
-func (o *loginOptions) Run(args []string) error {
+func (o *LoginOptions) Run(args []string) error {
 	uri := fmt.Sprintf("%s/oauth/token?grant_type=password&username=%s&password=%s", o.ServerAddress, o.User, o.Password)
 	resp, err := http.Post(uri, "application/json", nil)
 	if err != nil {
@@ -133,8 +139,8 @@ func (o *loginOptions) Run(args []string) error {
 	if err := os.WriteFile(cfgFile, b, 0600); err != nil {
 		return err
 	}
-	fmt.Printf("%s file has been created by login command \n", cfgFile)
-	fmt.Printf("\nLogin Succeeded \n")
+	_, _ = fmt.Fprintf(o.ioStreams.Out, "%s file has been created by login command \n", cfgFile)
+	_, _ = fmt.Fprintf(o.ioStreams.Out, "\nLogin Succeeded \n")
 	return nil
 }
 

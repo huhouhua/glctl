@@ -16,26 +16,17 @@ package main
 
 import (
 	"fmt"
-	"github.com/huhouhua/gitlab-repo-operator/cmd"
+	"github.com/huhouhua/gl/cmd"
 	"log"
 	"os"
 )
 
 func main() {
-	cmd, err := cmd.NewRootCmd(os.Stdout)
-	if err != nil {
-		warning("%+v", err)
-		os.Exit(1)
-	}
-	if err := cmd.Execute(); err != nil {
+	command := cmd.NeDefaultGlCommand()
+	if err := command.Execute(); err != nil {
 		debug("%+v", err.Error())
 		os.Exit(1)
 	}
-}
-
-func warning(format string, v ...interface{}) {
-	format = fmt.Sprintf("WARNING: %s\n", format)
-	fmt.Fprintf(os.Stderr, format, v...)
 }
 func debug(format string, v ...interface{}) {
 	format = fmt.Sprintf("[debug] %s\n", format)

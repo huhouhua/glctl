@@ -15,26 +15,24 @@
 package delete
 
 import (
-	"github.com/huhouhua/gitlab-repo-operator/cmd/resources/branch"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/resources/file"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/resources/project"
-	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	"github.com/huhouhua/gl/cmd/resources/branch"
+	"github.com/huhouhua/gl/cmd/resources/file"
+	"github.com/huhouhua/gl/cmd/resources/project"
+	cmdutil "github.com/huhouhua/gl/cmd/util"
 	"github.com/spf13/cobra"
 )
 
 var deleteDesc = "Delete a Gitlab resource"
 
-func NewDeleteCmd(f cmdutil.Factory) *cobra.Command {
+func NewDeleteCmd(f cmdutil.Factory, ioStreams cmdutil.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:               "delete",
-		Aliases:           []string{"d"},
-		Short:             deleteDesc,
-		SilenceErrors:     true,
-		SilenceUsage:      true,
-		DisableAutoGenTag: true,
+		Use:                   "delete",
+		Aliases:               []string{"d"},
+		Short:                 deleteDesc,
+		DisableFlagsInUseLine: true,
 	}
-	cmd.AddCommand(project.NewDeleteProjectCmd(f))
-	cmd.AddCommand(branch.NewDeleteBranchCmd(f))
-	cmd.AddCommand(file.NewDeleteFilesCmd(f))
+	cmd.AddCommand(project.NewDeleteProjectCmd(f, ioStreams))
+	cmd.AddCommand(branch.NewDeleteBranchCmd(f, ioStreams))
+	cmd.AddCommand(file.NewDeleteFilesCmd(f, ioStreams))
 	return cmd
 }

@@ -16,8 +16,8 @@ package project
 
 import (
 	"fmt"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/require"
-	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	"github.com/huhouhua/gl/cmd/require"
+	cmdutil "github.com/huhouhua/gl/cmd/util"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -26,6 +26,7 @@ import (
 type DeleteOptions struct {
 	gitlabClient *gitlab.Client
 	project      string
+	ioStreams    cmdutil.IOStreams
 }
 
 var (
@@ -38,12 +39,14 @@ gl delete project ProjectX
 gl delete project group/project`
 )
 
-func NewDeleteOptions() *DeleteOptions {
-	return &DeleteOptions{}
+func NewDeleteOptions(ioStreams cmdutil.IOStreams) *DeleteOptions {
+	return &DeleteOptions{
+		ioStreams: ioStreams,
+	}
 }
 
-func NewDeleteProjectCmd(f cmdutil.Factory) *cobra.Command {
-	o := NewDeleteOptions()
+func NewDeleteProjectCmd(f cmdutil.Factory, ioStreams cmdutil.IOStreams) *cobra.Command {
+	o := NewDeleteOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "project",
 		Aliases:               []string{"p"},
@@ -93,6 +96,6 @@ func (o *DeleteOptions) Run(args []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("project (%s) with id (%d) has been deleted\n", o.project, projectInfo.ID)
+	_, _ = fmt.Fprintf(o.ioStreams.Out, "project (%s) with id (%d) has been deleted\n", o.project, projectInfo.ID)
 	return nil
 }

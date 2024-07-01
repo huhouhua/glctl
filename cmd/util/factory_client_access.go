@@ -15,7 +15,7 @@
 package util
 
 import (
-	"github.com/huhouhua/gitlab-repo-operator/cmd/types"
+	"github.com/huhouhua/gl/cmd/types"
 	"github.com/xanzy/go-gitlab"
 )
 

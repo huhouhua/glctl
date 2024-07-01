@@ -1,4 +1,4 @@
-module github.com/huhouhua/gitlab-repo-operator
+module github.com/huhouhua/gl
 
 go 1.22.4
 
