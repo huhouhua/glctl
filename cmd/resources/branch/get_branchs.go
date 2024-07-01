@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"github.com/huhouhua/gl/cmd/require"
 	cmdutil "github.com/huhouhua/gl/cmd/util"
+	"github.com/huhouhua/gl/util/cli"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -28,7 +29,7 @@ type ListOptions struct {
 	Out          string
 	branch       *gitlab.ListBranchesOptions
 	All          bool
-	ioStreams    cmdutil.IOStreams
+	ioStreams    cli.IOStreams
 }
 
 var (
@@ -45,7 +46,7 @@ gl get branchs 100
 `
 )
 
-func NewListOptions(ioStreams cmdutil.IOStreams) *ListOptions {
+func NewListOptions(ioStreams cli.IOStreams) *ListOptions {
 	return &ListOptions{
 		ioStreams: ioStreams,
 		branch: &gitlab.ListBranchesOptions{
@@ -58,7 +59,7 @@ func NewListOptions(ioStreams cmdutil.IOStreams) *ListOptions {
 		Out: "simple",
 	}
 }
-func NewGetBranchesCmd(f cmdutil.Factory, ioStreams cmdutil.IOStreams) *cobra.Command {
+func NewGetBranchesCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
 	o := NewListOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "branch [Project]",

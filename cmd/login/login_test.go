@@ -15,10 +15,9 @@
 package login
 
 import (
-	"bytes"
 	"fmt"
 	cmdtesting "github.com/huhouhua/gl/cmd/testing"
-	cmdutil "github.com/huhouhua/gl/cmd/util"
+	"github.com/huhouhua/gl/util/cli"
 	"strings"
 	"testing"
 )
@@ -26,36 +25,43 @@ import (
 func TestLogin(t *testing.T) {
 	tests := []struct {
 		name           string
-		options        *LoginOptions
+		optionsFunc    func(opt *LoginOptions)
 		args           []string
 		expectedOutput string
 	}{
 		{
-			name:           "login incorrect password",
-			args:           []string{"http://172.17.162.204"},
-			options:        &LoginOptions{User: "v-huhouhua@ruijie.com.cn", Password: "12345"},
+			name: "login incorrect password",
+			args: []string{"http://172.17.162.204"},
+			optionsFunc: func(opt *LoginOptions) {
+				opt.User = "v-huhouhua@ruijie.com.cn"
+				opt.Password = "12345"
+			},
 			expectedOutput: "Login failed!\nThe provided authorization grant is invalid, expired, revoked, does not match the redirection URI used in the authorization request, or was issued to another client.",
 		}, {
-			name:           "login incorrect address",
-			args:           []string{"http://1.3.4.5"},
-			options:        &LoginOptions{User: "12345", Password: "12345"},
+			name: "login incorrect address",
+			args: []string{"http://1.3.4.5"},
+			optionsFunc: func(opt *LoginOptions) {
+				opt.User = "12345"
+				opt.Password = "12345"
+			},
 			expectedOutput: "dial tcp 1.3.4.5:80: i/o timeout",
 		},
 		{
-			name:           "login success",
-			args:           []string{"http://172.17.162.204"},
-			options:        &LoginOptions{User: "v-huhouhua@ruijie.com.cn", Password: "huhouhua"},
+			name: "login success",
+			args: []string{"http://172.17.162.204"},
+			optionsFunc: func(opt *LoginOptions) {
+				opt.User = "v-huhouhua@ruijie.com.cn"
+				opt.Password = "huhouhua"
+			},
 			expectedOutput: "\nLogin Succeeded",
 		}}
-	ioStreams := cmdutil.NewTestIOStreamsDiscard()
+	streams := cli.NewTestIOStreamsDiscard()
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			cmd := NewLoginCmd(ioStreams)
-			var cmdOptions *LoginOptions
-			if tc.options != nil {
-				cmdOptions = tc.options
-			} else {
-				cmdOptions = &LoginOptions{}
+			cmd := NewLoginCmd(streams)
+			var cmdOptions = NewLoginOptions(streams)
+			if tc.optionsFunc != nil {
+				tc.optionsFunc(cmdOptions)
 			}
 			out := cmdtesting.RunTestForStdout(func() {
 				var err error
@@ -86,36 +92,43 @@ func TestLogin(t *testing.T) {
 func TestValidate(t *testing.T) {
 	tests := []struct {
 		name           string
-		options        *LoginOptions
+		optionsFunc    func(opt *LoginOptions)
 		args           []string
 		expectedOutput string
 	}{
 		{
-			name:           "login address is empty",
-			args:           []string{""},
-			options:        &LoginOptions{User: "v-huhouhua@ruijie.com.cn", Password: "12345"},
+			name: "login address is empty",
+			args: []string{""},
+			optionsFunc: func(opt *LoginOptions) {
+				opt.User = "v-huhouhua@ruijie.com.cn"
+				opt.Password = "12345"
+			},
 			expectedOutput: "please enter the gitlab url",
 		}, {
-			name:           "login username is empty",
-			args:           []string{"http://172.17.162.204"},
-			options:        &LoginOptions{User: "", Password: "12345"},
+			name: "login username is empty",
+			args: []string{"http://172.17.162.204"},
+			optionsFunc: func(opt *LoginOptions) {
+				opt.User = ""
+				opt.Password = "12345"
+			},
 			expectedOutput: "please enter the username",
 		},
 		{
-			name:           "login password is empty",
-			args:           []string{"http://172.17.162.204"},
-			options:        &LoginOptions{User: "v-huhouhua@ruijie.com.cn", Password: ""},
+			name: "login password is empty",
+			args: []string{"http://172.17.162.204"},
+			optionsFunc: func(opt *LoginOptions) {
+				opt.User = "v-huhouhua@ruijie.com.cn"
+				opt.Password = ""
+			},
 			expectedOutput: "please enter the password",
 		}}
-	ioStreams := cmdutil.NewTestIOStreamsDiscard()
+	streams := cli.NewTestIOStreamsDiscard()
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			cmd := NewLoginCmd(ioStreams)
-			var cmdOptions *LoginOptions
-			if tc.options != nil {
-				cmdOptions = tc.options
-			} else {
-				cmdOptions = &LoginOptions{}
+			cmd := NewLoginCmd(streams)
+			var cmdOptions = NewLoginOptions(streams)
+			if tc.optionsFunc != nil {
+				tc.optionsFunc(cmdOptions)
 			}
 			out := cmdtesting.RunTestForStdout(func() {
 				var err error
@@ -158,14 +171,13 @@ func TestRunLogin(t *testing.T) {
 			flags:          map[string]string{},
 			expectedOutput: "Login error",
 		}}
-	ioStreams := cmdutil.NewTestIOStreamsDiscard()
+	streams, _, buf, _ := cli.NewTestIOStreams()
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			for i, arg := range tc.args {
 				cmdtesting.TInfo(fmt.Sprintf("(%d) %s", i, arg))
 			}
-			buf := new(bytes.Buffer)
-			cmd := NewLoginCmd(ioStreams)
+			cmd := NewLoginCmd(streams)
 			cmd.SetOut(buf)
 			cmd.SetErr(buf)
 			for flag, value := range tc.flags {

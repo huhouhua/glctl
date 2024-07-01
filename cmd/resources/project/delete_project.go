@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"github.com/huhouhua/gl/cmd/require"
 	cmdutil "github.com/huhouhua/gl/cmd/util"
+	"github.com/huhouhua/gl/util/cli"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -26,7 +27,7 @@ import (
 type DeleteOptions struct {
 	gitlabClient *gitlab.Client
 	project      string
-	ioStreams    cmdutil.IOStreams
+	ioStreams    cli.IOStreams
 }
 
 var (
@@ -39,13 +40,13 @@ gl delete project ProjectX
 gl delete project group/project`
 )
 
-func NewDeleteOptions(ioStreams cmdutil.IOStreams) *DeleteOptions {
+func NewDeleteOptions(ioStreams cli.IOStreams) *DeleteOptions {
 	return &DeleteOptions{
 		ioStreams: ioStreams,
 	}
 }
 
-func NewDeleteProjectCmd(f cmdutil.Factory, ioStreams cmdutil.IOStreams) *cobra.Command {
+func NewDeleteProjectCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
 	o := NewDeleteOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "project",

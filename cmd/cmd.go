@@ -24,6 +24,7 @@ import (
 	"github.com/huhouhua/gl/cmd/login"
 	cmdutil "github.com/huhouhua/gl/cmd/util"
 	"github.com/huhouhua/gl/cmd/version"
+	"github.com/huhouhua/gl/util/cli"
 	"github.com/huhouhua/gl/util/templates"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -103,7 +104,7 @@ func NeGlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 	f := cmdutil.NewFactory(configFlags)
 	// From this point and forward we get warnings on flags that contain "_" separators
 	cmd.SetGlobalNormalizationFunc(cmdutil.WarnWordSepNormalizeFunc)
-	ioStreams := cmdutil.IOStreams{In: in, Out: out, ErrOut: err}
+	ioStreams := cli.IOStreams{In: in, Out: out, ErrOut: err}
 	groups := templates.CommandGroups{
 		{
 			Message: "Basic Commands:",

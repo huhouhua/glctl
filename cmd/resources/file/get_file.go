@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"github.com/AlekSi/pointer"
 	cmdutil "github.com/huhouhua/gl/cmd/util"
+	"github.com/huhouhua/gl/util/cli"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -31,10 +32,10 @@ type ListOptions struct {
 	Out          string
 	All          bool
 	Raw          bool
-	ioStreams    cmdutil.IOStreams
+	ioStreams    cli.IOStreams
 }
 
-func NewListOptions(ioStreams cmdutil.IOStreams) *ListOptions {
+func NewListOptions(ioStreams cli.IOStreams) *ListOptions {
 	return &ListOptions{
 		ioStreams: ioStreams,
 		file: &gitlab.ListTreeOptions{
@@ -56,7 +57,7 @@ var (
 gl get files myProject`
 )
 
-func NewGetFilesCmd(f cmdutil.Factory, ioStreams cmdutil.IOStreams) *cobra.Command {
+func NewGetFilesCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
 	o := NewListOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "files",

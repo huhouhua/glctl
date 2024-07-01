@@ -19,6 +19,7 @@ import (
 	"github.com/AlekSi/pointer"
 	cmdtesting "github.com/huhouhua/gl/cmd/testing"
 	cmdutil "github.com/huhouhua/gl/cmd/util"
+	"github.com/huhouhua/gl/util/cli"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"strings"
@@ -72,12 +73,12 @@ func TestDeleteFile(t *testing.T) {
 		},
 		wantError: nil,
 	}}
-	ioStreams := cmdutil.NewTestIOStreamsDiscard()
+	streams := cli.NewTestIOStreamsDiscard()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			cmd := NewDeleteFilesCmd(factory, ioStreams)
-			var cmdOptions = NewDeleteOptions(ioStreams)
+			cmd := NewDeleteFilesCmd(factory, streams)
+			var cmdOptions = NewDeleteOptions(streams)
 			if tc.optionsFunc != nil {
 				tc.optionsFunc(cmdOptions)
 			}

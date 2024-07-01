@@ -18,12 +18,13 @@ import (
 	"github.com/huhouhua/gl/cmd/resources/branch"
 	"github.com/huhouhua/gl/cmd/resources/project"
 	cmdutil "github.com/huhouhua/gl/cmd/util"
+	cli "github.com/huhouhua/gl/util/cli"
 	"github.com/spf13/cobra"
 )
 
 var createDesc = "Create a Gitlab resource"
 
-func NewCreateCmd(f cmdutil.Factory, ioStreams cmdutil.IOStreams) *cobra.Command {
+func NewCreateCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "create",
 		Aliases:               []string{"c"},

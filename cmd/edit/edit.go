@@ -16,12 +16,13 @@ package edit
 
 import (
 	cmdutil "github.com/huhouhua/gl/cmd/util"
+	"github.com/huhouhua/gl/util/cli"
 	"github.com/spf13/cobra"
 )
 
 var editDesc = "edit a Gitlab resource"
 
-func NewEditCmd(f cmdutil.Factory, ioStreams cmdutil.IOStreams) *cobra.Command {
+func NewEditCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "edit",
 		Aliases:               []string{"e"},

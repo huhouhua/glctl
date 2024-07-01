@@ -20,6 +20,7 @@ import (
 	"github.com/huhouhua/gl/cmd/require"
 	cmdutil "github.com/huhouhua/gl/cmd/util"
 	"github.com/huhouhua/gl/cmd/validate"
+	"github.com/huhouhua/gl/util/cli"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -30,7 +31,7 @@ type CreateOptions struct {
 	branch       *gitlab.CreateBranchOptions
 	project      string
 	Out          string
-	ioStreams    cmdutil.IOStreams
+	ioStreams    cli.IOStreams
 }
 
 var (
@@ -40,7 +41,7 @@ var (
 gl create branch develop --project=group/myapp --ref=master`
 )
 
-func NewCreateOptions(ioStreams cmdutil.IOStreams) *CreateOptions {
+func NewCreateOptions(ioStreams cli.IOStreams) *CreateOptions {
 	return &CreateOptions{
 		ioStreams: ioStreams,
 		branch: &gitlab.CreateBranchOptions{
@@ -51,7 +52,7 @@ func NewCreateOptions(ioStreams cmdutil.IOStreams) *CreateOptions {
 	}
 }
 
-func NewCreateBranchCmd(f cmdutil.Factory, ioStreams cmdutil.IOStreams) *cobra.Command {
+func NewCreateBranchCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
 	o := NewCreateOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "branch",

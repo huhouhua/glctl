@@ -18,6 +18,7 @@ import (
 	"github.com/AlekSi/pointer"
 	"github.com/huhouhua/gl/cmd/require"
 	cmdutil "github.com/huhouhua/gl/cmd/util"
+	"github.com/huhouhua/gl/util/cli"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 )
@@ -26,7 +27,7 @@ type CreateOptions struct {
 	gitlabClient *gitlab.Client
 	project      *gitlab.CreateProjectOptions
 	Out          string
-	ioStreams    cmdutil.IOStreams
+	ioStreams    cli.IOStreams
 }
 
 var (
@@ -38,7 +39,7 @@ gl new project ProjectX --desc="Project X is party!"
 gl new project ProjectY --namespace=GroupY`
 )
 
-func NewCreateOptions(ioStreams cmdutil.IOStreams) *CreateOptions {
+func NewCreateOptions(ioStreams cli.IOStreams) *CreateOptions {
 	return &CreateOptions{
 		ioStreams: ioStreams,
 		project: &gitlab.CreateProjectOptions{
@@ -66,7 +67,7 @@ func NewCreateOptions(ioStreams cmdutil.IOStreams) *CreateOptions {
 	}
 }
 
-func NewCreateProjectCmd(f cmdutil.Factory, ioStreams cmdutil.IOStreams) *cobra.Command {
+func NewCreateProjectCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
 	o := NewCreateOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "project",

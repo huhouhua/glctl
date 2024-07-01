@@ -20,12 +20,13 @@ import (
 	"github.com/huhouhua/gl/cmd/resources/group"
 	"github.com/huhouhua/gl/cmd/resources/project"
 	cmdutil "github.com/huhouhua/gl/cmd/util"
+	"github.com/huhouhua/gl/util/cli"
 	"github.com/spf13/cobra"
 )
 
 var getDesc = "Get Gitlab resources"
 
-func NewGetCmd(f cmdutil.Factory, ioStreams cmdutil.IOStreams) *cobra.Command {
+func NewGetCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "get",
 		Aliases:               []string{"g"},

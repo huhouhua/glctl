@@ -15,10 +15,10 @@
 package branch
 
 import (
-	"bytes"
 	"fmt"
 	cmdtesting "github.com/huhouhua/gl/cmd/testing"
 	cmdutil "github.com/huhouhua/gl/cmd/util"
+	"github.com/huhouhua/gl/util/cli"
 	"strings"
 	"testing"
 )
@@ -34,12 +34,12 @@ func TestGetBranch(t *testing.T) {
 		args:           []string{""},
 		expectedOutput: fmt.Sprintf("error from server (NotFound): project %s not found", ""),
 	}}
-	ioStreams := cmdutil.NewTestIOStreamsDiscard()
+	streams := cli.NewTestIOStreamsDiscard()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			cmd := NewGetBranchesCmd(factory, ioStreams)
-			cmdOptions := NewListOptions(ioStreams)
+			cmd := NewGetBranchesCmd(factory, streams)
+			cmdOptions := NewListOptions(streams)
 			if tc.optionsFunc != nil {
 				tc.optionsFunc(cmdOptions)
 			}
@@ -91,15 +91,14 @@ func TestRunGetBranch(t *testing.T) {
 		flags:          map[string]string{},
 		expectedOutput: "main",
 	}}
-	ioStreams := cmdutil.NewTestIOStreamsDiscard()
+	streams, _, buf, _ := cli.NewTestIOStreams()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			for i, arg := range tc.args {
 				cmdtesting.TInfo(fmt.Sprintf("(%d) %s", i, arg))
 			}
-			buf := new(bytes.Buffer)
-			cmd := NewGetBranchesCmd(factory, ioStreams)
+			cmd := NewGetBranchesCmd(factory, streams)
 			cmd.SetOut(buf)
 			cmd.SetErr(buf)
 			for flag, value := range tc.flags {

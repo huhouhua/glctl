@@ -22,6 +22,7 @@ import (
 	"github.com/huhouhua/gl/cmd/require"
 	"github.com/huhouhua/gl/cmd/types"
 	cmdutil "github.com/huhouhua/gl/cmd/util"
+	"github.com/huhouhua/gl/util/cli"
 	"github.com/mitchellh/go-homedir"
 	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/cobra"
@@ -38,15 +39,15 @@ type LoginOptions struct {
 	ServerAddress string
 	User          string
 	Password      string
-	ioStreams     cmdutil.IOStreams
+	ioStreams     cli.IOStreams
 }
 
-func NewLoginOptions(ioStreams cmdutil.IOStreams) *LoginOptions {
+func NewLoginOptions(ioStreams cli.IOStreams) *LoginOptions {
 	return &LoginOptions{
 		ioStreams: ioStreams,
 	}
 }
-func NewLoginCmd(ioStreams cmdutil.IOStreams) *cobra.Command {
+func NewLoginCmd(ioStreams cli.IOStreams) *cobra.Command {
 	o := NewLoginOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "login [host]",

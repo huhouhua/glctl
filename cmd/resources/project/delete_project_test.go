@@ -19,6 +19,7 @@ import (
 	"fmt"
 	cmdtesting "github.com/huhouhua/gl/cmd/testing"
 	cmdutil "github.com/huhouhua/gl/cmd/util"
+	"github.com/huhouhua/gl/util/cli"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -84,12 +85,12 @@ func TestDeleteProject(t *testing.T) {
 			return nil
 		},
 	}}
-	ioStreams := cmdutil.NewTestIOStreamsDiscard()
+	streams := cli.NewTestIOStreamsDiscard()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			cmd := NewDeleteProjectCmd(factory, ioStreams)
-			cmdOptions := NewDeleteOptions(ioStreams)
+			cmd := NewDeleteProjectCmd(factory, streams)
+			cmdOptions := NewDeleteOptions(streams)
 			var err error
 			if err = cmdOptions.Complete(factory, cmd, tc.args); err != nil && !errors.Is(err, tc.wantError) {
 				t.Errorf("expected %v, got: '%v'", tc.wantError, err)

@@ -19,6 +19,7 @@ import (
 	"github.com/AlekSi/pointer"
 	cmdtesting "github.com/huhouhua/gl/cmd/testing"
 	cmdutil "github.com/huhouhua/gl/cmd/util"
+	"github.com/huhouhua/gl/util/cli"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
@@ -67,12 +68,12 @@ func TestCreateBranch(t *testing.T) {
 			return err
 		},
 	}}
-	ioStreams := cmdutil.NewTestIOStreamsDiscard()
+	streams := cli.NewTestIOStreamsDiscard()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			cmd := NewCreateBranchCmd(factory, ioStreams)
-			cmdOptions := NewCreateOptions(ioStreams)
+			cmd := NewCreateBranchCmd(factory, streams)
+			cmdOptions := NewCreateOptions(streams)
 			if tc.optionsFunc != nil {
 				tc.optionsFunc(cmdOptions)
 			}

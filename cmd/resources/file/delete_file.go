@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"github.com/AlekSi/pointer"
 	cmdutil "github.com/huhouhua/gl/cmd/util"
+	"github.com/huhouhua/gl/util/cli"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -28,10 +29,10 @@ type DeleteOptions struct {
 	file         *gitlab.DeleteFileOptions
 	project      string
 	FileName     string
-	ioStreams    cmdutil.IOStreams
+	ioStreams    cli.IOStreams
 }
 
-func NewDeleteOptions(ioStreams cmdutil.IOStreams) *DeleteOptions {
+func NewDeleteOptions(ioStreams cli.IOStreams) *DeleteOptions {
 	return &DeleteOptions{
 		ioStreams: ioStreams,
 		file: &gitlab.DeleteFileOptions{
@@ -52,7 +53,7 @@ var (
 delete get files myProject`
 )
 
-func NewDeleteFilesCmd(f cmdutil.Factory, ioStreams cmdutil.IOStreams) *cobra.Command {
+func NewDeleteFilesCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
 	o := NewDeleteOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "files",

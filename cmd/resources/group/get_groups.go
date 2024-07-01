@@ -19,6 +19,7 @@ import (
 	"github.com/AlekSi/pointer"
 	cmdutil "github.com/huhouhua/gl/cmd/util"
 	"github.com/huhouhua/gl/cmd/validate"
+	"github.com/huhouhua/gl/util/cli"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strconv"
@@ -33,7 +34,7 @@ type ListOptions struct {
 	FromGroup    string
 	Out          string
 	AllGroups    bool
-	ioStreams    cmdutil.IOStreams
+	ioStreams    cli.IOStreams
 }
 
 var (
@@ -46,7 +47,7 @@ gl get groups
 gl get groups --all-groups=GroupX`
 )
 
-func NewListOptions(ioStreams cmdutil.IOStreams) *ListOptions {
+func NewListOptions(ioStreams cli.IOStreams) *ListOptions {
 	return &ListOptions{
 		ioStreams: ioStreams,
 		group: &gitlab.ListGroupsOptions{
@@ -67,7 +68,7 @@ func NewListOptions(ioStreams cmdutil.IOStreams) *ListOptions {
 	}
 }
 
-func NewGetGroupsCmd(f cmdutil.Factory, ioStreams cmdutil.IOStreams) *cobra.Command {
+func NewGetGroupsCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
 	o := NewListOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "groups",

@@ -19,12 +19,13 @@ import (
 	"github.com/huhouhua/gl/cmd/resources/file"
 	"github.com/huhouhua/gl/cmd/resources/project"
 	cmdutil "github.com/huhouhua/gl/cmd/util"
+	"github.com/huhouhua/gl/util/cli"
 	"github.com/spf13/cobra"
 )
 
 var deleteDesc = "Delete a Gitlab resource"
 
-func NewDeleteCmd(f cmdutil.Factory, ioStreams cmdutil.IOStreams) *cobra.Command {
+func NewDeleteCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "delete",
 		Aliases:               []string{"d"},

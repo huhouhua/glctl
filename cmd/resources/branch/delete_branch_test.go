@@ -19,6 +19,7 @@ import (
 	"fmt"
 	cmdtesting "github.com/huhouhua/gl/cmd/testing"
 	cmdutil "github.com/huhouhua/gl/cmd/util"
+	"github.com/huhouhua/gl/util/cli"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -90,12 +91,12 @@ func TestDeleteBranch(t *testing.T) {
 			return nil
 		},
 	}}
-	ioStreams := cmdutil.NewTestIOStreamsDiscard()
+	streams := cli.NewTestIOStreamsDiscard()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			cmd := NewDeleteBranchCmd(factory, ioStreams)
-			var cmdOptions = NewDeleteOptions(ioStreams)
+			cmd := NewDeleteBranchCmd(factory, streams)
+			var cmdOptions = NewDeleteOptions(streams)
 			if tc.optionsFunc != nil {
 				tc.optionsFunc(cmdOptions)
 			}
