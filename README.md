@@ -1,1 +1,1 @@
-# gitlab-repo-operator
+# gitlab-cli plus
