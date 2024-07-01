@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"github.com/AlekSi/pointer"
 	"github.com/howeyc/gopass"
 	"github.com/huhouhua/gl/cmd/require"
 	"github.com/huhouhua/gl/cmd/types"
@@ -131,8 +132,8 @@ func (o *LoginOptions) Run(args []string) error {
 	}
 	cfgFile := fmt.Sprintf("%s/.gl.yaml", home)
 	// add host_url and user to config file
-	cfg.HostUrl = &o.ServerAddress
-	cfg.UserName = &o.User
+	cfg.HostUrl = pointer.ToString(o.ServerAddress)
+	cfg.UserName = pointer.ToString(o.User)
 	b, err = yaml.Marshal(cfg)
 	if err != nil {
 		return err
