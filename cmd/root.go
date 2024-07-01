@@ -15,13 +15,13 @@
 package cmd
 
 import (
+	"flag"
 	"fmt"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/create"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/delete"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/edit"
-	"github.com/huhouhua/gitlab-repo-operator/cmd/get"
+	"github.com/huhouhua/gitlab-repo-operator/cmd/completion"
 	"github.com/huhouhua/gitlab-repo-operator/cmd/login"
 	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	"github.com/huhouhua/gitlab-repo-operator/cmd/version"
+	"github.com/huhouhua/gitlab-repo-operator/util/templates"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -67,21 +67,53 @@ func NewRootCmd(out io.Writer) (*cobra.Command, error) {
 		Long:          fmt.Sprintf("%s\n%s", globalUsage, AuthDoc),
 		SilenceErrors: true,
 		Run:           runHelp,
+		// Hook before and after Run initialize and write profiles to disk,
+		// respectively.
+		PersistentPreRunE: func(*cobra.Command, []string) error {
+			return initProfiling()
+		},
+		PersistentPostRunE: func(*cobra.Command, []string) error {
+			return flushProfiling()
+		},
 	}
 	flags := cmd.PersistentFlags()
 	flags.StringVarP(&cfgFile, "config", "c", "", "config file (default is $HOME/.grepo.yaml)")
+	flags.SetNormalizeFunc(cmdutil.WarnWordSepNormalizeFunc) // Warn for "_" flags
+
+	// Normalize all flags that are coming from other packages or pre-configurations
+	// a.k.a. change all "_" to "-". e.g. glog package
+	flags.SetNormalizeFunc(cmdutil.WordSepNormalizeFunc)
+
+	addProfilingFlags(flags)
 
 	cobra.OnInitialize(initConfig)
+	flags.AddGoFlagSet(flag.CommandLine)
+
 	configFlags := cmdutil.NewConfigFlags(false)
 	configFlags.AddFlags(flags)
 	f := cmdutil.NewFactory(configFlags)
+	// From this point and forward we get warnings on flags that contain "_" separators
+	cmd.SetGlobalNormalizationFunc(cmdutil.WarnWordSepNormalizeFunc)
 
-	cmd.AddCommand(
-		login.NewLoginCmd(),
-		get.NewGetCmd(f),
-		delete.NewDeleteCmd(f),
-		create.NewCreateCmd(f),
-		edit.NewEditCmd(f))
+	groups := templates.CommandGroups{
+		{
+			Message: "auth Commands:",
+			Commands: []*cobra.Command{
+				login.NewLoginCmd(),
+			},
+		},
+		{
+			Message: "Settings Commands:",
+			Commands: []*cobra.Command{
+				completion.NewCmdCompletion(),
+			},
+		},
+	}
+	groups.Add(cmd)
+
+	filters := []string{"options"}
+	templates.ActsAsRootCommand(cmd, filters, groups...)
+	cmd.AddCommand(version.NewCmdVersion(f))
 	return cmd, nil
 }
 

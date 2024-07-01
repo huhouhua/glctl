@@ -15,8 +15,11 @@
 package util
 
 import (
+	"github.com/golang/glog"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"github.com/xanzy/go-gitlab"
+	"strings"
 )
 
 func AddPaginationVarFlags(cmd *cobra.Command, page *gitlab.ListOptions) {
@@ -81,4 +84,23 @@ func AddSortVarFlag(cmd *cobra.Command, p *string) {
 }
 func AddVisibilityVarFlag(cmd *cobra.Command, p *string) {
 	cmd.Flags().StringVar(p, "visibility", *p, "public, internal or private")
+}
+
+// WarnWordSepNormalizeFunc changes and warns for flags that contain "_" separators.
+func WarnWordSepNormalizeFunc(f *pflag.FlagSet, name string) pflag.NormalizedName {
+	if strings.Contains(name, "_") {
+		nname := strings.ReplaceAll(name, "_", "-")
+		glog.Warningf("%s is DEPRECATED and will be removed in a future version. Use %s instead.", name, nname)
+
+		return pflag.NormalizedName(nname)
+	}
+	return pflag.NormalizedName(name)
+}
+
+// WordSepNormalizeFunc changes all flags that contain "_" separators.
+func WordSepNormalizeFunc(f *pflag.FlagSet, name string) pflag.NormalizedName {
+	if strings.Contains(name, "_") {
+		return pflag.NormalizedName(strings.ReplaceAll(name, "_", "-"))
+	}
+	return pflag.NormalizedName(name)
 }

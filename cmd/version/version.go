@@ -13,3 +13,27 @@
 // limitations under the License.
 
 package version
+
+import (
+	cmdutil "github.com/huhouhua/gitlab-repo-operator/cmd/util"
+	"github.com/huhouhua/gitlab-repo-operator/util/templates"
+	"github.com/spf13/cobra"
+)
+
+var versionExample = templates.Examples(`
+		# Print the client and server versions for the current context
+		grepo version`)
+
+// NewCmdVersion returns a cobra command for fetching versions.
+func NewCmdVersion(f cmdutil.Factory) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "version",
+		Short:   "Print the client and server version information",
+		Long:    "Print the client and server version information for the current context",
+		Example: versionExample,
+		Run: func(cmd *cobra.Command, args []string) {
+
+		},
+	}
+	return cmd
+}

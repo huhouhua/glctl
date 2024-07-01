@@ -13,3 +13,21 @@
 // limitations under the License.
 
 package completion
+
+import (
+	"github.com/spf13/cobra"
+)
+
+var completionLong = "completion a Gitlab resource"
+
+func NewCmdCompletion() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:               "completion SHELL",
+		Aliases:           []string{"c"},
+		Short:             completionLong,
+		SilenceErrors:     true,
+		SilenceUsage:      true,
+		DisableAutoGenTag: true,
+	}
+	return cmd
+}
