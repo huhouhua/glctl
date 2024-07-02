@@ -37,15 +37,17 @@ import (
 var loginDesc = "This command authenticates you to a Gitlab server, retrieves your OAuth Token and then save it to $HOME/.gl.yaml file."
 
 type LoginOptions struct {
-	ServerAddress string
-	User          string
-	Password      string
-	ioStreams     cli.IOStreams
+	ServerAddress      string
+	User               string
+	Password           string
+	ioStreams          cli.IOStreams
+	maxInputRetryTimes int
 }
 
 func NewLoginOptions(ioStreams cli.IOStreams) *LoginOptions {
 	return &LoginOptions{
-		ioStreams: ioStreams,
+		ioStreams:          ioStreams,
+		maxInputRetryTimes: 3,
 	}
 }
 func NewLoginCmd(ioStreams cli.IOStreams) *cobra.Command {
@@ -77,10 +79,10 @@ func (o *LoginOptions) Complete(cmd *cobra.Command, args []string) error {
 		o.ServerAddress = args[0]
 	}
 	if strings.TrimSpace(o.User) == "" {
-		o.User = promptUserNameInput()
+		o.User = o.promptUserNameInput()
 	}
 	if strings.TrimSpace(o.Password) == "" {
-		o.Password = promptPasswordInput()
+		o.Password = o.promptPasswordInput()
 	}
 	return nil
 }
@@ -146,8 +148,8 @@ func (o *LoginOptions) Run(args []string) error {
 	return nil
 }
 
-func promptPasswordInput() string {
-	for i := 0; i < 3; i++ {
+func (o *LoginOptions) promptPasswordInput() string {
+	for i := 0; i < o.maxInputRetryTimes; i++ {
 		fmt.Print("Password: ")
 		input, err := gopass.GetPasswd()
 		if err != nil {
@@ -162,8 +164,8 @@ func promptPasswordInput() string {
 	return ""
 }
 
-func promptUserNameInput() string {
-	for i := 0; i < 3; i++ {
+func (o *LoginOptions) promptUserNameInput() string {
+	for i := 0; i < o.maxInputRetryTimes; i++ {
 		reader := bufio.NewReader(os.Stdin)
 		fmt.Printf("%s: ", "Username")
 		input, err := reader.ReadString('\n')
