@@ -34,6 +34,10 @@ func TestRoot(t *testing.T) {
 		name:      "login",
 		cmd:       "login",
 		wantError: true,
+	}, {
+		name:      "list repo all files",
+		cmd:       "get files -h",
+		wantError: false,
 	}}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {

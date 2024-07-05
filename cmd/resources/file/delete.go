@@ -38,10 +38,10 @@ func NewDeleteOptions(ioStreams cli.IOStreams) *DeleteOptions {
 		file: &gitlab.DeleteFileOptions{
 			Branch:        pointer.ToString("main"),
 			CommitMessage: pointer.ToString(""),
-			AuthorName:    nil,
-			AuthorEmail:   nil,
-			LastCommitID:  nil,
-			StartBranch:   nil,
+			AuthorName:    pointer.ToString(""),
+			AuthorEmail:   pointer.ToString(""),
+			LastCommitID:  pointer.ToString(""),
+			StartBranch:   pointer.ToString(""),
 		},
 	}
 }
@@ -69,6 +69,7 @@ func NewDeleteFilesCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Comman
 		},
 		SuggestFor: []string{"file"},
 	}
+	o.AddFlags(cmd)
 	return cmd
 }
 func (o *DeleteOptions) AddFlags(cmd *cobra.Command) {

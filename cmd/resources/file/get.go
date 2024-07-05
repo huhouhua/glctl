@@ -17,6 +17,7 @@ package file
 import (
 	"fmt"
 	"github.com/AlekSi/pointer"
+	"github.com/huhouhua/gl/cmd/require"
 	cmdutil "github.com/huhouhua/gl/cmd/util"
 	"github.com/huhouhua/gl/util/cli"
 	"github.com/spf13/cobra"
@@ -45,6 +46,7 @@ func NewListOptions(ioStreams cli.IOStreams) *ListOptions {
 			},
 			Path:      pointer.ToString(""),
 			Recursive: pointer.ToBool(true),
+			Ref:       pointer.ToString(""),
 		},
 		Out: "simple",
 	}
@@ -65,6 +67,7 @@ func NewGetFilesCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
 		Short:                 getFilesDesc,
 		Example:               getFilesExample,
 		DisableFlagsInUseLine: true,
+		Args:                  require.MinimumNArgs(1),
 		TraverseChildren:      true,
 		Run: func(cmd *cobra.Command, args []string) {
 			cmdutil.CheckErr(o.Complete(f, cmd, args))
@@ -73,6 +76,7 @@ func NewGetFilesCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
 		},
 		SuggestFor: []string{"file"},
 	}
+	o.AddFlags(cmd)
 	return cmd
 }
 
@@ -81,8 +85,8 @@ func (o *ListOptions) AddFlags(cmd *cobra.Command) {
 	cmdutil.AddOutFlag(cmd, &o.Out)
 	cmdutil.AddSortVarFlag(cmd, &o.file.Sort)
 	f := cmd.Flags()
-	f.StringVar(o.file.Ref, "ref", "", "The name of a repository branch or tag or, if not given, the default branch.")
-	f.StringVarP(o.file.Path, "path", "p", *o.file.Path, "The path inside the repository. Used to get content of subdirectories.")
+	f.StringVar(o.file.Ref, "ref", *o.file.Ref, "The name of a repository branch or tag or, if not given, the default branch.")
+	f.StringVar(o.file.Path, "path", *o.file.Path, "The path inside the repository. Used to get content of subdirectories.")
 	f.BoolVarP(o.file.Recursive, "recursive", "r", *o.file.Recursive, "Boolean value used to get a recursive tree. Default is true.")
 	f.BoolVar(&o.Raw, "raw", o.Raw, "read to receive the raw file in repository.")
 	f.BoolVarP(&o.All, "all", "A", o.All, "If present, list the across all project file. file in current context is ignored even if specified with --all.")

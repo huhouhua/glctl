@@ -84,6 +84,7 @@ func NewCreateProjectCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Comm
 		},
 		SuggestFor: []string{},
 	}
+	o.AddFlags(cmd)
 	return cmd
 }
 
