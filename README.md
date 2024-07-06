@@ -1,1 +1,1 @@
-# gitlab-cli plus
+# gitlab-cli
