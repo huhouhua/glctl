@@ -51,3 +51,68 @@ func GetSize(fd uintptr) *TerminalSize {
 
 	return &TerminalSize{Width: winsize.Width, Height: winsize.Height}
 }
+
+// sizeQueue implements TerminalSizeQueue
+type sizeQueue struct {
+	t TTY
+	// resizeChan receives a Size each time the user's terminal is resized.
+	resizeChan   chan TerminalSize
+	stopResizing chan struct{}
+}
+
+// monitorSize primes resizeChan with initialSizes and then monitors for resize events. With each
+// new event, it sends the current terminal size to resizeChan.
+func (s *sizeQueue) monitorSize(outFd uintptr, initialSizes ...*TerminalSize) {
+	// send the initial sizes
+	for i := range initialSizes {
+		if initialSizes[i] != nil {
+			s.resizeChan <- *initialSizes[i]
+		}
+	}
+
+	resizeEvents := make(chan TerminalSize, 1)
+
+	monitorResizeEvents(outFd, resizeEvents, s.stopResizing)
+
+	// listen for resize events in the background
+	go func() {
+		defer HandleCrash()
+
+		for {
+			select {
+			case size, ok := <-resizeEvents:
+				if !ok {
+					return
+				}
+
+				select {
+				// try to send the size to resizeChan, but don't block
+				case s.resizeChan <- size:
+					// send successful
+				default:
+					// unable to send / no-op
+				}
+			case <-s.stopResizing:
+				return
+			}
+		}
+	}()
+}
+
+// Next returns the new terminal size after the terminal has been resized. It returns nil when
+// monitoring has been stopped.
+func (s *sizeQueue) Next() *TerminalSize {
+	size, ok := <-s.resizeChan
+	if !ok {
+		return nil
+	}
+	return &size
+}
+
+// stop stops the background goroutine that is monitoring for terminal resizes.
+func (s *sizeQueue) stop() {
+	close(s.stopResizing)
+}
+
+// make sure sizeQueue implements the TerminalSizeQueue interface
+var _ TerminalSizeQueue = &sizeQueue{}

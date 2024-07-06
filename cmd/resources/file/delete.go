@@ -27,7 +27,7 @@ import (
 type DeleteOptions struct {
 	gitlabClient *gitlab.Client
 	file         *gitlab.DeleteFileOptions
-	project      string
+	Project      string
 	FileName     string
 	ioStreams    cli.IOStreams
 }
@@ -72,7 +72,7 @@ func NewDeleteFilesCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Comman
 	return cmd
 }
 func (o *DeleteOptions) AddFlags(cmd *cobra.Command) {
-	cmdutil.AddProjectVarPFlag(cmd, &o.project)
+	cmdutil.AddProjectVarPFlag(cmd, &o.Project)
 	f := cmd.Flags()
 	f.StringVarP(o.file.Branch, "branch", "b", *o.file.Branch, "Name of the new branch to create. The commit is added to this branch.(default main)")
 	f.StringVarP(o.file.CommitMessage, "message", "m", *o.file.CommitMessage, "The commit message.(default delete file_path)")
@@ -100,7 +100,7 @@ func (o *DeleteOptions) Validate(cmd *cobra.Command, args []string) error {
 	if len(args) == 0 || strings.TrimSpace(o.FileName) == "" {
 		return fmt.Errorf("please enter file name")
 	}
-	if strings.TrimSpace(o.project) == "" || strings.TrimSpace(*o.file.Branch) == "" {
+	if strings.TrimSpace(o.Project) == "" || strings.TrimSpace(*o.file.Branch) == "" {
 		return cmd.Usage()
 	}
 	return nil
@@ -109,10 +109,10 @@ func (o *DeleteOptions) Validate(cmd *cobra.Command, args []string) error {
 // Run executes a list subcommand using the specified options.
 func (o *DeleteOptions) Run(args []string) error {
 	//o.gitlabClient.RepositoryFiles.GetFileMetaData()
-	_, err := o.gitlabClient.RepositoryFiles.DeleteFile(o.project, o.FileName, o.file)
+	_, err := o.gitlabClient.RepositoryFiles.DeleteFile(o.Project, o.FileName, o.file)
 	if err != nil {
 		return err
 	}
-	_, _ = fmt.Fprintf(o.ioStreams.Out, "file (%s) for %s branch with project id (%s) has been deleted\n", o.FileName, *o.file.Branch, o.project)
+	_, _ = fmt.Fprintf(o.ioStreams.Out, "file (%s) for %s branch with project id (%s) has been deleted\n", o.FileName, *o.file.Branch, o.Project)
 	return nil
 }
