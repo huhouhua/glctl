@@ -15,6 +15,7 @@
 package edit
 
 import (
+	"github.com/huhouhua/gl/cmd/resources/file"
 	cmdutil "github.com/huhouhua/gl/cmd/util"
 	"github.com/huhouhua/gl/util/cli"
 	"github.com/spf13/cobra"
@@ -29,5 +30,6 @@ func NewEditCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
 		Short:                 editDesc,
 		DisableFlagsInUseLine: true,
 	}
+	cmd.AddCommand(file.NewEditFileCmd(f, ioStreams))
 	return cmd
 }
