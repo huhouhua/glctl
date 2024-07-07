@@ -29,7 +29,6 @@ type ListOptions struct {
 	gitlabClient *gitlab.Client
 	file         *gitlab.ListTreeOptions
 	project      string
-	path         string
 	Out          string
 	All          bool
 	Raw          bool
@@ -119,7 +118,7 @@ func (o *ListOptions) Validate(cmd *cobra.Command, args []string) error {
 // Run executes a list subcommand using the specified options.
 func (o *ListOptions) Run(args []string) error {
 	if o.Raw {
-		file, _, err := o.gitlabClient.RepositoryFiles.GetRawFile(o.project, o.path, &gitlab.GetRawFileOptions{
+		file, _, err := o.gitlabClient.RepositoryFiles.GetRawFile(o.project, *o.file.Path, &gitlab.GetRawFileOptions{
 			Ref: o.file.Ref,
 		})
 		if err != nil {

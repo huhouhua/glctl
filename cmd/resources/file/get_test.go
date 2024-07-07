@@ -53,7 +53,7 @@ func TestGetFiles(t *testing.T) {
 		},
 		optionsFunc: func(opt *ListOptions) {
 			opt.file.Ref = pointer.ToString("develop")
-			opt.path = "clusters/devops/manifests/local-path-provisioner.yaml"
+			opt.file.Path = pointer.ToString("clusters/devops/manifests/local-path-provisioner.yaml")
 			opt.Raw = true
 		},
 		wantError: nil,

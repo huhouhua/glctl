@@ -22,6 +22,7 @@ import (
 	"github.com/huhouhua/gl/cmd/edit"
 	"github.com/huhouhua/gl/cmd/get"
 	"github.com/huhouhua/gl/cmd/login"
+	"github.com/huhouhua/gl/cmd/replace"
 	cmdutil "github.com/huhouhua/gl/cmd/util"
 	"github.com/huhouhua/gl/cmd/version"
 	"github.com/huhouhua/gl/util/cli"
@@ -118,6 +119,12 @@ func NeGlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 			Message: "Authorization Commands:",
 			Commands: []*cobra.Command{
 				login.NewLoginCmd(ioStreams),
+			},
+		},
+		{
+			Message: "Advanced Commands:",
+			Commands: []*cobra.Command{
+				replace.NewReplaceCmd(f, ioStreams),
 			},
 		},
 		{
