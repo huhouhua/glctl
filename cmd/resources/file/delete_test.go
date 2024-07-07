@@ -38,7 +38,7 @@ func TestDeleteFile(t *testing.T) {
 		name: "delete by file",
 		args: []string{"delete.yaml"},
 		optionsFunc: func(opt *DeleteOptions) {
-			opt.project = "223"
+			opt.Project = "223"
 			opt.file.Branch = pointer.ToString("main")
 		},
 		run: func(opt *DeleteOptions, args []string) error {
@@ -46,7 +46,7 @@ func TestDeleteFile(t *testing.T) {
 			out := cmdtesting.RunTestForStdout(func() {
 				err = opt.Run(args)
 			})
-			expectedOutput := fmt.Sprintf("file (%s) for %s branch with project id (%s) has been deleted", opt.FileName, *opt.file.Branch, opt.project)
+			expectedOutput := fmt.Sprintf("file (%s) for %s branch with project id (%s) has been deleted", opt.FileName, *opt.file.Branch, opt.Project)
 			if !strings.Contains(out, expectedOutput) {
 				err = errors.New(fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out))
 			}
@@ -57,7 +57,7 @@ func TestDeleteFile(t *testing.T) {
 		name: "delete by dir",
 		args: []string{"/weqwee"},
 		optionsFunc: func(opt *DeleteOptions) {
-			opt.project = "223"
+			opt.Project = "223"
 			opt.file.Branch = pointer.ToString("main")
 		},
 		run: func(opt *DeleteOptions, args []string) error {
@@ -65,7 +65,7 @@ func TestDeleteFile(t *testing.T) {
 			out := cmdtesting.RunTestForStdout(func() {
 				err = opt.Run(args)
 			})
-			expectedOutput := fmt.Sprintf("file (%s) for %s branch with project id (%s) has been deleted", opt.FileName, *opt.file.Branch, opt.project)
+			expectedOutput := fmt.Sprintf("file (%s) for %s branch with project id (%s) has been deleted", opt.FileName, *opt.file.Branch, opt.Project)
 			if !strings.Contains(out, expectedOutput) {
 				err = errors.New(fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out))
 			}

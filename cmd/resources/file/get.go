@@ -136,7 +136,7 @@ func (o *ListOptions) Run(args []string) error {
 	for {
 		tree, _, err := o.gitlabClient.Repositories.ListTree(o.project, o.file)
 		if err != nil {
-			return nil
+			return err
 		}
 		list = append(list, tree...)
 		if cap(tree) == 0 || !o.All {
