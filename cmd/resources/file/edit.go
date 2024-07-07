@@ -24,7 +24,6 @@ import (
 	"github.com/huhouhua/gl/util/cli"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -103,8 +102,9 @@ func (o *EditOptions) Validate(cmd *cobra.Command, args []string) error {
 
 // Run executes a list subcommand using the specified options.
 func (o *EditOptions) Run(args []string) error {
-	raw, _, err := o.gitlabClient.RepositoryFiles.GetRawFile(o.Project, url.QueryEscape(o.path), o.file)
+	raw, _, err := o.gitlabClient.RepositoryFiles.GetRawFile(o.Project, o.path, o.file)
 	if err != nil {
+		fmt.Println(err.Error())
 		return err
 	}
 	edit := editor.NewDefaultEditor([]string{"EDITOR"})
@@ -124,7 +124,7 @@ func (o *EditOptions) Run(args []string) error {
 		_, _ = fmt.Fprintln(o.ioStreams.ErrOut, "Edit cancelled, no changes made.")
 		return nil
 	}
-	_, _, err = o.gitlabClient.RepositoryFiles.UpdateFile(o.Project, url.QueryEscape(o.path), &gitlab.UpdateFileOptions{
+	_, _, err = o.gitlabClient.RepositoryFiles.UpdateFile(o.Project, o.path, &gitlab.UpdateFileOptions{
 		Branch:        o.file.Ref,
 		Content:       pointer.ToString(string(edited)),
 		CommitMessage: pointer.ToString(fmt.Sprintf("edit %s", o.path)),
