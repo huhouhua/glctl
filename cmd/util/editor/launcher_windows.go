@@ -76,7 +76,6 @@ func (e Editor) Launch(path string) error {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
-	klog.V(5).Infof("Opening file with editor %v", args)
 	if err := (term.TTY{In: os.Stdin, TryDev: true}).Safe(cmd.Run); err != nil {
 		if errors.Is(err, exec.ErrNotFound) {
 			return fmt.Errorf("unable to launch the editor %q", strings.Join(e.Args, " "))

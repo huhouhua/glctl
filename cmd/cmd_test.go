@@ -18,8 +18,13 @@ import (
 	"bytes"
 	cmdutil "github.com/huhouhua/gl/cmd/testing"
 	"github.com/spf13/cobra"
+	"net/url"
 	"testing"
 )
+
+func TestQueryEscape(t *testing.T) {
+	t.Log(url.QueryEscape("/weqweq/data.yaml"))
+}
 
 func TestRoot(t *testing.T) {
 	tests := []struct {

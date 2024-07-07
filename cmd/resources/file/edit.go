@@ -16,39 +16,34 @@ package file
 
 import (
 	"bytes"
-	"encoding/base64"
 	"fmt"
 	"github.com/AlekSi/pointer"
 	"github.com/huhouhua/gl/cmd/require"
 	cmdutil "github.com/huhouhua/gl/cmd/util"
 	"github.com/huhouhua/gl/cmd/util/editor"
-	"github.com/huhouhua/gl/cmd/util/editor/crlf"
 	"github.com/huhouhua/gl/util/cli"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
-	"io"
+	"net/url"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 )
 
 type EditOptions struct {
-	gitlabClient       *gitlab.Client
-	path               string
-	Project            string
-	file               *gitlab.GetFileOptions
-	WindowsLineEndings bool
-	ioStreams          cli.IOStreams
+	gitlabClient *gitlab.Client
+	path         string
+	Project      string
+	file         *gitlab.GetRawFileOptions
+	ioStreams    cli.IOStreams
 }
 
 func NewEditOptions(ioStreams cli.IOStreams) *EditOptions {
 	return &EditOptions{
 		ioStreams: ioStreams,
-		file: &gitlab.GetFileOptions{
+		file: &gitlab.GetRawFileOptions{
 			Ref: pointer.ToString("main"),
 		},
-		WindowsLineEndings: runtime.GOOS == "windows",
 	}
 }
 
@@ -108,32 +103,35 @@ func (o *EditOptions) Validate(cmd *cobra.Command, args []string) error {
 
 // Run executes a list subcommand using the specified options.
 func (o *EditOptions) Run(args []string) error {
-	repoFile, _, err := o.gitlabClient.RepositoryFiles.GetFile(o.Project, o.path, o.file)
+	raw, _, err := o.gitlabClient.RepositoryFiles.GetRawFile(o.Project, url.QueryEscape(o.path), o.file)
 	if err != nil {
 		return err
 	}
 	edit := editor.NewDefaultEditor([]string{"EDITOR"})
 	// generate the file to edit
-	decodeString, err := base64.StdEncoding.DecodeString(repoFile.Content)
-	if err != nil {
-		return err
-	}
-	buf := bytes.NewBuffer(decodeString)
-	var w io.Writer = buf
-	if o.WindowsLineEndings {
-		w = crlf.NewCRLFWriter(w)
-	}
-	edited, file, err := edit.LaunchTempFile(fmt.Sprintf("%s-edit-", filepath.Base(os.Args[0])), filepath.Ext(repoFile.FileName), buf)
-	if err != nil {
-		return err
-	}
-	fmt.Print(edited)
+	buf := bytes.NewBuffer(raw)
+	edited, file, err := edit.LaunchTempFile(fmt.Sprintf("%s-edit-", filepath.Base(os.Args[0])), filepath.Ext(o.path), buf)
 	defer func() {
 		// cleanup any file from the previous pass
 		if len(file) > 0 {
 			_ = os.Remove(file)
 		}
 	}()
-
+	if err != nil {
+		return err
+	}
+	if bytes.Equal(raw, edited) {
+		_, _ = fmt.Fprintln(o.ioStreams.ErrOut, "Edit cancelled, no changes made.")
+		return nil
+	}
+	_, _, err = o.gitlabClient.RepositoryFiles.UpdateFile(o.Project, url.QueryEscape(o.path), &gitlab.UpdateFileOptions{
+		Branch:        o.file.Ref,
+		Content:       pointer.ToString(string(edited)),
+		CommitMessage: pointer.ToString(fmt.Sprintf("edit %s", o.path)),
+	})
+	if err != nil {
+		return err
+	}
+	_, _ = fmt.Fprintln(o.ioStreams.Out, fmt.Sprintf("%s edited", o.path))
 	return nil
 }
