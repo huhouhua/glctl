@@ -23,11 +23,14 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
+	"sync"
 )
 
 type ReplaceOptions struct {
 	gitlabClient *gitlab.Client
 	path         string
+	branchList   *gitlab.ListBranchesOptions
+	content      []byte
 	Project      string
 	Ref          string
 	RefMatch     string
@@ -39,9 +42,12 @@ type ReplaceOptions struct {
 func NewReplaceOptions(ioStreams cli.IOStreams) *ReplaceOptions {
 	return &ReplaceOptions{
 		ioStreams: ioStreams,
-		//file: &gitlab.GetRawFileOptions{
-		//	Ref: pointer.ToString("main"),
-		//},
+		branchList: &gitlab.ListBranchesOptions{
+			ListOptions: gitlab.ListOptions{
+				Page:    1,
+				PerPage: 100,
+			},
+		},
 	}
 }
 
@@ -89,7 +95,14 @@ func (o *ReplaceOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []
 	if len(args) > 0 {
 		o.path = args[0]
 	}
+	if strings.TrimSpace(o.Ref) != "" {
+		o.branchList.Search = pointer.ToString(o.Ref)
+	}
+	if strings.TrimSpace(o.RefMatch) != "" {
+		o.branchList.Regex = pointer.ToString(o.RefMatch)
+	}
 	o.gitlabClient, err = f.GitlabClient()
+	o.content, err = cmdutil.ReadFile(o.FileName)
 	return err
 }
 
@@ -105,11 +118,44 @@ func (o *ReplaceOptions) Validate(cmd *cobra.Command, args []string) error {
 // Run executes a list subcommand using the specified options.
 func (o *ReplaceOptions) Run(args []string) error {
 	for {
-		o.gitlabClient.RepositoryFiles.UpdateFile(o.Project, o.path, &gitlab.UpdateFileOptions{
-			Branch:        pointer.ToString(o.Ref),
-			CommitMessage: pointer.ToString(fmt.Sprintf("update %s from gl", o.path)),
-		})
-
+		branches, err := o.nextBranches()
+		if err != nil {
+			return err
+		}
+		if cap(branches) == 0 {
+			break
+		}
+		var wg = sync.WaitGroup{}
+		for _, item := range branches {
+			wg.Add(1)
+			go func(branch *gitlab.Branch) {
+				defer wg.Done()
+				o.updateFile(branch)
+			}(item)
+		}
+		wg.Wait()
 	}
 	return nil
+}
+
+func (o *ReplaceOptions) updateFile(branch *gitlab.Branch) {
+	_, _, err := o.gitlabClient.RepositoryFiles.UpdateFile(o.Project, o.path, &gitlab.UpdateFileOptions{
+		Branch:        pointer.ToString(branch.Name),
+		CommitMessage: pointer.ToString(fmt.Sprintf("update %s from gl", o.path)),
+		Content:       pointer.ToString(string(o.content)),
+	})
+
+	if err != nil {
+		return
+	}
+}
+
+func (o *ReplaceOptions) nextBranches() ([]*gitlab.Branch, error) {
+	o.branchList.ListOptions.Page++
+
+	branches, _, err := o.gitlabClient.Branches.ListBranches(o.Project, o.branchList)
+	if err != nil {
+		return nil, err
+	}
+	return branches, nil
 }

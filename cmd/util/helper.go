@@ -15,13 +15,13 @@
 package util
 
 import (
+	"errors"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"io"
 	"net/url"
 	"os"
-	"path/filepath"
 	"strings"
 )
 
@@ -148,21 +148,16 @@ func UsageErrorf(cmd *cobra.Command, format string, args ...interface{}) error {
 	return fmt.Errorf("%s\nSee '%s -h' for help and examples", msg, cmd.CommandPath())
 }
 
-const pathNotExistError = "the path %q does not exist"
+const pathNotExistError = "the path %s does not exist"
 
-// expandIfFilePattern returns all the filenames that match the input pattern
-// or the filename if it is a specific filename and not a pattern.
-// If the input is a pattern and it yields no result it will result in an error.
-func expandIfFilePattern(pattern string) ([]string, error) {
-	if _, err := os.Stat(pattern); os.IsNotExist(err) {
-		matches, err := filepath.Glob(pattern)
-		if err == nil && len(matches) == 0 {
-			return nil, fmt.Errorf(pathNotExistError, pattern)
-		}
-		if err == filepath.ErrBadPattern {
-			return nil, fmt.Errorf("pattern %q is not valid: %v", pattern, err)
-		}
-		return matches, err
+// ReadFile read file contents
+func ReadFile(path string) ([]byte, error) {
+	fi, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		return nil, errors.New(fmt.Sprintf(pathNotExistError, path))
 	}
-	return []string{pattern}, nil
+	if fi.IsDir() {
+		return nil, errors.New(fmt.Sprintf("the path %s is dir", path))
+	}
+	return os.ReadFile(path)
 }

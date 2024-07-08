@@ -18,6 +18,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/huhouhua/gl/cmd/completion"
+	"github.com/huhouhua/gl/cmd/create"
 	delete "github.com/huhouhua/gl/cmd/delete"
 	"github.com/huhouhua/gl/cmd/edit"
 	"github.com/huhouhua/gl/cmd/get"
@@ -113,6 +114,7 @@ func NeGlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 				get.NewGetCmd(f, ioStreams),
 				edit.NewEditCmd(f, ioStreams),
 				delete.NewDeleteCmd(f, ioStreams),
+				create.NewCreateCmd(f, ioStreams),
 			},
 		},
 		{
