@@ -8,8 +8,8 @@ source $DIR/../common.sh
 set +o noglob
 
 REGISTRY_PREFIX=registry.cn-beijing.aliyuncs.com
-REGISTRY_USERNAME="huhouhua@1369200651364267"
-REGISTRY_PASSWORD="huhouhua123456"
+REGISTRY_USERNAME="xxxxx"
+REGISTRY_PASSWORD="xxxxx"
 DOCKER_COMPOSE_FILE=$DIR/docker-compose-dev.yaml
 IS_DOWN="false"
 IMAGE_TAG=dev
