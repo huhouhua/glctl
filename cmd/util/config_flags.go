@@ -54,7 +54,6 @@ func (f *ConfigFlags) ToRawGLConfigLoader() ClientConfig {
 	if f.usePersistentConfig {
 		return f.toRawGLPersistentConfigLoader()
 	}
-
 	return f.toRawGLConfigLoader()
 }
 

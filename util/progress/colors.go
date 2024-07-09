@@ -14,7 +14,7 @@ var (
 	DoneColor    colorFunc = color.BlueString
 	TimerColor   colorFunc = color.BlueString
 	CountColor   colorFunc = color.YellowString
-	WarningColor colorFunc = color.BlackString
+	WarningColor colorFunc = color.YellowString
 	SuccessColor colorFunc = color.GreenString
 	ErrorColor   colorFunc = color.RedString
 	PrefixColor  colorFunc = color.CyanString
