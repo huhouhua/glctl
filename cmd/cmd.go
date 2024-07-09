@@ -27,6 +27,7 @@ import (
 	cmdutil "github.com/huhouhua/gl/cmd/util"
 	"github.com/huhouhua/gl/cmd/version"
 	"github.com/huhouhua/gl/util/cli"
+	"github.com/huhouhua/gl/util/progress"
 	"github.com/huhouhua/gl/util/templates"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -97,6 +98,10 @@ func NeGlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 	flags.SetNormalizeFunc(cmdutil.WordSepNormalizeFunc)
 
 	addProfilingFlags(flags)
+
+	if noColor, ok := os.LookupEnv("NO_COLOR"); ok && noColor != "" {
+		progress.NoColor()
+	}
 
 	cobra.OnInitialize(initConfig)
 	flags.AddGoFlagSet(flag.CommandLine)

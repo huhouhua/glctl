@@ -1,23 +1,31 @@
 package progress
 
-//type colorFunc func(string) string
-//
-//var (
-//	DoneColor    colorFunc = aec.BlueF.Apply
-//	TimerColor   colorFunc = aec.BlueF.Apply
-//	CountColor   colorFunc = aec.YellowF.Apply
-//	WarningColor colorFunc = aec.YellowF.With(aec.Bold).Apply
-//	SuccessColor colorFunc =
-//	ErrorColor   colorFunc = aec.RedF.With(aec.Bold).Apply
-//	PrefixColor  colorFunc = aec.CyanF.Apply
-//)
-//
-//func NoColor() {
-//	DoneColor = nocolor
-//	TimerColor = nocolor
-//	CountColor = nocolor
-//	WarningColor = nocolor
-//	SuccessColor = nocolor
-//	ErrorColor = nocolor
-//	PrefixColor = nocolor
-//}
+import (
+	"fmt"
+	"github.com/fatih/color"
+)
+
+type colorFunc func(format string, a ...interface{}) string
+
+var (
+	nocolor colorFunc = func(format string, a ...interface{}) string {
+		return fmt.Sprintf(format, a)
+	}
+	DoneColor    colorFunc = color.BlueString
+	TimerColor   colorFunc = color.BlueString
+	CountColor   colorFunc = color.YellowString
+	WarningColor colorFunc = color.BlackString
+	SuccessColor colorFunc = color.GreenString
+	ErrorColor   colorFunc = color.RedString
+	PrefixColor  colorFunc = color.CyanString
+)
+
+func NoColor() {
+	DoneColor = nocolor
+	TimerColor = nocolor
+	CountColor = nocolor
+	WarningColor = nocolor
+	SuccessColor = nocolor
+	ErrorColor = nocolor
+	PrefixColor = nocolor
+}

@@ -17,16 +17,14 @@ package file
 import (
 	"fmt"
 	"github.com/AlekSi/pointer"
-	"github.com/briandowns/spinner"
-	"github.com/fatih/color"
 	"github.com/huhouhua/gl/cmd/require"
 	cmdutil "github.com/huhouhua/gl/cmd/util"
 	"github.com/huhouhua/gl/util/cli"
+	"github.com/huhouhua/gl/util/progress"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
 	"sync"
-	"time"
 )
 
 type ReplaceOptions struct {
@@ -142,62 +140,33 @@ func (o *ReplaceOptions) Run(args []string) error {
 }
 
 func (o *ReplaceOptions) updateFile(branch *gitlab.Branch) {
-	title := fmt.Sprintf(" %s ...", branch.Name)
-	s := spinner.New(spinner.CharSets[11], 100*time.Millisecond, func(s *spinner.Spinner) {
-		s.Suffix = title
-		_ = s.Color("green")
-	})
-	s.Start()
+	s := progress.CreatingEvent(false).WithText(fmt.Sprintf(" %s ...", branch.Name)).Start()
 	defer s.Stop()
 	_, _, err := o.gitlabClient.RepositoryFiles.UpdateFile(o.Project, o.path, &gitlab.UpdateFileOptions{
 		Branch:        pointer.ToString(branch.Name),
-		CommitMessage: pointer.ToString(fmt.Sprintf("update %s from gl", o.path)),
+		CommitMessage: pointer.ToString(fmt.Sprintf("update %s from gl command line", o.path)),
 		Content:       pointer.ToString(string(o.content)),
 	})
 	if err != nil {
-		s.FinalMSG = fmt.Sprintf(" %s%s Error \n%s\n", color.RedString("✘"), title, err.Error())
+		s.Error("Error\n", err.Error())
 		return
 	}
-	s.FinalMSG = fmt.Sprintf(" %s %s\n", color.GreenString("✔"), title)
+	s.Success()
 }
 
 func (o *ReplaceOptions) nextBranches() ([]*gitlab.Branch, error) {
-	title := fmt.Sprintf(" pull branch on page %d", o.branchList.ListOptions.Page)
-	s := spinner.New(spinner.CharSets[11], 100*time.Millisecond, func(s *spinner.Spinner) {
-		s.Suffix = title
-		_ = s.Color("green")
-	})
-	s.Start()
+	s := progress.CreatingEvent(true).WithText(fmt.Sprintf(" pull branch on page %d", o.branchList.ListOptions.Page)).Start()
 	defer s.Stop()
 	branches, _, err := o.gitlabClient.Branches.ListBranches(o.Project, o.branchList)
 	o.branchList.ListOptions.Page++
 	if err != nil {
-		s.FinalMSG = fmt.Sprintf("%s%s Error \n%s\n", color.RedString("✘"), title, err.Error())
+		s.Error("Error\n", err.Error())
 		return nil, err
 	}
 	if len(branches) == 0 {
-		s.FinalMSG = color.GreenString("successfully\n")
+		s.Done()
 		return branches, nil
 	}
-	s.FinalMSG = fmt.Sprintf("%s %s\n", color.GreenString("✔"), title)
+	s.Success()
 	return branches, nil
 }
-
-var (
-	spinnerDone    = "✔"
-	spinnerWarning = "!"
-	spinnerError   = "✘"
-)
-
-//func (o *ReplaceOptions) Spinner() any {
-//	switch e.Status {
-//	case Done:
-//		return SuccessColor(spinnerDone)
-//	case Warning:
-//		return WarningColor(spinnerWarning)
-//	case Error:
-//		return ErrorColor(spinnerError)
-//	default:
-//		return CountColor(e.spinner.String())
-//	}
-//}
