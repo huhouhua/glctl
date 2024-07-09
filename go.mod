@@ -5,6 +5,8 @@ go 1.22.4
 require (
 	github.com/AlekSi/pointer v1.2.0
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
+	github.com/briandowns/spinner v1.23.1
+	github.com/fatih/color v1.17.0
 	github.com/golang/glog v1.2.1
 	github.com/howeyc/gopass v0.0.0-20210920133722-c8aef6fb66ef
 	github.com/mattn/go-shellwords v1.0.12
@@ -26,8 +28,6 @@ require (
 
 require (
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
-	github.com/briandowns/spinner v1.23.1 // indirect
-	github.com/fatih/color v1.17.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect

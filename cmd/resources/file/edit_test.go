@@ -12,7 +12,7 @@ import (
 	"testing"
 )
 
-func TestRun(t *testing.T) {
+func TestRunEdit(t *testing.T) {
 	tests := []struct {
 		name        string
 		args        []string
