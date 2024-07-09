@@ -49,11 +49,11 @@ func LoadOathWithInfoConfig() (*types.GitLabOauthInfo, error) {
 
 func LoadOathWithEnvConfig() (*types.GitLabOathFormEnv, error) {
 	return &types.GitLabOathFormEnv{
-		Url:          pointer.ToString(viper.GetString("URL")),
-		UserName:     pointer.ToString(viper.GetString("USERNAME")),
-		Password:     pointer.ToString(viper.GetString("PASSWORD")),
-		PrivateToken: pointer.ToString(viper.GetString("PRIVATE_TOKEN")),
-		OauthToken:   pointer.ToString(viper.GetString("OAUTH_TOKEN")),
+		Url:          pointer.ToString(viper.GetString("GITLAB_URL")),
+		UserName:     pointer.ToString(viper.GetString("GITLAB_USERNAME")),
+		Password:     pointer.ToString(viper.GetString("GITLAB_PASSWORD")),
+		PrivateToken: pointer.ToString(viper.GetString("GITLAB_PRIVATE_TOKEN")),
+		OauthToken:   pointer.ToString(viper.GetString("GITLAB_OAUTH_TOKEN")),
 	}, nil
 }
 
@@ -75,10 +75,10 @@ func (g *GitLabAuthorization) HasAuth() bool {
 	if info == nil {
 		return false
 	}
-	if strings.TrimSpace(*info.AccessToken) == "" {
+	if info.AccessToken == nil || strings.TrimSpace(*info.AccessToken) == "" {
 		return false
 	}
-	if strings.TrimSpace(*info.HostUrl) == "" {
+	if info.HostUrl == nil || strings.TrimSpace(*info.HostUrl) == "" {
 		return false
 	}
 	return true
@@ -89,13 +89,13 @@ func (g *GitLabAuthorization) HasPasswordAuth() bool {
 	if env == nil {
 		return false
 	}
-	if strings.TrimSpace(*env.Url) == "" {
+	if env.Url == nil || strings.TrimSpace(*env.Url) == "" {
 		return false
 	}
-	if strings.TrimSpace(*env.UserName) == "" {
+	if env.UserName == nil || strings.TrimSpace(*env.UserName) == "" {
 		return false
 	}
-	if strings.TrimSpace(*env.Password) == "" {
+	if env.Password == nil || strings.TrimSpace(*env.Password) == "" {
 		return false
 	}
 	return true
@@ -105,10 +105,10 @@ func (g *GitLabAuthorization) HasBasicAuth() bool {
 	if env == nil {
 		return false
 	}
-	if strings.TrimSpace(*env.Url) == "" {
+	if env.Url == nil || strings.TrimSpace(*env.Url) == "" {
 		return false
 	}
-	if strings.TrimSpace(*env.PrivateToken) == "" {
+	if env.PrivateToken == nil || strings.TrimSpace(*env.PrivateToken) == "" {
 		return false
 	}
 	return true
@@ -118,10 +118,10 @@ func (g *GitLabAuthorization) HasOathAuth() bool {
 	if env == nil {
 		return false
 	}
-	if strings.TrimSpace(*env.Url) == "" {
+	if env.Url == nil || strings.TrimSpace(*env.Url) == "" {
 		return false
 	}
-	if strings.TrimSpace(*env.OauthToken) == "" {
+	if env.OauthToken == nil || strings.TrimSpace(*env.OauthToken) == "" {
 		return false
 	}
 	return true

@@ -165,9 +165,7 @@ func initConfig() {
 		viper.AddConfigPath(home)
 		viper.SetConfigName(".gl")
 	}
-
 	viper.AutomaticEnv() // read in environment variables that match
-	viper.SetEnvPrefix("GITLAB_")
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err != nil {
 		// NOTE: the config file is not required to exists
