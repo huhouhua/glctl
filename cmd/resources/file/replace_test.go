@@ -37,6 +37,27 @@ func TestRunReplace(t *testing.T) {
 			return err
 		},
 		wantError: nil,
+	}, {
+		name: "force replace",
+		args: []string{"package.yaml"},
+		optionsFunc: func(opt *ReplaceOptions) {
+			opt.Project = "224"
+			opt.RefMatch = "*"
+			opt.FileName = "../../../testdata/replace/new_test.yaml"
+			opt.Force = true
+		},
+		run: func(opt *ReplaceOptions, args []string) error {
+			var err error
+			_ = cmdtesting.RunTestForStdout(func() {
+				err = opt.Run(args)
+			})
+			//expectedOutput := fmt.Sprintf("%s edited", opt.path)
+			//if !strings.Contains(out, expectedOutput) {
+			//	err = errors.New(fmt.Sprintf("compare content : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out))
+			//}
+			return err
+		},
+		wantError: nil,
 	}}
 	streams := cli.NewTestIOStreamsDiscard()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
