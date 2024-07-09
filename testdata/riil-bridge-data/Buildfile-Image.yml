@@ -1,0 +1,38 @@
+environment:
+  - key: JAVA_OPTS
+    value: ""
+  - key: TZ
+    value: "Asia/Shanghai"
+# 多阶段构建，可选
+multi-stage:
+  enable: true
+  builders:
+    - name: base-builder
+      image: 172.17.162.231/library/maven:3.9.4
+      copy:
+        - from:
+          src: .
+          dest: /build
+      cmd:
+        - cd /build
+        - mvn clean package -U -s ./settings.xml -Dmaven.test.skip=true
+        - mkdir -p target/dependency && (cd target/dependency; java -Djarmode=layertools -jar ../application.jar extract)
+
+builder:
+  image: 172.17.162.231/library/bellsoft/liberica-openjdk-alpine:11
+  copy:
+    - from:  base-builder
+      src: /build/target/dependency/dependencies/
+      dest: ./classpath/
+    - from:  base-builder
+      src: /build/target/dependency/spring-boot-loader/
+      dest: ./classpath/
+    - from:  base-builder
+      src: /build/target/dependency/snapshot-dependencies/
+      dest: ./classpath/
+    - from:  base-builder
+      src: /build/target/dependency/application/
+      dest: ./classpath/
+  cmd:
+    - mkdir config data logs
+  entrypoint: [ "sh", "-c", "java -cp ./classpath -Djava.security.egd=file:/dev/./urandom ${JAVA_OPTS} org.springframework.boot.loader.JarLauncher ${0} ${@} " ]

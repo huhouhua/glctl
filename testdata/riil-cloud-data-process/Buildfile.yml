@@ -1,0 +1,6 @@
+- target: "{{ .imageName }}"
+  type: image
+  buildfile: Buildfile-Image.yml
+  rbuildCommand: image
+  platform: "linux/amd64"
+  nonstandard: true

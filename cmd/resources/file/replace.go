@@ -15,14 +15,17 @@
 package file
 
 import (
+	"errors"
 	"fmt"
 	"github.com/AlekSi/pointer"
+	"github.com/fatih/color"
 	"github.com/huhouhua/gl/cmd/require"
 	cmdutil "github.com/huhouhua/gl/cmd/util"
 	"github.com/huhouhua/gl/util/cli"
 	"github.com/huhouhua/gl/util/progress"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
+	"net/http"
 	"strings"
 	"sync"
 )
@@ -142,11 +145,27 @@ func (o *ReplaceOptions) Run(args []string) error {
 func (o *ReplaceOptions) updateFile(branch *gitlab.Branch) {
 	s := progress.CreatingEvent(false).WithText(fmt.Sprintf(" %s ...", branch.Name)).Start()
 	defer s.Stop()
-	_, _, err := o.gitlabClient.RepositoryFiles.UpdateFile(o.Project, o.path, &gitlab.UpdateFileOptions{
+	_, r, err := o.gitlabClient.RepositoryFiles.UpdateFile(o.Project, o.path, &gitlab.UpdateFileOptions{
 		Branch:        pointer.ToString(branch.Name),
 		CommitMessage: pointer.ToString(fmt.Sprintf("update %s from gl command line", o.path)),
 		Content:       pointer.ToString(string(o.content)),
 	})
+	if r.StatusCode == http.StatusBadRequest && o.Force {
+		var repoErr *gitlab.ErrorResponse
+		if !errors.As(err, &repoErr) {
+			repoErr.Message = err.Error()
+		}
+		_, _, err = o.gitlabClient.RepositoryFiles.CreateFile(o.Project, o.path, &gitlab.CreateFileOptions{
+			Branch:        pointer.ToString(branch.Name),
+			CommitMessage: pointer.ToString(fmt.Sprintf("create %s from gl command line", o.path)),
+			Content:       pointer.ToString(string(o.content)),
+		})
+
+		if err == nil {
+			s.Warning(" ", repoErr.Message, color.GreenString(" try create new a successfully"))
+			return
+		}
+	}
 	if err != nil {
 		s.Error("Error\n", err.Error())
 		return

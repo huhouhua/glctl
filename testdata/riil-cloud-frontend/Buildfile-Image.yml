@@ -1,0 +1,48 @@
+# 多阶段构建，可选
+multi-stage:
+  enable: true
+  builders:
+    - name: build
+      image: 172.17.162.231/library/node:18.14.0
+      copy:
+        - from:
+          src: .
+          dest: /app
+      cmd:
+        - cd /app && npm config set registry https://registry.npmmirror.com/
+        - cd /app && npm install
+        - cd /app && npm run build:docker
+    - name: remove_exif
+      image: 172.17.162.231/library/alpine:3.17
+      copy:
+        - from: build
+          src: /app/docker/dist
+          dest: /app/dist
+      cmd:
+        - sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+        - apk update && apk add -U bash exiftool        
+        - find /app/dist -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -exec exiftool -all= {} \;
+
+builder:
+  image: 172.17.162.231/library/nginx:stable-alpine3.17
+  copy:
+    - from: 172.17.162.231/platform/roquie/smalte:latest-alpine
+      src: /app/smalte
+      dest: /usr/local/bin/smalte
+    - from: remove_exif
+      src: /app/dist
+      dest: /var/www/riil-cloud-frontend
+    - from: build
+      src: /app/scripts/nginx.conf
+      dest: /etc/nginx/nginx.conf
+    - from: build
+      src:  /app/scripts/app.conf.template
+      dest: /etc/nginx/conf.d/app.conf.template
+    - from: build
+      src: /app/scripts/start.sh
+      dest: /app/
+  cmd:
+    - sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories 
+    - apk update && apk add -U gettext bash pcre 
+    - find /app -type f -name "*.sh" | xargs chmod a+x
+  entrypoint: [ "sh", "-c", "/app/start.sh" ]

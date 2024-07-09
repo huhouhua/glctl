@@ -77,6 +77,16 @@ func (e *Event) Error(msg ...string) *Event {
 	return e
 }
 
+func (e *Event) Warning(msg ...string) *Event {
+	e.status = Warning
+	e.setFinal(msg...)
+	return e
+}
+
+func (e *Event) Text() string {
+	return e.spinner.Suffix
+}
+
 func (e *Event) setFinal(msg ...string) {
 	s := e.Spinner()
 	if !e.isParent {
