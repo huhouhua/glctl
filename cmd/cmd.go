@@ -51,15 +51,15 @@ The login token will be saved in $HOME/.gl.yaml file.
 * Basic Authentication (if using a username and password)
     - GITLAB_USERNAME
     - GITLAB_PASSWORD
-    - GITLAB_HTTP_URL
+    - GITLAB_URL
 
 * Private Token (if using a private token)
     - GITLAB_PRIVATE_TOKEN
-    - GITLAB_API_HTTP_URL
+    - GITLAB_URL
 
 * OAuth Token (if using an oauth token)
     - GITLAB_OAUTH_TOKEN
-    - GITLAB_API_HTTP_URL`
+    - GITLAB_URL`
 
 var cfgFile string
 var globalUsage = `The gitlab repository operator for the command-line.
@@ -167,7 +167,7 @@ func initConfig() {
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
-	viper.SetEnvPrefix("GITLAB")
+	viper.SetEnvPrefix("GITLAB_")
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err != nil {
 		// NOTE: the config file is not required to exists
@@ -176,7 +176,6 @@ func initConfig() {
 			cmdutil.Error(err)
 		}
 	}
-
 }
 func runHelp(cmd *cobra.Command, args []string) {
 	_ = cmd.Help()
