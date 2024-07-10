@@ -19,10 +19,10 @@ import (
 	"fmt"
 	"github.com/AlekSi/pointer"
 	"github.com/fatih/color"
-	"github.com/huhouhua/gl/cmd/require"
-	cmdutil "github.com/huhouhua/gl/cmd/util"
-	"github.com/huhouhua/gl/util/cli"
-	"github.com/huhouhua/gl/util/progress"
+	"github.com/huhouhua/glctl/cmd/require"
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
+	"github.com/huhouhua/glctl/util/cli"
+	"github.com/huhouhua/glctl/util/progress"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"net/http"
@@ -59,7 +59,7 @@ var (
 	replaceFileDesc = "replace file for project "
 
 	replaceFileExample = `# edit file
-gl replace files app/my.yml -p myproject --ref=main -f ./my.yml`
+glctl replace files app/my.yml -p myproject --ref=main -f ./my.yml`
 )
 
 func NewReplaceFileCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {

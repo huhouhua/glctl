@@ -20,10 +20,10 @@ import (
 	"fmt"
 	"github.com/AlekSi/pointer"
 	"github.com/howeyc/gopass"
-	"github.com/huhouhua/gl/cmd/require"
-	"github.com/huhouhua/gl/cmd/types"
-	cmdutil "github.com/huhouhua/gl/cmd/util"
-	"github.com/huhouhua/gl/util/cli"
+	"github.com/huhouhua/glctl/cmd/require"
+	"github.com/huhouhua/glctl/cmd/types"
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
+	"github.com/huhouhua/glctl/util/cli"
 	"github.com/mitchellh/go-homedir"
 	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/cobra"
@@ -34,7 +34,7 @@ import (
 	"strings"
 )
 
-var loginDesc = "This command authenticates you to a Gitlab server, retrieves your OAuth Token and then save it to $HOME/.gl.yaml file."
+var loginDesc = "This command authenticates you to a Gitlab server, retrieves your OAuth Token and then save it to $HOME/.glctl.yaml file."
 
 type LoginOptions struct {
 	ServerAddress      string
@@ -57,7 +57,7 @@ func NewLoginCmd(ioStreams cli.IOStreams) *cobra.Command {
 		Short:                 "Login to gitlab",
 		Long:                  loginDesc,
 		DisableFlagsInUseLine: true,
-		Example:               `gl login http://localhost:8080`,
+		Example:               `glctl login http://localhost:8080`,
 		Args:                  require.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			cmdutil.CheckErr(o.Complete(cmd, args))
@@ -130,7 +130,7 @@ func (o *LoginOptions) Run(args []string) error {
 	if err != nil {
 		return err
 	}
-	cfgFile := fmt.Sprintf("%s/.gl.yaml", home)
+	cfgFile := fmt.Sprintf("%s/.glctl.yaml", home)
 	// add host_url and user to config file
 	cfg.HostUrl = pointer.ToString(o.ServerAddress)
 	cfg.UserName = pointer.ToString(o.User)

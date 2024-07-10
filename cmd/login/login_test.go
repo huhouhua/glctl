@@ -16,8 +16,8 @@ package login
 
 import (
 	"fmt"
-	cmdtesting "github.com/huhouhua/gl/cmd/testing"
-	"github.com/huhouhua/gl/util/cli"
+	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
+	"github.com/huhouhua/glctl/util/cli"
 	"strings"
 	"testing"
 )

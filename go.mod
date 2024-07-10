@@ -1,4 +1,4 @@
-module github.com/huhouhua/gl
+module github.com/huhouhua/glctl
 
 go 1.22.4
 

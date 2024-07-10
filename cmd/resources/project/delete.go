@@ -16,9 +16,9 @@ package project
 
 import (
 	"fmt"
-	"github.com/huhouhua/gl/cmd/require"
-	cmdutil "github.com/huhouhua/gl/cmd/util"
-	"github.com/huhouhua/gl/util/cli"
+	"github.com/huhouhua/glctl/cmd/require"
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
+	"github.com/huhouhua/glctl/util/cli"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -34,10 +34,10 @@ var (
 	deleteProjectDesc = "Delete a Gitlab project by specifying the full path"
 
 	deleteProjectExample = `# delete a project
-gl delete project ProjectX
+glctl delete project ProjectX
 
 # delete a project under a group
-gl delete project group/project`
+glctl delete project group/project`
 )
 
 func NewDeleteOptions(ioStreams cli.IOStreams) *DeleteOptions {

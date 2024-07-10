@@ -16,13 +16,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/huhouhua/gl/cmd"
+	"github.com/huhouhua/glctl/cmd"
 	"log"
 	"os"
 )
 
 func main() {
-	command := cmd.NeDefaultGlCommand()
+	command := cmd.NeDefaultGlCtlCommand()
 	if err := command.Execute(); err != nil {
 		debug("%+v", err.Error())
 		os.Exit(1)

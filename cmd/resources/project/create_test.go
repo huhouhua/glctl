@@ -16,9 +16,9 @@ package project
 
 import (
 	"fmt"
-	cmdtesting "github.com/huhouhua/gl/cmd/testing"
-	cmdutil "github.com/huhouhua/gl/cmd/util"
-	"github.com/huhouhua/gl/util/cli"
+	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
+	"github.com/huhouhua/glctl/util/cli"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"

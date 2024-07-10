@@ -15,10 +15,10 @@
 # Build all by default, even if it's not first
 
 GO := go
-NAME = gl
+NAME = glctl
 OS = linux darwin
 architecture = amd64 arm6
-VERSION_PACKAGE=github.com/huhouhua/gl/util/version
+VERSION_PACKAGE=github.com/huhouhua/glctl/util/version
 GIT_TREE_STATE:="dirty"
 ifeq (, $(shell git status --porcelain 2>/dev/null))
 	GIT_TREE_STATE="clean"

@@ -15,11 +15,11 @@
 package delete
 
 import (
-	"github.com/huhouhua/gl/cmd/resources/branch"
-	"github.com/huhouhua/gl/cmd/resources/file"
-	"github.com/huhouhua/gl/cmd/resources/project"
-	cmdutil "github.com/huhouhua/gl/cmd/util"
-	"github.com/huhouhua/gl/util/cli"
+	"github.com/huhouhua/glctl/cmd/resources/branch"
+	"github.com/huhouhua/glctl/cmd/resources/file"
+	"github.com/huhouhua/glctl/cmd/resources/project"
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
+	"github.com/huhouhua/glctl/util/cli"
 	"github.com/spf13/cobra"
 )
 

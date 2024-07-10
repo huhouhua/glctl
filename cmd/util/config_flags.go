@@ -17,7 +17,7 @@ package util
 import (
 	"errors"
 	"github.com/AlekSi/pointer"
-	"github.com/huhouhua/gl/cmd/types"
+	"github.com/huhouhua/glctl/cmd/types"
 	"github.com/spf13/pflag"
 	"sync"
 )

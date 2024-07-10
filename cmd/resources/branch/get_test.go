@@ -16,9 +16,9 @@ package branch
 
 import (
 	"fmt"
-	cmdtesting "github.com/huhouhua/gl/cmd/testing"
-	cmdutil "github.com/huhouhua/gl/cmd/util"
-	"github.com/huhouhua/gl/util/cli"
+	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
+	"github.com/huhouhua/glctl/util/cli"
 	"strings"
 	"testing"
 )

@@ -16,10 +16,10 @@ package branch
 
 import (
 	"fmt"
-	"github.com/huhouhua/gl/cmd/require"
-	cmdutil "github.com/huhouhua/gl/cmd/util"
-	"github.com/huhouhua/gl/cmd/validate"
-	"github.com/huhouhua/gl/util/cli"
+	"github.com/huhouhua/glctl/cmd/require"
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
+	"github.com/huhouhua/glctl/cmd/validate"
+	"github.com/huhouhua/glctl/util/cli"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -36,7 +36,7 @@ var (
 	deleteBranchDesc = "Delete a project branch"
 
 	deleteBranchExample = `# delete a develop branch from project group/myapp
-gl delete branch develop --project=group/myapp`
+glctl delete branch develop --project=group/myapp`
 )
 
 func NewDeleteOptions(ioStreams cli.IOStreams) *DeleteOptions {

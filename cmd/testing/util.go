@@ -17,7 +17,7 @@ package testing
 import (
 	"bytes"
 	"fmt"
-	"github.com/huhouhua/gl/util/cli"
+	"github.com/huhouhua/glctl/util/cli"
 	"github.com/mattn/go-shellwords"
 	"github.com/spf13/cobra"
 	"io"

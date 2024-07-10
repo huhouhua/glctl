@@ -16,9 +16,9 @@ package branch
 
 import (
 	"fmt"
-	"github.com/huhouhua/gl/cmd/require"
-	cmdutil "github.com/huhouhua/gl/cmd/util"
-	"github.com/huhouhua/gl/util/cli"
+	"github.com/huhouhua/glctl/cmd/require"
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
+	"github.com/huhouhua/glctl/util/cli"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -36,13 +36,13 @@ var (
 	getBranchsDesc = "List all branches of a repository"
 
 	getBranchsExample = `# get all branch from project
-gl get branchs
+glctl get branchs
 
 # get all branch
-gl get branchs group1/devops
+glctl get branchs group1/devops
 
 # get all branch with project id
-gl get branchs 100
+glctl get branchs 100
 `
 )
 

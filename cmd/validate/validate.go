@@ -17,7 +17,7 @@ package validate
 import (
 	"fmt"
 	"github.com/golang/glog"
-	cmdutil "github.com/huhouhua/gl/cmd/util"
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/spf13/cobra"
 	"strings"
 )

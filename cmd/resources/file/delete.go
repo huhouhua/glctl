@@ -17,8 +17,8 @@ package file
 import (
 	"fmt"
 	"github.com/AlekSi/pointer"
-	cmdutil "github.com/huhouhua/gl/cmd/util"
-	"github.com/huhouhua/gl/util/cli"
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
+	"github.com/huhouhua/glctl/util/cli"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -50,7 +50,7 @@ var (
 	deleteFilesDesc = "delete file for project "
 
 	deleteFilesExample = `# delete project file
-delete get files myProject`
+glctl delete files myfile -p=myProject`
 )
 
 func NewDeleteFilesCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {

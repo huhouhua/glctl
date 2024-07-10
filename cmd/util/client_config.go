@@ -14,7 +14,7 @@
 
 package util
 
-import "github.com/huhouhua/gl/cmd/types"
+import "github.com/huhouhua/glctl/cmd/types"
 
 // ClientConfig is used to make it easy to get an api server client.
 type ClientConfig interface {

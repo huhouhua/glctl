@@ -17,9 +17,9 @@ package project
 import (
 	"encoding/json"
 	"github.com/AlekSi/pointer"
-	cmdutil "github.com/huhouhua/gl/cmd/util"
-	"github.com/huhouhua/gl/cmd/validate"
-	"github.com/huhouhua/gl/util/cli"
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
+	"github.com/huhouhua/glctl/cmd/validate"
+	"github.com/huhouhua/glctl/util/cli"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -41,10 +41,10 @@ var (
 	getProjectsDesc = "List projects of the authenticated user or of a group"
 
 	getProjectsExample = `# get all projects
-gl get projects
+glctl get projects
 
 # get all projects from a group
-gl get projects --all-groups=Group1`
+glctl get projects --all-groups=Group1`
 )
 
 func NewListOptions(ioStreams cli.IOStreams) *ListOptions {

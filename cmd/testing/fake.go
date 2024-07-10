@@ -16,8 +16,8 @@ package testing
 
 import (
 	"github.com/AlekSi/pointer"
-	"github.com/huhouhua/gl/cmd/types"
-	cmdutil "github.com/huhouhua/gl/cmd/util"
+	"github.com/huhouhua/glctl/cmd/types"
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
 )
 
 var _ cmdutil.RESTClientGetter = &FakeRESTClientGetter{}

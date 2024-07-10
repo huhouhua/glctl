@@ -17,18 +17,18 @@ package cmd
 import (
 	"flag"
 	"fmt"
-	"github.com/huhouhua/gl/cmd/completion"
-	"github.com/huhouhua/gl/cmd/create"
-	delete "github.com/huhouhua/gl/cmd/delete"
-	"github.com/huhouhua/gl/cmd/edit"
-	"github.com/huhouhua/gl/cmd/get"
-	"github.com/huhouhua/gl/cmd/login"
-	"github.com/huhouhua/gl/cmd/replace"
-	cmdutil "github.com/huhouhua/gl/cmd/util"
-	"github.com/huhouhua/gl/cmd/version"
-	"github.com/huhouhua/gl/util/cli"
-	"github.com/huhouhua/gl/util/progress"
-	"github.com/huhouhua/gl/util/templates"
+	"github.com/huhouhua/glctl/cmd/completion"
+	"github.com/huhouhua/glctl/cmd/create"
+	delete "github.com/huhouhua/glctl/cmd/delete"
+	"github.com/huhouhua/glctl/cmd/edit"
+	"github.com/huhouhua/glctl/cmd/get"
+	"github.com/huhouhua/glctl/cmd/login"
+	"github.com/huhouhua/glctl/cmd/replace"
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
+	"github.com/huhouhua/glctl/cmd/version"
+	"github.com/huhouhua/glctl/util/cli"
+	"github.com/huhouhua/glctl/util/progress"
+	"github.com/huhouhua/glctl/util/templates"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -44,7 +44,7 @@ There are two options to authenticate the command-line client to Gitlab interfac
 
 $ gl login
 
-The login token will be saved in $HOME/.gl.yaml file.
+The login token will be saved in $HOME/.glctl.yaml file.
 
 2.) Using Environment variables.
 
@@ -68,12 +68,12 @@ This client helps you view, update, create, and delete Gitlab resources from the
 command-line interface.
 `
 
-// NeDefaultGlCommand creates the `glctl` command with default arguments.
-func NeDefaultGlCommand() *cobra.Command {
-	return NeGlCommand(os.Stdin, os.Stdout, os.Stderr)
+// NeDefaultGlCtlCommand creates the `glctl` command with default arguments.
+func NeDefaultGlCtlCommand() *cobra.Command {
+	return NeGlCtlCommand(os.Stdin, os.Stdout, os.Stderr)
 }
 
-func NeGlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
+func NeGlCtlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           "gl",
 		Short:         "the gitlab repository operator",
@@ -90,7 +90,7 @@ func NeGlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 		},
 	}
 	flags := cmd.PersistentFlags()
-	flags.StringVarP(&cfgFile, "config", "c", "", "config file (default is $HOME/.gl.yaml)")
+	flags.StringVarP(&cfgFile, "config", "c", "", "config file (default is $HOME/.glctl.yaml)")
 	flags.SetNormalizeFunc(cmdutil.WarnWordSepNormalizeFunc) // Warn for "_" flags
 
 	// Normalize all flags that are coming from other packages or pre-configurations
@@ -163,14 +163,14 @@ func initConfig() {
 
 		// Search config in home directory with name ".gl" (without extension).
 		viper.AddConfigPath(home)
-		viper.SetConfigName(".gl")
+		viper.SetConfigName(".glctl")
 	}
 	viper.AutomaticEnv() // read in environment variables that match
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err != nil {
 		// NOTE: the config file is not required to exists
 		// raise an error if error is other than config file not found
-		if !strings.Contains(err.Error(), `Config File ".gl" Not Found`) {
+		if !strings.Contains(err.Error(), `Config File ".glctl" Not Found`) {
 			cmdutil.Error(err)
 		}
 	}

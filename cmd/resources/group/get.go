@@ -17,9 +17,9 @@ package group
 import (
 	"fmt"
 	"github.com/AlekSi/pointer"
-	cmdutil "github.com/huhouhua/gl/cmd/util"
-	"github.com/huhouhua/gl/cmd/validate"
-	"github.com/huhouhua/gl/util/cli"
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
+	"github.com/huhouhua/glctl/cmd/validate"
+	"github.com/huhouhua/glctl/util/cli"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strconv"
@@ -41,10 +41,10 @@ var (
 	getGroupsDesc = "List groups and subgroups"
 
 	getGroupsExample = `# list all groups
-gl get groups
+glctl get groups
 
 # list all subgroups of GroupX
-gl get groups --all-groups=GroupX`
+glctl get groups --all-groups=GroupX`
 )
 
 func NewListOptions(ioStreams cli.IOStreams) *ListOptions {

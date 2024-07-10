@@ -16,9 +16,9 @@ package project
 
 import (
 	"github.com/AlekSi/pointer"
-	"github.com/huhouhua/gl/cmd/require"
-	cmdutil "github.com/huhouhua/gl/cmd/util"
-	"github.com/huhouhua/gl/util/cli"
+	"github.com/huhouhua/glctl/cmd/require"
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
+	"github.com/huhouhua/glctl/util/cli"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 )
@@ -34,9 +34,9 @@ var (
 	createProjectDesc = "Create a new project by specifying the project name as the first argument"
 
 	createProjectExample = `# create a new project
-gl new project ProjectX --desc="Project X is party!"
+glctl new project ProjectX --desc="Project X is party!"
 # create a new project under a group
-gl new project ProjectY --namespace=GroupY`
+glctl new project ProjectY --namespace=GroupY`
 )
 
 func NewCreateOptions(ioStreams cli.IOStreams) *CreateOptions {

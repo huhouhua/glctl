@@ -16,7 +16,7 @@ package cmd
 
 import (
 	"bytes"
-	cmdutil "github.com/huhouhua/gl/cmd/testing"
+	cmdutil "github.com/huhouhua/glctl/cmd/testing"
 	"github.com/spf13/cobra"
 	"net/url"
 	"testing"
@@ -47,7 +47,7 @@ func TestRoot(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			out, err := cmdutil.ExecuteCommand(func(buffer *bytes.Buffer) *cobra.Command {
-				return NeDefaultGlCommand()
+				return NeDefaultGlCtlCommand()
 			}, tc.cmd)
 
 			cmdutil.TInfo(out)

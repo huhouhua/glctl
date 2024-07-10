@@ -17,7 +17,7 @@ package editor
 import (
 	"errors"
 	"fmt"
-	"github.com/huhouhua/gl/util/term"
+	"github.com/huhouhua/glctl/util/term"
 	"os"
 	"os/exec"
 	"path/filepath"

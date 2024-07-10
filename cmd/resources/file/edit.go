@@ -18,10 +18,10 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/AlekSi/pointer"
-	"github.com/huhouhua/gl/cmd/require"
-	cmdutil "github.com/huhouhua/gl/cmd/util"
-	"github.com/huhouhua/gl/cmd/util/editor"
-	"github.com/huhouhua/gl/util/cli"
+	"github.com/huhouhua/glctl/cmd/require"
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
+	"github.com/huhouhua/glctl/cmd/util/editor"
+	"github.com/huhouhua/glctl/util/cli"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"os"
@@ -50,7 +50,7 @@ var (
 	editFileDesc = "edit file for project "
 
 	editFileExample = `# edit file
-gl edit files myfile -p project`
+glctl edit files myfile -p project`
 )
 
 func NewEditFileCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {

@@ -17,9 +17,9 @@ package file
 import (
 	"fmt"
 	"github.com/AlekSi/pointer"
-	"github.com/huhouhua/gl/cmd/require"
-	cmdutil "github.com/huhouhua/gl/cmd/util"
-	"github.com/huhouhua/gl/util/cli"
+	"github.com/huhouhua/glctl/cmd/require"
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
+	"github.com/huhouhua/glctl/util/cli"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -55,7 +55,7 @@ var (
 	getFilesDesc = "get file for project "
 
 	getFilesExample = `# list project file
-gl get files myProject`
+glctl get files myProject`
 )
 
 func NewGetFilesCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {

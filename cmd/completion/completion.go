@@ -15,7 +15,7 @@
 package completion
 
 import (
-	cli "github.com/huhouhua/gl/util/cli"
+	cli "github.com/huhouhua/glctl/util/cli"
 	"github.com/spf13/cobra"
 )
 

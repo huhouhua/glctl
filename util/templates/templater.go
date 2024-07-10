@@ -24,7 +24,7 @@ import (
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
-	"github.com/huhouhua/gl/util/term"
+	"github.com/huhouhua/glctl/util/term"
 )
 
 type FlagExposer interface {
