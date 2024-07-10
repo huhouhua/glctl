@@ -17,6 +17,7 @@ package cli
 import (
 	"bytes"
 	"io"
+	"os"
 )
 
 // IOStreams provides the standard names for iostreams.  This is useful for embedding and for unit testing.
@@ -51,5 +52,14 @@ func NewTestIOStreamsDiscard() IOStreams {
 		In:     in,
 		Out:    io.Discard,
 		ErrOut: io.Discard,
+	}
+}
+
+func NewTestIOStreamsForPipe() IOStreams {
+	r, w, _ := os.Pipe()
+	return IOStreams{
+		In:     r,
+		Out:    w,
+		ErrOut: w,
 	}
 }

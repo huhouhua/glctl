@@ -17,6 +17,7 @@ package testing
 import (
 	"bytes"
 	"fmt"
+	"github.com/huhouhua/gl/util/cli"
 	"github.com/mattn/go-shellwords"
 	"github.com/spf13/cobra"
 	"io"
@@ -94,27 +95,25 @@ func RunTest(exec func()) (stdout string) {
 	return stdout
 }
 
-//func RunTestForStdout(, exec func()) (stdout string) {
-//	// see https://stackoverflow.com/questions/10473800/in-go-how-do-i-capture-stdout-of-a-function-into-a-string
-//	old := os.Stdout // keep backup of the real stdout
-//	r, w, _ := os.Pipe()
-//	os.Stdout = w
-//	exec()
-//	outC := make(chan string)
-//	// copy the output in a separate goroutine so printing can't block indefinitely
-//	go func() {
-//		var buf bytes.Buffer
-//		if _, err := io.Copy(&buf, r); err != nil {
-//			panic(err)
-//		}
-//		outC <- buf.String()
-//	}()
-//
-//	// back to normal state
-//	if err := w.Close(); err != nil {
-//		TInfo(err)
-//	}
-//	os.Stdout = old // restoring the real stdout
-//	stdout = <-outC
-//	return stdout
-//}
+func RunTestForStdout(streams cli.IOStreams, exec func()) (stdout string) {
+	// see https://stackoverflow.com/questions/10473800/in-go-how-do-i-capture-stdout-of-a-function-into-a-string
+	old := streams.Out // keep backup of the real stdout
+	exec()
+	outC := make(chan string)
+	// copy the output in a separate goroutine so printing can't block indefinitely
+	go func() {
+		var buf bytes.Buffer
+		if _, err := io.Copy(&buf, streams.In); err != nil {
+			panic(err)
+		}
+		outC <- buf.String()
+	}()
+
+	// back to normal state
+	if err := streams.Out.(*os.File).Close(); err != nil {
+		TInfo(err)
+	}
+	streams.Out = old // restoring the real stdout
+	stdout = <-outC
+	return stdout
+}
