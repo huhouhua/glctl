@@ -38,7 +38,7 @@ func TestCreateProject(t *testing.T) {
 		args: []string{"huhouhua/gitlab-repo-test"},
 		run: func(opt *CreateOptions, args []string) error {
 			var err error
-			out := cmdtesting.RunTestForStdout(func() {
+			out := cmdtesting.RunTest(func() {
 				err = opt.Run(args)
 			})
 			expectedOutput := fmt.Sprintf("project (%s) with id", "huhouhua/gitlab-repo-test")
@@ -53,7 +53,7 @@ func TestCreateProject(t *testing.T) {
 		args: []string{"222"},
 		run: func(opt *CreateOptions, args []string) error {
 			var err error
-			out := cmdtesting.RunTestForStdout(func() {
+			out := cmdtesting.RunTest(func() {
 				err = opt.Run(args)
 			})
 			expectedOutput := fmt.Sprintf("with id (%d) has been deleted", 222)

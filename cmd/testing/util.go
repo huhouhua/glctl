@@ -63,13 +63,13 @@ func ExecuteCommandC(root *cobra.Command, args ...string) (stdout string, output
 	root.SetOut(buf)
 	root.SetErr(buf)
 	root.SetArgs(args)
-	stdout = RunTestForStdout(func() {
+	stdout = RunTest(func() {
 		_, err = root.ExecuteC()
 	})
 	return stdout, buf.String(), err
 }
 
-func RunTestForStdout(exec func()) (stdout string) {
+func RunTest(exec func()) (stdout string) {
 	// see https://stackoverflow.com/questions/10473800/in-go-how-do-i-capture-stdout-of-a-function-into-a-string
 	old := os.Stdout // keep backup of the real stdout
 	r, w, _ := os.Pipe()
@@ -93,3 +93,28 @@ func RunTestForStdout(exec func()) (stdout string) {
 	stdout = <-outC
 	return stdout
 }
+
+//func RunTestForStdout(, exec func()) (stdout string) {
+//	// see https://stackoverflow.com/questions/10473800/in-go-how-do-i-capture-stdout-of-a-function-into-a-string
+//	old := os.Stdout // keep backup of the real stdout
+//	r, w, _ := os.Pipe()
+//	os.Stdout = w
+//	exec()
+//	outC := make(chan string)
+//	// copy the output in a separate goroutine so printing can't block indefinitely
+//	go func() {
+//		var buf bytes.Buffer
+//		if _, err := io.Copy(&buf, r); err != nil {
+//			panic(err)
+//		}
+//		outC <- buf.String()
+//	}()
+//
+//	// back to normal state
+//	if err := w.Close(); err != nil {
+//		TInfo(err)
+//	}
+//	os.Stdout = old // restoring the real stdout
+//	stdout = <-outC
+//	return stdout
+//}

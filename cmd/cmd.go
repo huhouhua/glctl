@@ -68,7 +68,7 @@ This client helps you view, update, create, and delete Gitlab resources from the
 command-line interface.
 `
 
-// NeDefaultGlCommand creates the `iamctl` command with default arguments.
+// NeDefaultGlCommand creates the `glctl` command with default arguments.
 func NeDefaultGlCommand() *cobra.Command {
 	return NeGlCommand(os.Stdin, os.Stdout, os.Stderr)
 }
@@ -145,7 +145,7 @@ func NeGlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 
 	filters := []string{"options"}
 	templates.ActsAsRootCommand(cmd, filters, groups...)
-	cmd.AddCommand(version.NewCmdVersion(f))
+	cmd.AddCommand(version.NewCmdVersion(f, ioStreams))
 	return cmd
 }
 

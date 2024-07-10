@@ -43,7 +43,7 @@ func TestGetBranch(t *testing.T) {
 			if tc.optionsFunc != nil {
 				tc.optionsFunc(cmdOptions)
 			}
-			out := cmdtesting.RunTestForStdout(func() {
+			out := cmdtesting.RunTest(func() {
 				var err error
 				if err = cmdOptions.Complete(factory, cmd, tc.args); err != nil {
 					fmt.Print(err)
@@ -108,7 +108,7 @@ func TestRunGetBranch(t *testing.T) {
 					return
 				}
 			}
-			out := cmdtesting.RunTestForStdout(func() {
+			out := cmdtesting.RunTest(func() {
 				cmd.Run(cmd, tc.args)
 			})
 			cmdtesting.TInfo(out)

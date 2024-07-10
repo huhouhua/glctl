@@ -43,7 +43,7 @@ func TestDeleteFile(t *testing.T) {
 		},
 		run: func(opt *DeleteOptions, args []string) error {
 			var err error
-			out := cmdtesting.RunTestForStdout(func() {
+			out := cmdtesting.RunTest(func() {
 				err = opt.Run(args)
 			})
 			expectedOutput := fmt.Sprintf("file (%s) for %s branch with project id (%s) has been deleted", opt.FileName, *opt.file.Branch, opt.Project)
@@ -62,7 +62,7 @@ func TestDeleteFile(t *testing.T) {
 		},
 		run: func(opt *DeleteOptions, args []string) error {
 			var err error
-			out := cmdtesting.RunTestForStdout(func() {
+			out := cmdtesting.RunTest(func() {
 				err = opt.Run(args)
 			})
 			expectedOutput := fmt.Sprintf("file (%s) for %s branch with project id (%s) has been deleted", opt.FileName, *opt.file.Branch, opt.Project)

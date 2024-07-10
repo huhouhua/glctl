@@ -42,7 +42,7 @@ func TestDeleteBranch(t *testing.T) {
 		},
 		run: func(opt *DeleteOptions, args []string) error {
 			var err error
-			out := cmdtesting.RunTestForStdout(func() {
+			out := cmdtesting.RunTest(func() {
 				err = opt.Run(args)
 			})
 			expectedOutput := fmt.Sprintf("Branch (%s) from project (%s) has been deleted", opt.branch, opt.project)

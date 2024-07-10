@@ -44,7 +44,7 @@ func TestCreateBranch(t *testing.T) {
 		},
 		run: func(opt *CreateOptions, args []string) error {
 			var err error
-			out := cmdtesting.RunTestForStdout(func() {
+			out := cmdtesting.RunTest(func() {
 				err = opt.Run(args)
 			})
 			if !strings.Contains(out, *opt.branch.Branch) {
