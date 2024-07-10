@@ -147,7 +147,7 @@ func (o *ReplaceOptions) updateFile(branch *gitlab.Branch) {
 	defer s.Stop()
 	_, r, err := o.gitlabClient.RepositoryFiles.UpdateFile(o.Project, o.path, &gitlab.UpdateFileOptions{
 		Branch:        pointer.ToString(branch.Name),
-		CommitMessage: pointer.ToString(fmt.Sprintf("update %s from gl command line", o.path)),
+		CommitMessage: pointer.ToString(fmt.Sprintf("update %s from glctl command line", o.path)),
 		Content:       pointer.ToString(string(o.content)),
 	})
 	if r.StatusCode == http.StatusBadRequest && o.Force {
@@ -157,7 +157,7 @@ func (o *ReplaceOptions) updateFile(branch *gitlab.Branch) {
 		}
 		_, _, err = o.gitlabClient.RepositoryFiles.CreateFile(o.Project, o.path, &gitlab.CreateFileOptions{
 			Branch:        pointer.ToString(branch.Name),
-			CommitMessage: pointer.ToString(fmt.Sprintf("create %s from gl command line", o.path)),
+			CommitMessage: pointer.ToString(fmt.Sprintf("create %s from glctl command line", o.path)),
 			Content:       pointer.ToString(string(o.content)),
 		})
 

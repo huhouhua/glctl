@@ -36,7 +36,7 @@ func NewClientConfigFromConfig(oathInfo *types.GitLabOauthInfo, oathEnv *types.G
 	}
 }
 
-// NewClientConfigFromBytes takes your gl config and gives you back a ClientConfig.
+// NewClientConfigFromBytes takes your glctl config and gives you back a ClientConfig.
 func NewClientConfigFromBytes(configBytes []byte) (ClientConfig, error) {
 	config, err := Load(configBytes)
 	if err != nil {

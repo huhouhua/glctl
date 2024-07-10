@@ -20,7 +20,7 @@ import (
 	"testing"
 )
 
-const test = "GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL GL"
+const test = "GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL GLCTL"
 
 func TestWordWrapWriter(t *testing.T) {
 	testcases := map[string]struct {
@@ -40,8 +40,8 @@ func TestWordWrapWriter(t *testing.T) {
 			t.Errorf("%s: Unexpected error: %v", k, err)
 		}
 		result := b.String()
-		if !strings.Contains(result, "GL") {
-			t.Errorf("%s: Expected to contain \"GL\"", k)
+		if !strings.Contains(result, "GLCTL") {
+			t.Errorf("%s: Expected to contain \"GLCTL\"", k)
 		}
 		if len(result) < len(tc.input) {
 			t.Errorf(
@@ -58,7 +58,7 @@ func TestWordWrapWriter(t *testing.T) {
 			}
 		}
 		for _, word := range strings.Split(result, " ") {
-			if !strings.Contains(word, "GL") {
+			if !strings.Contains(word, "GLCTL") {
 				t.Errorf("%s: Unexpected broken word: %q", k, word)
 			}
 		}
@@ -83,8 +83,8 @@ func TestMaxWidthWriter(t *testing.T) {
 			t.Errorf("%s: Unexpected error: %v", k, err)
 		}
 		result := b.String()
-		if !strings.Contains(result, "GL") {
-			t.Errorf("%s: Expected to contain \"GL\"", k)
+		if !strings.Contains(result, "GLCTL") {
+			t.Errorf("%s: Expected to contain \"GLCTL\"", k)
 		}
 		if len(result) < len(tc.input) {
 			t.Errorf(

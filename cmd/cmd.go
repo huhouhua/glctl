@@ -42,7 +42,7 @@ There are two options to authenticate the command-line client to Gitlab interfac
 
 1.) Using the 'login' command by passing the host url, username and password.
 
-$ gl login
+$ glctl login
 
 The login token will be saved in $HOME/.glctl.yaml file.
 
@@ -75,7 +75,7 @@ func NeDefaultGlCtlCommand() *cobra.Command {
 
 func NeGlCtlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:           "gl",
+		Use:           "glctl",
 		Short:         "the gitlab repository operator",
 		Long:          fmt.Sprintf("%s\n%s", globalUsage, AuthDoc),
 		SilenceErrors: true,

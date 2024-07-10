@@ -26,7 +26,7 @@ type RESTClientGetter interface {
 	// ToRESTConfig returns restconfig
 	ToRESTConfig() (*types.Config, error)
 
-	// ToRawGLConfigLoader return GLconfig loader as-is
+	// ToRawGlConfigLoader return GLconfig loader as-is
 	ToRawGLConfigLoader() ClientConfig
 }
 
