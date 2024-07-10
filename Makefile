@@ -18,7 +18,17 @@ GO := go
 NAME = gl
 OS = linux darwin
 architecture = amd64 arm6
+VERSION_PACKAGE=github.com/huhouhua/gl/util/version
+GIT_TREE_STATE:="dirty"
+ifeq (, $(shell git status --porcelain 2>/dev/null))
+	GIT_TREE_STATE="clean"
+endif
 # include the common make file
+GO_LDFLAGS += -X $(VERSION_PACKAGE).GitVersion=$(shell git describe --tags --always --match='v*') \
+	-X $(VERSION_PACKAGE).GitCommit=$(shell git rev-parse HEAD) \
+	-X $(VERSION_PACKAGE).GitTreeState=$(GIT_TREE_STATE) \
+	-X $(VERSION_PACKAGE).BuildDate=$(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
+GO_BUILD_FLAGS += -ldflags "$(GO_LDFLAGS)"
 COMMON_SELF_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 ifeq ($(origin ROOT_DIR),undefined)
 ROOT_DIR := $(abspath $(shell cd $(COMMON_SELF_DIR) && pwd -P))
@@ -27,6 +37,7 @@ ifeq ($(origin OUTPUT_DIR),undefined)
 OUTPUT_DIR := $(ROOT_DIR)/_output
 $(shell mkdir -p $(OUTPUT_DIR))
 endif
+
 
 .DEFAULT_GOAL := help
 
@@ -65,7 +76,7 @@ build: clean tidy ## Generate releases for unix systems
 		for os in ${OS};\
 		do \
 			echo "Building $$os-$$arch"; \
-			CGO_ENABLED=0 GOOS=$$os GOARCH=$$arch go build -ldflags "-s -w" -o $(OUTPUT_DIR)/$(NAME)-$$os-$$arch; \
+			CGO_ENABLED=0 GOOS=$$os GOARCH=$$arch $(GO) build  $(GO_BUILD_FLAGS) -o $(OUTPUT_DIR)/$(NAME)-$$os-$$arch; \
 		done \
 	done
 
