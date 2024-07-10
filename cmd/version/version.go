@@ -36,7 +36,7 @@ type Version struct {
 
 var versionExample = templates.Examples(`
 		# Print the client and server versions for the current context
-		gl version`)
+		glctl version`)
 
 // Options is a struct to support version command.
 type Options struct {
