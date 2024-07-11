@@ -23,6 +23,7 @@ import (
 	"github.com/huhouhua/glctl/cmd/edit"
 	"github.com/huhouhua/glctl/cmd/get"
 	"github.com/huhouhua/glctl/cmd/login"
+	"github.com/huhouhua/glctl/cmd/logout"
 	"github.com/huhouhua/glctl/cmd/replace"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/cmd/version"
@@ -126,6 +127,7 @@ func NeGlCtlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 			Message: "Authorization Commands:",
 			Commands: []*cobra.Command{
 				login.NewLoginCmd(ioStreams),
+				logout.NewLogoutCmd(ioStreams),
 			},
 		},
 		{
