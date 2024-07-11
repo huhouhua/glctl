@@ -25,14 +25,14 @@ import (
 func TestLogin(t *testing.T) {
 	tests := []struct {
 		name           string
-		optionsFunc    func(opt *LoginOptions)
+		optionsFunc    func(opt *Options)
 		args           []string
 		expectedOutput string
 	}{
 		{
 			name: "login incorrect password",
 			args: []string{"http://172.17.162.204"},
-			optionsFunc: func(opt *LoginOptions) {
+			optionsFunc: func(opt *Options) {
 				opt.User = "v-huhouhua@ruijie.com.cn"
 				opt.Password = "12345"
 			},
@@ -40,7 +40,7 @@ func TestLogin(t *testing.T) {
 		}, {
 			name: "login incorrect address",
 			args: []string{"http://1.3.4.5"},
-			optionsFunc: func(opt *LoginOptions) {
+			optionsFunc: func(opt *Options) {
 				opt.User = "12345"
 				opt.Password = "12345"
 			},
@@ -49,7 +49,7 @@ func TestLogin(t *testing.T) {
 		{
 			name: "login success",
 			args: []string{"http://172.17.162.204"},
-			optionsFunc: func(opt *LoginOptions) {
+			optionsFunc: func(opt *Options) {
 				opt.User = "v-huhouhua@ruijie.com.cn"
 				opt.Password = "huhouhua"
 			},
@@ -59,7 +59,7 @@ func TestLogin(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			cmd := NewLoginCmd(streams)
-			var cmdOptions = NewLoginOptions(streams)
+			var cmdOptions = NewOptions(streams)
 			if tc.optionsFunc != nil {
 				tc.optionsFunc(cmdOptions)
 			}
@@ -92,14 +92,14 @@ func TestLogin(t *testing.T) {
 func TestValidate(t *testing.T) {
 	tests := []struct {
 		name           string
-		optionsFunc    func(opt *LoginOptions)
+		optionsFunc    func(opt *Options)
 		args           []string
 		expectedOutput string
 	}{
 		{
 			name: "login address is empty",
 			args: []string{""},
-			optionsFunc: func(opt *LoginOptions) {
+			optionsFunc: func(opt *Options) {
 				opt.User = "v-huhouhua@ruijie.com.cn"
 				opt.Password = "12345"
 			},
@@ -107,7 +107,7 @@ func TestValidate(t *testing.T) {
 		}, {
 			name: "login username is empty",
 			args: []string{"http://172.17.162.204"},
-			optionsFunc: func(opt *LoginOptions) {
+			optionsFunc: func(opt *Options) {
 				opt.User = ""
 				opt.Password = "12345"
 			},
@@ -116,7 +116,7 @@ func TestValidate(t *testing.T) {
 		{
 			name: "login password is empty",
 			args: []string{"http://172.17.162.204"},
-			optionsFunc: func(opt *LoginOptions) {
+			optionsFunc: func(opt *Options) {
 				opt.User = "v-huhouhua@ruijie.com.cn"
 				opt.Password = ""
 			},
@@ -126,7 +126,7 @@ func TestValidate(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			cmd := NewLoginCmd(streams)
-			var cmdOptions = NewLoginOptions(streams)
+			var cmdOptions = NewOptions(streams)
 			if tc.optionsFunc != nil {
 				tc.optionsFunc(cmdOptions)
 			}

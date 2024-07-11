@@ -21,7 +21,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var editDesc = "edit a Gitlab resource"
+var editDesc = "Edit a Gitlab resource"
 
 func NewEditCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{

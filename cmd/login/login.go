@@ -24,6 +24,7 @@ import (
 	"github.com/huhouhua/glctl/cmd/types"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
+	"github.com/huhouhua/glctl/util/templates"
 	"github.com/mitchellh/go-homedir"
 	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/cobra"
@@ -34,9 +35,12 @@ import (
 	"strings"
 )
 
-var loginDesc = "This command authenticates you to a Gitlab server, retrieves your OAuth Token and then save it to $HOME/.glctl.yaml file."
+var loginLong = templates.LongDesc(`
+login command. 
 
-type LoginOptions struct {
+This command authenticates you to a Gitlab server, retrieves your OAuth Token and then save it to $HOME/.glctl.yaml file.`)
+
+type Options struct {
 	ServerAddress      string
 	User               string
 	Password           string
@@ -44,18 +48,18 @@ type LoginOptions struct {
 	maxInputRetryTimes int
 }
 
-func NewLoginOptions(ioStreams cli.IOStreams) *LoginOptions {
-	return &LoginOptions{
+func NewOptions(ioStreams cli.IOStreams) *Options {
+	return &Options{
 		ioStreams:          ioStreams,
 		maxInputRetryTimes: 3,
 	}
 }
 func NewLoginCmd(ioStreams cli.IOStreams) *cobra.Command {
-	o := NewLoginOptions(ioStreams)
+	o := NewOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "login [host]",
 		Short:                 "Login to gitlab",
-		Long:                  loginDesc,
+		Long:                  loginLong,
 		DisableFlagsInUseLine: true,
 		Example:               `glctl login http://localhost:8080`,
 		Args:                  require.MinimumNArgs(1),
@@ -72,7 +76,7 @@ func NewLoginCmd(ioStreams cli.IOStreams) *cobra.Command {
 }
 
 // Complete completes all the required options.
-func (o *LoginOptions) Complete(cmd *cobra.Command, args []string) error {
+func (o *Options) Complete(cmd *cobra.Command, args []string) error {
 	if len(args) > 0 {
 		o.ServerAddress = args[0]
 	}
@@ -86,7 +90,7 @@ func (o *LoginOptions) Complete(cmd *cobra.Command, args []string) error {
 }
 
 // Validate makes sure there is no discrepency in command options.
-func (o *LoginOptions) Validate(cmd *cobra.Command, args []string) error {
+func (o *Options) Validate(cmd *cobra.Command, args []string) error {
 	if strings.TrimSpace(o.ServerAddress) == "" {
 		return fmt.Errorf("please enter the gitlab url")
 	}
@@ -100,7 +104,7 @@ func (o *LoginOptions) Validate(cmd *cobra.Command, args []string) error {
 }
 
 // Run executes a create subcommand using the specified options.
-func (o *LoginOptions) Run(args []string) error {
+func (o *Options) Run(args []string) error {
 	uri := fmt.Sprintf("%s/oauth/token?grant_type=password&username=%s&password=%s", o.ServerAddress, o.User, o.Password)
 	resp, err := http.Post(uri, "application/json", nil)
 	if err != nil {
@@ -146,7 +150,7 @@ func (o *LoginOptions) Run(args []string) error {
 	return nil
 }
 
-func (o *LoginOptions) promptPasswordInput() string {
+func (o *Options) promptPasswordInput() string {
 	for i := 0; i < o.maxInputRetryTimes; i++ {
 		fmt.Print("Password: ")
 		input, err := gopass.GetPasswd()
@@ -162,7 +166,7 @@ func (o *LoginOptions) promptPasswordInput() string {
 	return ""
 }
 
-func (o *LoginOptions) promptUserNameInput() string {
+func (o *Options) promptUserNameInput() string {
 	for i := 0; i < o.maxInputRetryTimes; i++ {
 		reader := bufio.NewReader(os.Stdin)
 		fmt.Printf("%s: ", "Username")
