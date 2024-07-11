@@ -19,6 +19,7 @@ import (
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
+	"github.com/huhouhua/glctl/util/templates"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -31,13 +32,12 @@ type DeleteOptions struct {
 }
 
 var (
-	deleteProjectDesc = "Delete a Gitlab project by specifying the full path"
-
-	deleteProjectExample = `# delete a project
+	deleteProjectExample = templates.Examples(`
+# delete a project
 glctl delete project ProjectX
 
 # delete a project under a group
-glctl delete project group/project`
+glctl delete project group/project`)
 )
 
 func NewDeleteOptions(ioStreams cli.IOStreams) *DeleteOptions {
@@ -51,7 +51,7 @@ func NewDeleteProjectCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Comm
 	cmd := &cobra.Command{
 		Use:                   "project",
 		Aliases:               []string{"p"},
-		Short:                 deleteProjectDesc,
+		Short:                 "Delete a Gitlab project by specifying the full path",
 		Example:               deleteProjectExample,
 		Args:                  require.ExactArgs(1),
 		DisableFlagsInUseLine: true,

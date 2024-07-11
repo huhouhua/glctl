@@ -23,6 +23,7 @@ import (
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
 	"github.com/huhouhua/glctl/util/progress"
+	"github.com/huhouhua/glctl/util/templates"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"net/http"
@@ -56,10 +57,9 @@ func NewReplaceOptions(ioStreams cli.IOStreams) *ReplaceOptions {
 }
 
 var (
-	replaceFileDesc = "replace file for project "
-
-	replaceFileExample = `# edit file
-glctl replace files app/my.yml -p myproject --ref=main -f ./my.yml`
+	replaceFileExample = templates.Examples(`
+# edit file for project
+glctl replace files app/my.yml -p myproject --ref=main -f ./my.yml`)
 )
 
 func NewReplaceFileCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
@@ -67,7 +67,7 @@ func NewReplaceFileCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Comman
 	cmd := &cobra.Command{
 		Use:                   "file",
 		Aliases:               []string{"f"},
-		Short:                 replaceFileDesc,
+		Short:                 "replace file for project ",
 		Example:               replaceFileExample,
 		Args:                  require.MinimumNArgs(1),
 		DisableFlagsInUseLine: true,

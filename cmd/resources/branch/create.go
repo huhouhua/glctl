@@ -21,6 +21,7 @@ import (
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/cmd/validate"
 	"github.com/huhouhua/glctl/util/cli"
+	"github.com/huhouhua/glctl/util/templates"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -35,10 +36,9 @@ type CreateOptions struct {
 }
 
 var (
-	createBranchDesc = "Create a new branch for a specified project"
-
-	createBranchExample = `# create a develop branch from master branch for project group/myapp
-glctl create branch develop --project=group/myapp --ref=master`
+	createBranchExample = templates.Examples(`
+# create a develop branch from master branch for project group/myapp
+glctl create branch develop --project=group/myapp --ref=master`)
 )
 
 func NewCreateOptions(ioStreams cli.IOStreams) *CreateOptions {
@@ -57,7 +57,7 @@ func NewCreateBranchCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Comma
 	cmd := &cobra.Command{
 		Use:                   "branch",
 		Aliases:               []string{"b"},
-		Short:                 createBranchDesc,
+		Short:                 "Create a new branch for a specified project",
 		Example:               createBranchExample,
 		Args:                  require.ExactArgs(1),
 		DisableFlagsInUseLine: true,

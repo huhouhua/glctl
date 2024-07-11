@@ -19,6 +19,7 @@ import (
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
+	"github.com/huhouhua/glctl/util/templates"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 )
@@ -31,12 +32,12 @@ type CreateOptions struct {
 }
 
 var (
-	createProjectDesc = "Create a new project by specifying the project name as the first argument"
-
-	createProjectExample = `# create a new project
+	createProjectExample = templates.Examples(`
+# create a new project
 glctl new project ProjectX --desc="Project X is party!"
+
 # create a new project under a group
-glctl new project ProjectY --namespace=GroupY`
+glctl new project ProjectY --namespace=GroupY`)
 )
 
 func NewCreateOptions(ioStreams cli.IOStreams) *CreateOptions {
@@ -72,7 +73,7 @@ func NewCreateProjectCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Comm
 	cmd := &cobra.Command{
 		Use:                   "project",
 		Aliases:               []string{"p"},
-		Short:                 createProjectDesc,
+		Short:                 "Create a new project by specifying the project name as the first argument",
 		Example:               createProjectExample,
 		Args:                  require.ExactArgs(1),
 		DisableFlagsInUseLine: true,

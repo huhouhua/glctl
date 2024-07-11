@@ -20,6 +20,7 @@ import (
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/cmd/validate"
 	"github.com/huhouhua/glctl/util/cli"
+	"github.com/huhouhua/glctl/util/templates"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -33,10 +34,9 @@ type DeleteOptions struct {
 }
 
 var (
-	deleteBranchDesc = "Delete a project branch"
-
-	deleteBranchExample = `# delete a develop branch from project group/myapp
-glctl delete branch develop --project=group/myapp`
+	deleteBranchExample = templates.Examples(`
+# delete a develop branch from project group/myapp
+glctl delete branch develop --project=group/myapp`)
 )
 
 func NewDeleteOptions(ioStreams cli.IOStreams) *DeleteOptions {
@@ -50,7 +50,7 @@ func NewDeleteBranchCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Comma
 	cmd := &cobra.Command{
 		Use:                   "branch",
 		Aliases:               []string{"b"},
-		Short:                 deleteBranchDesc,
+		Short:                 "Delete a project branch",
 		Example:               deleteBranchExample,
 		Args:                  require.ExactArgs(1),
 		DisableFlagsInUseLine: true,

@@ -22,6 +22,7 @@ import (
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/cmd/util/editor"
 	"github.com/huhouhua/glctl/util/cli"
+	"github.com/huhouhua/glctl/util/templates"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"os"
@@ -47,10 +48,9 @@ func NewEditOptions(ioStreams cli.IOStreams) *EditOptions {
 }
 
 var (
-	editFileDesc = "edit file for project "
-
-	editFileExample = `# edit file
-glctl edit files myfile -p project`
+	editFileExample = templates.Examples(`
+# edit file for project
+glctl edit files myfile -p project`)
 )
 
 func NewEditFileCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
@@ -58,7 +58,7 @@ func NewEditFileCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "file",
 		Aliases:               []string{"f"},
-		Short:                 editFileDesc,
+		Short:                 "edit file for project ",
 		Example:               editFileExample,
 		Args:                  require.MinimumNArgs(1),
 		DisableFlagsInUseLine: true,

@@ -19,6 +19,7 @@ import (
 	"github.com/AlekSi/pointer"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
+	"github.com/huhouhua/glctl/util/templates"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -47,10 +48,9 @@ func NewDeleteOptions(ioStreams cli.IOStreams) *DeleteOptions {
 }
 
 var (
-	deleteFilesDesc = "delete file for project "
-
-	deleteFilesExample = `# delete project file
-glctl delete files myfile -p=myProject`
+	deleteFilesExample = templates.Examples(`
+# delete project file
+glctl delete files myfile -p=myProject`)
 )
 
 func NewDeleteFilesCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
@@ -58,7 +58,7 @@ func NewDeleteFilesCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Comman
 	cmd := &cobra.Command{
 		Use:                   "files",
 		Aliases:               []string{"f"},
-		Short:                 deleteFilesDesc,
+		Short:                 "delete file for project ",
 		Example:               deleteFilesExample,
 		DisableFlagsInUseLine: true,
 		TraverseChildren:      true,

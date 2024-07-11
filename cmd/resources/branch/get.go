@@ -19,6 +19,7 @@ import (
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
+	"github.com/huhouhua/glctl/util/templates"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -33,17 +34,18 @@ type ListOptions struct {
 }
 
 var (
-	getBranchsDesc = "List all branches of a repository"
+	getBranchsExample = templates.Examples(`
+# get branch from project
 
-	getBranchsExample = `# get all branch from project
-glctl get branchs
-
-# get all branch
+# get branch with project name
 glctl get branchs group1/devops
 
-# get all branch with project id
+# get branch with project id
 glctl get branchs 100
-`
+
+# get all branch
+glctl get branchs 100 -A
+`)
 )
 
 func NewListOptions(ioStreams cli.IOStreams) *ListOptions {
@@ -64,7 +66,7 @@ func NewGetBranchesCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Comman
 	cmd := &cobra.Command{
 		Use:                   "branch [Project]",
 		Aliases:               []string{"b"},
-		Short:                 getBranchsDesc,
+		Short:                 "List all branches of a repository",
 		Example:               getBranchsExample,
 		DisableFlagsInUseLine: true,
 		TraverseChildren:      true,

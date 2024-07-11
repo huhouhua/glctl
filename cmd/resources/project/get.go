@@ -20,6 +20,7 @@ import (
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/cmd/validate"
 	"github.com/huhouhua/glctl/util/cli"
+	"github.com/huhouhua/glctl/util/templates"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -38,13 +39,12 @@ type ListOptions struct {
 }
 
 var (
-	getProjectsDesc = "List projects of the authenticated user or of a group"
-
-	getProjectsExample = `# get all projects
+	getProjectsExample = templates.Examples(`
+# get all projects
 glctl get projects
 
 # get all projects from a group
-glctl get projects --all-groups=Group1`
+glctl get projects --all-groups=Group1`)
 )
 
 func NewListOptions(ioStreams cli.IOStreams) *ListOptions {
@@ -78,7 +78,7 @@ func NewGetProjectsCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Comman
 	cmd := &cobra.Command{
 		Use:                   "projects",
 		Aliases:               []string{"p"},
-		Short:                 getProjectsDesc,
+		Short:                 "List projects of the authenticated user or of a group",
 		Example:               getProjectsExample,
 		DisableFlagsInUseLine: true,
 		TraverseChildren:      true,

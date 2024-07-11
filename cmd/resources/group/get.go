@@ -20,6 +20,7 @@ import (
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/cmd/validate"
 	"github.com/huhouhua/glctl/util/cli"
+	"github.com/huhouhua/glctl/util/templates"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strconv"
@@ -38,13 +39,12 @@ type ListOptions struct {
 }
 
 var (
-	getGroupsDesc = "List groups and subgroups"
-
-	getGroupsExample = `# list all groups
+	getGroupsExample = templates.Examples(`
+# list all groups
 glctl get groups
 
 # list all subgroups of GroupX
-glctl get groups --all-groups=GroupX`
+glctl get groups --all-groups=GroupX`)
 )
 
 func NewListOptions(ioStreams cli.IOStreams) *ListOptions {
@@ -73,7 +73,7 @@ func NewGetGroupsCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command 
 	cmd := &cobra.Command{
 		Use:                   "groups",
 		Aliases:               []string{"g"},
-		Short:                 getGroupsDesc,
+		Short:                 "List groups and subgroups",
 		Example:               getGroupsExample,
 		DisableFlagsInUseLine: true,
 		TraverseChildren:      true,

@@ -20,6 +20,7 @@ import (
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
+	"github.com/huhouhua/glctl/util/templates"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"strings"
@@ -52,10 +53,9 @@ func NewListOptions(ioStreams cli.IOStreams) *ListOptions {
 }
 
 var (
-	getFilesDesc = "get file for project "
-
-	getFilesExample = `# list project file
-glctl get files myProject`
+	getFilesExample = templates.Examples(`
+# list project file
+glctl get files myProject`)
 )
 
 func NewGetFilesCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
@@ -63,7 +63,7 @@ func NewGetFilesCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "files",
 		Aliases:               []string{"f"},
-		Short:                 getFilesDesc,
+		Short:                 "get file for project ",
 		Example:               getFilesExample,
 		DisableFlagsInUseLine: true,
 		Args:                  require.MinimumNArgs(1),

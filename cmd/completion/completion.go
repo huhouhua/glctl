@@ -19,13 +19,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var completionLong = "completion a Gitlab resource"
-
 func NewCmdCompletion(ioStreams cli.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "completion SHELL",
 		Aliases:               []string{"c"},
-		Short:                 completionLong,
+		Short:                 "completion a Gitlab resource",
 		DisableFlagsInUseLine: true,
 	}
 	return cmd
