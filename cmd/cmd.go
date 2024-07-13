@@ -139,7 +139,7 @@ func NeGlCtlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 		{
 			Message: "Settings Commands:",
 			Commands: []*cobra.Command{
-				completion.NewCmdCompletion(ioStreams),
+				completion.NewCmdCompletion(ioStreams, ""),
 			},
 		},
 	}
