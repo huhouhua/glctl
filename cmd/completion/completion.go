@@ -159,12 +159,14 @@ func runCompletionBash(out io.Writer, boilerPlate string, glctl *cobra.Command) 
 
 func runCompletionZsh(out io.Writer, boilerPlate string, glctl *cobra.Command) error {
 	zshHead := fmt.Sprintf("#compdef %[1]s\ncompdef _%[1]s %[1]s\n", glctl.Name())
-	out.Write([]byte(zshHead))
-
+	_, err := out.Write([]byte(zshHead))
+	if err != nil {
+		return err
+	}
 	if len(boilerPlate) == 0 {
 		boilerPlate = defaultBoilerPlate
 	}
-	if _, err := out.Write([]byte(boilerPlate)); err != nil {
+	if _, err = out.Write([]byte(boilerPlate)); err != nil {
 		return err
 	}
 
