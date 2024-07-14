@@ -63,7 +63,7 @@ func TestLogin(t *testing.T) {
 			if tc.optionsFunc != nil {
 				tc.optionsFunc(cmdOptions)
 			}
-			out := cmdtesting.RunTest(func() {
+			out := cmdtesting.Run(func() {
 				var err error
 				if err = cmdOptions.Complete(cmd, tc.args); err != nil {
 					fmt.Print(err)
@@ -130,7 +130,7 @@ func TestValidate(t *testing.T) {
 			if tc.optionsFunc != nil {
 				tc.optionsFunc(cmdOptions)
 			}
-			out := cmdtesting.RunTest(func() {
+			out := cmdtesting.Run(func() {
 				var err error
 				if err = cmdOptions.Complete(cmd, tc.args); err != nil {
 					fmt.Print(err)
@@ -187,7 +187,7 @@ func TestRunLogin(t *testing.T) {
 					return
 				}
 			}
-			out := cmdtesting.RunTest(func() {
+			out := cmdtesting.Run(func() {
 				cmd.Run(cmd, tc.args)
 			})
 			cmdtesting.TInfo(out)

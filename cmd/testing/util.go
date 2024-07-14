@@ -64,13 +64,13 @@ func ExecuteCommandC(root *cobra.Command, args ...string) (stdout string, output
 	root.SetOut(buf)
 	root.SetErr(buf)
 	root.SetArgs(args)
-	stdout = RunTest(func() {
+	stdout = Run(func() {
 		_, err = root.ExecuteC()
 	})
 	return stdout, buf.String(), err
 }
 
-func RunTest(exec func()) (stdout string) {
+func Run(exec func()) (stdout string) {
 	// see https://stackoverflow.com/questions/10473800/in-go-how-do-i-capture-stdout-of-a-function-into-a-string
 	old := os.Stdout // keep backup of the real stdout
 	r, w, _ := os.Pipe()
@@ -95,7 +95,7 @@ func RunTest(exec func()) (stdout string) {
 	return stdout
 }
 
-func RunTestForStdout(streams cli.IOStreams, exec func()) (stdout string) {
+func RunForStdout(streams cli.IOStreams, exec func()) (stdout string) {
 	// see https://stackoverflow.com/questions/10473800/in-go-how-do-i-capture-stdout-of-a-function-into-a-string
 	old := streams.Out // keep backup of the real stdout
 	exec()

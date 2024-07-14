@@ -41,7 +41,7 @@ func TestRunReplace(t *testing.T) {
 		},
 		run: func(opt *ReplaceOptions, args []string) error {
 			var err error
-			_ = cmdtesting.RunTest(func() {
+			_ = cmdtesting.Run(func() {
 				err = opt.Run(args)
 			})
 			//expectedOutput := fmt.Sprintf("%s edited", opt.path)
@@ -62,7 +62,7 @@ func TestRunReplace(t *testing.T) {
 		},
 		run: func(opt *ReplaceOptions, args []string) error {
 			var err error
-			_ = cmdtesting.RunTest(func() {
+			_ = cmdtesting.Run(func() {
 				err = opt.Run(args)
 			})
 			//expectedOutput := fmt.Sprintf("%s edited", opt.path)

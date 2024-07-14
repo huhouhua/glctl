@@ -43,7 +43,7 @@ func TestRunEdit(t *testing.T) {
 		},
 		run: func(opt *EditOptions, args []string) error {
 			var err error
-			out := cmdtesting.RunTest(func() {
+			out := cmdtesting.Run(func() {
 				err = opt.Run(args)
 			})
 			expectedOutput := fmt.Sprintf("%s edited", opt.path)

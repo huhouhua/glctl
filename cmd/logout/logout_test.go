@@ -37,7 +37,7 @@ func TestLogout(t *testing.T) {
 			if tc.optionsFunc != nil {
 				tc.optionsFunc(cmdOptions)
 			}
-			out := cmdtesting.RunTestForStdout(streams, func() {
+			out := cmdtesting.RunForStdout(streams, func() {
 				var err error
 				if err = cmdOptions.Complete(cmd, tc.args); err != nil {
 					fmt.Print(err)
@@ -78,7 +78,7 @@ func TestValidate(t *testing.T) {
 			if tc.optionsFunc != nil {
 				tc.optionsFunc(cmdOptions)
 			}
-			out := cmdtesting.RunTestForStdout(streams, func() {
+			out := cmdtesting.RunForStdout(streams, func() {
 				var err error
 				if err = cmdOptions.Complete(cmd, tc.args); err != nil {
 					fmt.Print(err)
@@ -123,7 +123,7 @@ func TestRunLogout(t *testing.T) {
 					return
 				}
 			}
-			out := cmdtesting.RunTestForStdout(streams, func() {
+			out := cmdtesting.RunForStdout(streams, func() {
 				cmd.Run(cmd, tc.args)
 			})
 			cmdtesting.TInfo(out)

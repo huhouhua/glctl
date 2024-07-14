@@ -50,7 +50,7 @@ func TestRunVersion(t *testing.T) {
 			if tc.optionsFunc != nil {
 				tc.optionsFunc(cmdOptions)
 			}
-			out := cmdtesting.RunTestForStdout(streams, func() {
+			out := cmdtesting.RunForStdout(streams, func() {
 				var err error
 				if err = cmdOptions.Complete(factory, cmd); err != nil {
 					fmt.Print(err)
