@@ -35,10 +35,10 @@ type CreateOptions struct {
 var (
 	createProjectExample = templates.Examples(`
 # create a new project
-glctl new project ProjectX --desc="Project X is party!"
+glctl create project myProject --desc="Project X is party!"
 
 # create a new project under a group
-glctl new project ProjectY --namespace=GroupY`)
+glctl create project myProject --namespace=GroupY`)
 )
 
 func NewCreateOptions(ioStreams cli.IOStreams) *CreateOptions {
