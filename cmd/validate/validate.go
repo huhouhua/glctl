@@ -38,6 +38,12 @@ func ValidateVisibilityFlagValue(cmd *cobra.Command) error {
 		cmd, "visibility")
 }
 
+func ValidateMergeMethodValue(cmd *cobra.Command) error {
+	return ValidateFlagStringValue(
+		[]string{"merge", "ff", "rebase_merge"},
+		cmd, "merge-method")
+}
+
 func ValidateOutFlagValue(cmd *cobra.Command) error {
 	return ValidateFlagStringValue([]string{cmdutil.JSON, cmdutil.YAML, "simple"},
 		cmd, "out")

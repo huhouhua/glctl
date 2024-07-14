@@ -18,6 +18,7 @@ import (
 	"github.com/AlekSi/pointer"
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
+	"github.com/huhouhua/glctl/cmd/validate"
 	"github.com/huhouhua/glctl/util/cli"
 	"github.com/huhouhua/glctl/util/templates"
 	"github.com/spf13/cobra"
@@ -137,16 +138,28 @@ func (o *CreateOptions) AddFlags(cmd *cobra.Command) {
 func (o *CreateOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []string) error {
 	var err error
 	o.gitlabClient, err = f.GitlabClient()
+	o.project.Name = pointer.ToString(args[0])
+	o.project.Path = pointer.ToString(args[0])
 	return err
 }
 
 // Validate makes sure there is no discrepency in command options.
 func (o *CreateOptions) Validate(cmd *cobra.Command, args []string) error {
-
+	if err := validate.ValidateVisibilityFlagValue(cmd); err != nil {
+		return err
+	}
+	if err := validate.ValidateMergeMethodValue(cmd); err != nil {
+		return err
+	}
 	return nil
 }
 
 // Run executes a list subcommand using the specified options.
 func (o *CreateOptions) Run(args []string) error {
+	project, _, err := o.gitlabClient.Projects.CreateProject(o.project)
+	if err != nil {
+		return err
+	}
+	cmdutil.PrintProjectsOut(o.Out, project)
 	return nil
 }

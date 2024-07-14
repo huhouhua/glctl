@@ -43,8 +43,7 @@ func NoArgs(cmd *cobra.Command, args []string) error {
 		return errors.Errorf(
 			"%q accepts no arguments\n\nUsage:  %s",
 			cmd.CommandPath(),
-			cmd.UseLine(),
-		)
+			cmd.UseLine())
 	}
 	return nil
 }
