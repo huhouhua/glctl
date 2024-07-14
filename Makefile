@@ -23,7 +23,6 @@ GIT_TREE_STATE:="dirty"
 ifeq (, $(shell git status --porcelain 2>/dev/null))
 	GIT_TREE_STATE="clean"
 endif
-# include the common make file
 GO_LDFLAGS += -X $(VERSION_PACKAGE).GitVersion=$(shell git describe --tags --always --match='v*') \
 	-X $(VERSION_PACKAGE).GitCommit=$(shell git rev-parse HEAD) \
 	-X $(VERSION_PACKAGE).GitTreeState=$(GIT_TREE_STATE) \
@@ -38,7 +37,6 @@ OUTPUT_DIR := $(ROOT_DIR)/_output
 $(shell mkdir -p $(OUTPUT_DIR))
 endif
 
-
 .DEFAULT_GOAL := help
 
 .PHONY: copyright.verify
@@ -50,7 +48,6 @@ copyright.verify: tools.verify.licctl
 copyright.add: tools.verify.licctl
 	@echo $(ROOT_DIR)
 	@licctl -v -f $(ROOT_DIR)/boilerplate.txt $(ROOT_DIR) --skip-dirs=.idea
-
 
 .PHONY: install.licctl
 install.addlicense:
