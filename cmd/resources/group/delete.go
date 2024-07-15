@@ -79,13 +79,13 @@ func (o *DeleteOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []s
 		o.groupId, err = strconv.Atoi(args[0])
 		// if group is not a number,
 		// search for the group path's id and assign it to gid
-		if err == nil {
-			groupInfo, _, err := o.gitlabClient.Groups.GetGroup("namespace", &gitlab.GetGroupOptions{})
+		if err != nil {
+			group, _, err := o.gitlabClient.Groups.GetGroup("namespace", &gitlab.GetGroupOptions{})
 			if err != nil {
 				return fmt.Errorf("couldn't find the id of group %s, got error: %v",
 					args[0], err)
 			}
-			o.groupId = groupInfo.ID
+			o.groupId = group.ID
 		}
 	}
 	return err
