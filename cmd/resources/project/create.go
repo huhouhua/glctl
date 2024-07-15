@@ -53,7 +53,7 @@ func NewCreateOptions(ioStreams cli.IOStreams) *CreateOptions {
 			PublicBuilds:                              pointer.ToBool(false),
 			OnlyAllowMergeIfPipelineSucceeds:          pointer.ToBool(false),
 			OnlyAllowMergeIfAllDiscussionsAreResolved: pointer.ToBool(false),
-			Visibility:                                pointer.To(gitlab.PublicVisibility),
+			Visibility:                                pointer.To(gitlab.PrivateVisibility),
 			IssuesAccessLevel:                         pointer.To(gitlab.EnabledAccessControl),
 			MergeRequestsAccessLevel:                  pointer.To(gitlab.EnabledAccessControl),
 			BuildsAccessLevel:                         pointer.To(gitlab.EnabledAccessControl),
