@@ -122,7 +122,7 @@ func (o *ReplaceOptions) Validate(cmd *cobra.Command, args []string) error {
 // Run executes a list subcommand using the specified options.
 func (o *ReplaceOptions) Run(args []string) error {
 	for {
-		branches, err := o.nextBranches()
+		branches, err := o.next()
 		if err != nil {
 			return err
 		}
@@ -134,7 +134,7 @@ func (o *ReplaceOptions) Run(args []string) error {
 			wg.Add(1)
 			go func(branch *gitlab.Branch) {
 				defer wg.Done()
-				o.updateFile(branch)
+				o.update(branch)
 			}(item)
 		}
 		wg.Wait()
@@ -142,7 +142,7 @@ func (o *ReplaceOptions) Run(args []string) error {
 	return nil
 }
 
-func (o *ReplaceOptions) updateFile(branch *gitlab.Branch) {
+func (o *ReplaceOptions) update(branch *gitlab.Branch) {
 	s := progress.CreatingEvent(false).WithText(fmt.Sprintf(" %s ...", branch.Name)).Start()
 	defer s.Stop()
 	_, r, err := o.gitlabClient.RepositoryFiles.UpdateFile(o.Project, o.path, &gitlab.UpdateFileOptions{
@@ -173,7 +173,7 @@ func (o *ReplaceOptions) updateFile(branch *gitlab.Branch) {
 	s.Success()
 }
 
-func (o *ReplaceOptions) nextBranches() ([]*gitlab.Branch, error) {
+func (o *ReplaceOptions) next() ([]*gitlab.Branch, error) {
 	s := progress.CreatingEvent(true).WithText(fmt.Sprintf(" pull branch on page %d", o.branchList.ListOptions.Page)).Start()
 	defer s.Stop()
 	branches, _, err := o.gitlabClient.Branches.ListBranches(o.Project, o.branchList)
