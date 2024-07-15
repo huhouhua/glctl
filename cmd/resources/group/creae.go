@@ -63,7 +63,7 @@ func NewCreateGroupCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Comman
 		Use:                   "group",
 		Aliases:               []string{"g"},
 		Short:                 "Create a new group by specifying the group name as the first argument",
-		Example:               getGroupsExample,
+		Example:               createGroupExample,
 		Args:                  require.ExactArgs(1),
 		DisableFlagsInUseLine: true,
 		TraverseChildren:      true,
