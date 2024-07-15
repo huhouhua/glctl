@@ -66,6 +66,7 @@ func ValidateFlagStringValue(stringSlice []string,
 		"Please choose from: [%s]\n",
 		fValue, fName, strings.Join(stringSlice, ", "))
 }
+
 func VerifyMarkFlagRequired(cmd *cobra.Command, fName string) {
 	if err := cmd.MarkFlagRequired(fName); err != nil {
 		glog.Fatalf("error marking %s flag as required for command %s: %v",

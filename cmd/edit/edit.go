@@ -15,7 +15,9 @@
 package edit
 
 import (
+	"github.com/huhouhua/glctl/cmd/resources/branch"
 	"github.com/huhouhua/glctl/cmd/resources/file"
+	"github.com/huhouhua/glctl/cmd/resources/group"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
 	"github.com/spf13/cobra"
@@ -30,6 +32,8 @@ func NewEditCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
 		Short:                 editDesc,
 		DisableFlagsInUseLine: true,
 	}
+	cmd.AddCommand(group.NewEditGroupCmd(f, ioStreams))
+	cmd.AddCommand(branch.NewEditBranchCmd(f, ioStreams))
 	cmd.AddCommand(file.NewEditFileCmd(f, ioStreams))
 	return cmd
 }
