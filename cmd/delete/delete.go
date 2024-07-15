@@ -17,6 +17,7 @@ package delete
 import (
 	"github.com/huhouhua/glctl/cmd/resources/branch"
 	"github.com/huhouhua/glctl/cmd/resources/file"
+	"github.com/huhouhua/glctl/cmd/resources/group"
 	"github.com/huhouhua/glctl/cmd/resources/project"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
@@ -32,6 +33,7 @@ func NewDeleteCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
 		Short:                 deleteDesc,
 		DisableFlagsInUseLine: true,
 	}
+	cmd.AddCommand(group.NewDeleteGroupCmd(f, ioStreams))
 	cmd.AddCommand(project.NewDeleteProjectCmd(f, ioStreams))
 	cmd.AddCommand(branch.NewDeleteBranchCmd(f, ioStreams))
 	cmd.AddCommand(file.NewDeleteFilesCmd(f, ioStreams))

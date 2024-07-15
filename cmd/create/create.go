@@ -16,6 +16,7 @@ package create
 
 import (
 	"github.com/huhouhua/glctl/cmd/resources/branch"
+	"github.com/huhouhua/glctl/cmd/resources/group"
 	"github.com/huhouhua/glctl/cmd/resources/project"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	cli "github.com/huhouhua/glctl/util/cli"
@@ -31,6 +32,7 @@ func NewCreateCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
 		Short:                 createDesc,
 		DisableFlagsInUseLine: true,
 	}
+	cmd.AddCommand(group.NewCreateGroupCmd(f, ioStreams))
 	cmd.AddCommand(project.NewCreateProjectCmd(f, ioStreams))
 	cmd.AddCommand(branch.NewCreateBranchCmd(f, ioStreams))
 	return cmd
