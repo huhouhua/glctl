@@ -27,14 +27,15 @@ import (
 )
 
 type EditOptions struct {
-	gitlabClient  *gitlab.Client
-	protectBranch *gitlab.ProtectBranchOptions
-	branch        string
-	project       string
-	protect       bool
-	Unprotect     bool
-	Out           string
-	ioStreams     cli.IOStreams
+	gitlabClient      *gitlab.Client
+	protectBranch     *gitlab.ProtectBranchOptions
+	protectRepository *gitlab.ProtectRepositoryBranchesOptions
+	branch            string
+	project           string
+	protect           bool
+	Unprotect         bool
+	Out               string
+	ioStreams         cli.IOStreams
 }
 
 var (
@@ -52,7 +53,8 @@ func NewEditOptions(ioStreams cli.IOStreams) *EditOptions {
 			DevelopersCanPush:  pointer.ToBool(false),
 			DevelopersCanMerge: pointer.ToBool(false),
 		},
-		Out: "simple",
+		protectRepository: &gitlab.ProtectRepositoryBranchesOptions{},
+		Out:               "simple",
 	}
 }
 
@@ -97,6 +99,15 @@ func (o *EditOptions) AddFlags(cmd *cobra.Command) {
 func (o *EditOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []string) error {
 	var err error
 	o.gitlabClient, err = f.GitlabClient()
+	if len(args) > 0 {
+		o.protectRepository.Name = pointer.ToString(args[0])
+	}
+	if *o.protectBranch.DevelopersCanMerge {
+		o.protectRepository.MergeAccessLevel = pointer.To(gitlab.DeveloperPermissions)
+	}
+	if *o.protectBranch.DevelopersCanPush {
+		o.protectRepository.PushAccessLevel = pointer.To(gitlab.DeveloperPermissions)
+	}
 	return err
 }
 
@@ -121,19 +132,17 @@ func (o *EditOptions) Validate(cmd *cobra.Command, args []string) error {
 // Run executes a list subcommand using the specified options.
 func (o *EditOptions) Run(args []string) error {
 	if o.protect {
-		_, _, err := o.gitlabClient.ProtectedBranches.ProtectRepositoryBranches(o.project, &gitlab.ProtectRepositoryBranchesOptions{
-			Name: pointer.ToString(args[0]),
-		})
+		_, _, err := o.gitlabClient.ProtectedBranches.ProtectRepositoryBranches(o.project, o.protectRepository)
 		if err != nil {
 			return err
 		}
-		//cmdutil.PrintBranchOut(o.Out, protectedBranch)
+		fmt.Fprintf(o.ioStreams.Out, "branch /%s updated\n", args[0])
 		return nil
 	}
 	_, err := o.gitlabClient.ProtectedBranches.UnprotectRepositoryBranches(o.project, args[0])
 	if err != nil {
 		return err
 	}
-	//cmdutil.PrintBranchOut(o.Out, branch)
+	fmt.Fprintf(o.ioStreams.Out, "branch /%s updated\n", args[0])
 	return nil
 }
