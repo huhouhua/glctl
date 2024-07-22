@@ -3,16 +3,17 @@ package branch
 import (
 	"errors"
 	"fmt"
+	"github.com/AlekSi/pointer"
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
 	"github.com/spf13/cobra"
-	"github.com/xanzy/go-gitlab"
 	"strings"
 	"testing"
 )
 
 func TestEditBranch(t *testing.T) {
+	streams := cli.NewTestIOStreamsForPipe()
 	tests := []struct {
 		name        string
 		args        []string
@@ -21,63 +22,46 @@ func TestEditBranch(t *testing.T) {
 		run         func(opt *EditOptions, args []string) error
 		wantError   error
 	}{{
-		name: "edit by name",
-		args: []string{"develop"},
+		name: "set unprotect",
+		args: []string{"main"},
 		optionsFunc: func(opt *EditOptions) {
 			opt.project = "huhouhua/gitlab-repo-branch"
+			opt.Unprotect = true
 		},
 		run: func(opt *EditOptions, args []string) error {
 			var err error
-			out := cmdtesting.Run(func() {
+			out := cmdtesting.RunForStdout(streams, func() {
 				err = opt.Run(args)
 			})
-			expectedOutput := fmt.Sprintf("Branch (%s) from project (%s) has been deleted", opt.branch, opt.project)
+			expectedOutput := fmt.Sprintf("branch %s un protect", args[0])
 			if !strings.Contains(out, expectedOutput) {
-				err = errors.New(fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out))
+				err = errors.New(fmt.Sprintf("unprotect main : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out))
 			}
 			return err
 		},
 		wantError: nil,
 	}, {
-		name: "change can push",
-		args: []string{"not-found"},
+		name: "set protect",
+		args: []string{"main"},
 		optionsFunc: func(opt *EditOptions) {
 			opt.project = "huhouhua/gitlab-repo-branch"
+			opt.protect = true
+			opt.protectBranch.DevelopersCanMerge = pointer.ToBool(true)
+			opt.protectBranch.DevelopersCanPush = pointer.ToBool(true)
 		},
 		run: func(opt *EditOptions, args []string) error {
-			err := opt.Run(args)
-			var repo *gitlab.ErrorResponse
-			if errors.As(err, &repo) && repo.Message == "{message: 404 Branch Not Found}" {
-				return nil
+			var err error
+			out := cmdtesting.RunForStdout(streams, func() {
+				err = opt.Run(args)
+			})
+			expectedOutput := fmt.Sprintf("branch %s updated", args[0])
+			if !strings.Contains(out, expectedOutput) {
+				err = errors.New(fmt.Sprintf("unprotect main : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out))
 			}
 			return err
 		},
-	}, {
-		name: "set unprotect",
-		args: []string{"not-found"},
-		optionsFunc: func(opt *EditOptions) {
-			opt.project = "not-found"
-		},
-		run: func(opt *EditOptions, args []string) error {
-			err := opt.Run(args)
-			var repo *gitlab.ErrorResponse
-			if errors.As(err, &repo) && repo.Message == "{message: 404 Project Not Found}" {
-				return nil
-			}
-			return err
-		},
-	}, {
-		name: "not definition branch",
-		args: []string{},
-		validate: func(opt *EditOptions, cmd *cobra.Command, args []string) error {
-			err := opt.Validate(cmd, args)
-			if err.Error() == "please enter branch" {
-				return err
-			}
-			return nil
-		},
+		wantError: nil,
 	}}
-	streams := cli.NewTestIOStreamsDiscard()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {

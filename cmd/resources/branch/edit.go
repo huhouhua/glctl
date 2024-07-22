@@ -85,7 +85,7 @@ func (o *EditOptions) AddFlags(cmd *cobra.Command) {
 	cmdutil.AddOutFlag(cmd, &o.Out)
 	validate.VerifyMarkFlagRequired(cmd, "project")
 	f := cmd.Flags()
-	f.BoolVarP(&o.Unprotect, "unprotect", "un", o.Unprotect,
+	f.BoolVar(&o.Unprotect, "unprotect", o.Unprotect,
 		"Remove protection of a branch")
 	f.BoolVar(&o.protect, "protect",
 		o.protect, "Protect a branch")
@@ -136,13 +136,13 @@ func (o *EditOptions) Run(args []string) error {
 		if err != nil {
 			return err
 		}
-		fmt.Fprintf(o.ioStreams.Out, "branch /%s updated\n", args[0])
+		_, _ = fmt.Fprintf(o.ioStreams.Out, "branch %s updated\n", args[0])
 		return nil
 	}
 	_, err := o.gitlabClient.ProtectedBranches.UnprotectRepositoryBranches(o.project, args[0])
 	if err != nil {
 		return err
 	}
-	fmt.Fprintf(o.ioStreams.Out, "branch /%s updated\n", args[0])
+	_, _ = fmt.Fprintf(o.ioStreams.Out, "branch %s un protect\n", args[0])
 	return nil
 }
