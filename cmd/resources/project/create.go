@@ -23,11 +23,13 @@ import (
 	"github.com/huhouhua/glctl/util/templates"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
+	"strconv"
 )
 
 type CreateOptions struct {
 	gitlabClient *gitlab.Client
 	project      *gitlab.CreateProjectOptions
+	namespace    string
 	Out          string
 	ioStreams    cli.IOStreams
 }
@@ -132,6 +134,11 @@ func (o *CreateOptions) AddFlags(cmd *cobra.Command) {
 		"Show link to create/view merge request "+
 			"when pushing from the command line")
 	f.StringVar(o.project.CIConfigPath, "ci-config-path", *o.project.CIConfigPath, "The path to CI config file")
+
+	f.StringVarP(&o.namespace, "namespace", "n",
+		o.namespace, "This can be the parent namespace ID, group path, or user path. "+
+			"(defaults to current user namespace)")
+
 }
 
 // Complete completes all the required options.
@@ -140,6 +147,16 @@ func (o *CreateOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []s
 	o.gitlabClient, err = f.GitlabClient()
 	o.project.Name = pointer.ToString(args[0])
 	o.project.Path = pointer.ToString(args[0])
+	gid, err := strconv.Atoi(o.namespace)
+	// if namespace is not a number,
+	// get the namespace's group id and assign it to gid
+	if err != nil {
+		ns, err, _ := o.gitlabClient.Namespaces.GetNamespace(o.namespace)
+		if err == nil {
+			gid = ns.ID
+		}
+	}
+	o.project.NamespaceID = pointer.ToInt(gid)
 	return err
 }
 
