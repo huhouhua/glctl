@@ -16,6 +16,7 @@ package project
 
 import (
 	"fmt"
+	"github.com/AlekSi/pointer"
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
@@ -27,71 +28,61 @@ import (
 )
 
 func TestCreateProject(t *testing.T) {
+	streams := cli.NewTestIOStreamsForPipe()
 	tests := []struct {
-		name      string
-		args      []string
-		validate  func(opt *CreateOptions, cmd *cobra.Command, args []string) error
-		run       func(opt *CreateOptions, args []string) error
-		wantError error
+		name        string
+		args        []string
+		optionsFunc func(opt *CreateOptions)
+		validate    func(opt *CreateOptions, cmd *cobra.Command, args []string) error
+		run         func(opt *CreateOptions, args []string) error
+		wantError   error
 	}{{
-		name: "delete by path",
-		args: []string{"huhouhua/gitlab-repo-test"},
+		name: "create a new project using all flags",
+		args: []string{"gitlab-repo-test"},
+		optionsFunc: func(opt *CreateOptions) {
+			opt.namespace = "test-project"
+			opt.project.Description = pointer.ToString("Created by go test")
+			opt.project.IssuesAccessLevel = pointer.To(gitlab.EnabledAccessControl)
+			opt.project.MergeRequestsAccessLevel = pointer.To(gitlab.EnabledAccessControl)
+			opt.project.BuildsAccessLevel = pointer.To(gitlab.EnabledAccessControl)
+			opt.project.WikiAccessLevel = pointer.To(gitlab.EnabledAccessControl)
+			opt.project.SnippetsAccessLevel = pointer.To(gitlab.EnabledAccessControl)
+			opt.project.ResolveOutdatedDiffDiscussions = pointer.ToBool(true)
+			opt.project.ContainerRegistryAccessLevel = pointer.To(gitlab.EnabledAccessControl)
+			opt.project.SharedRunnersEnabled = pointer.ToBool(true)
+			opt.project.Visibility = pointer.To(gitlab.PrivateVisibility)
+			opt.project.PublicBuilds = pointer.ToBool(true)
+			opt.project.OnlyAllowMergeIfPipelineSucceeds = pointer.ToBool(true)
+			opt.project.OnlyAllowMergeIfAllDiscussionsAreResolved = pointer.ToBool(true)
+			opt.project.MergeMethod = pointer.To(gitlab.RebaseMerge)
+			opt.project.LFSEnabled = pointer.ToBool(true)
+			opt.project.RequestAccessEnabled = pointer.ToBool(true)
+			opt.project.Topics = pointer.To([]string{"gotest", "tdd"})
+			opt.project.PrintingMergeRequestLinkEnabled = pointer.ToBool(true)
+			opt.project.CIConfigPath = pointer.ToString("gitlabci.yml")
+		},
 		run: func(opt *CreateOptions, args []string) error {
 			var err error
-			out := cmdtesting.Run(func() {
+			out := cmdtesting.RunForStdout(streams, func() {
 				err = opt.Run(args)
 			})
-			expectedOutput := fmt.Sprintf("project (%s) with id", "huhouhua/gitlab-repo-test")
+			expectedOutput := fmt.Sprintf("%s/%s.git", opt.namespace, args[0])
 			if !strings.Contains(out, expectedOutput) {
-				err = errors.New(fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out))
+				err = errors.New(fmt.Sprintf("create a new project : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out))
 			}
 			return err
 		},
 		wantError: nil,
-	}, {
-		name: "delete by id",
-		args: []string{"222"},
-		run: func(opt *CreateOptions, args []string) error {
-			var err error
-			out := cmdtesting.Run(func() {
-				err = opt.Run(args)
-			})
-			expectedOutput := fmt.Sprintf("with id (%d) has been deleted", 222)
-			if !strings.Contains(out, expectedOutput) {
-				err = errors.New(fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out))
-			}
-			return err
-		},
-		wantError: nil,
-	}, {
-		name: "example delete a nonexistent ID",
-		args: []string{"100001"},
-		run: func(opt *CreateOptions, args []string) error {
-			err := opt.Run(args)
-			var repo *gitlab.ErrorResponse
-			if errors.As(err, &repo) && repo.Message == "{message: 404 Project Not Found}" {
-				return nil
-			}
-			return err
-		},
-	}, {
-		name: "no id",
-		args: []string{},
-		validate: func(opt *CreateOptions, cmd *cobra.Command, args []string) error {
-			err := opt.Validate(cmd, args)
-			if err.Error() == "please enter project and id" {
-				return err
-			}
-			return nil
-		},
 	}}
-	streams := cli.NewTestIOStreamsDiscard()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			cmd := NewCreateProjectCmd(factory, streams)
 			cmdOptions := NewCreateOptions(streams)
 			var err error
+			if tc.optionsFunc != nil {
+				tc.optionsFunc(cmdOptions)
+			}
 			if err = cmdOptions.Complete(factory, cmd, tc.args); err != nil && !errors.Is(err, tc.wantError) {
 				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
 				return
