@@ -147,11 +147,11 @@ func (o *CreateOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []s
 	o.gitlabClient, err = f.GitlabClient()
 	o.project.Name = pointer.ToString(args[0])
 	o.project.Path = pointer.ToString(args[0])
-	gid, err := strconv.Atoi(o.namespace)
+	gid, convErr := strconv.Atoi(o.namespace)
 	// if namespace is not a number,
 	// get the namespace's group id and assign it to gid
-	if err != nil {
-		ns, err, _ := o.gitlabClient.Namespaces.GetNamespace(o.namespace)
+	if convErr != nil {
+		ns, _, err := o.gitlabClient.Namespaces.GetNamespace(o.namespace)
 		if err == nil {
 			gid = ns.ID
 		}
