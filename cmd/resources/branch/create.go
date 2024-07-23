@@ -114,6 +114,6 @@ func (o *CreateOptions) Run(args []string) error {
 	if err != nil {
 		return err
 	}
-	cmdutil.PrintBranchOut(o.Out, branch)
+	cmdutil.PrintBranchOut(o.Out, o.ioStreams.Out, branch)
 	return nil
 }

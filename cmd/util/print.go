@@ -20,7 +20,7 @@ import (
 	"github.com/olekukonko/tablewriter"
 	gitlab "github.com/xanzy/go-gitlab"
 	"gopkg.in/yaml.v3"
-	"os"
+	"io"
 	"strconv"
 	"strings"
 )
@@ -30,15 +30,15 @@ var (
 		"Use the (-h) flag to see the command usage."
 )
 
-func PrintProjectsOut(format string, projects ...*gitlab.Project) {
+func PrintProjectsOut(format string, w io.Writer, projects ...*gitlab.Project) {
 	switch format {
 	case JSON:
-		printJSON(projects)
+		printJSON(w, projects)
 	case YAML:
-		printYAML(projects)
+		printYAML(w, projects)
 	default:
 		if len(projects) == 0 {
-			fmt.Println(noResultMsg)
+			fmt.Fprintln(w, noResultMsg)
 			return
 		}
 		header := []string{"ID", "PATH", "URL", "ISSUES COUNT", "TAGS"}
@@ -52,19 +52,19 @@ func PrintProjectsOut(format string, projects ...*gitlab.Project) {
 				strings.Join(v.TagList, ","),
 			})
 		}
-		printTable(header, rows)
+		printTable(header, w, rows)
 	}
 }
 
-func PrintGroupsOut(format string, groups ...*gitlab.Group) {
+func PrintGroupsOut(format string, w io.Writer, groups ...*gitlab.Group) {
 	switch format {
 	case JSON:
-		printJSON(groups)
+		printJSON(w, groups)
 	case YAML:
-		printYAML(groups)
+		printYAML(w, groups)
 	default:
 		if len(groups) == 0 {
-			fmt.Println(noResultMsg)
+			fmt.Fprintln(w, noResultMsg)
 			return
 		}
 		header := []string{"ID", "PATH", "URL", "PARENT ID"}
@@ -77,18 +77,18 @@ func PrintGroupsOut(format string, groups ...*gitlab.Group) {
 				strconv.Itoa(v.ParentID),
 			})
 		}
-		printTable(header, rows)
+		printTable(header, w, rows)
 	}
 }
-func PrintBranchOut(format string, branches ...*gitlab.Branch) {
+func PrintBranchOut(format string, w io.Writer, branches ...*gitlab.Branch) {
 	switch format {
 	case YAML:
-		printYAML(branches)
+		printYAML(w, branches)
 	case JSON:
-		printJSON(branches)
+		printJSON(w, branches)
 	default:
 		if len(branches) == 0 {
-			fmt.Println(noResultMsg)
+			fmt.Fprintln(w, noResultMsg)
 			return
 		}
 		header := []string{"NAME", "PROTECTED", "DEVELOPERS CAN PUSH", "DEVELOPERS CAN MERGE"}
@@ -101,16 +101,16 @@ func PrintBranchOut(format string, branches ...*gitlab.Branch) {
 				strconv.FormatBool(v.DevelopersCanMerge),
 			})
 		}
-		printTable(header, rows)
+		printTable(header, w, rows)
 	}
 }
 
-func PrintFilesOut(format string, trees ...*gitlab.TreeNode) {
+func PrintFilesOut(format string, w io.Writer, trees ...*gitlab.TreeNode) {
 	switch format {
 	case JSON:
-		printJSON(trees)
+		printJSON(w, trees)
 	case YAML:
-		printYAML(trees)
+		printYAML(w, trees)
 	default:
 		if len(trees) == 0 {
 			fmt.Println(noResultMsg)
@@ -124,31 +124,31 @@ func PrintFilesOut(format string, trees ...*gitlab.TreeNode) {
 				v.Type,
 			})
 		}
-		printTable(header, rows)
+		printTable(header, w, rows)
 	}
 }
 
-func printJSON(v interface{}) {
+func printJSON(w io.Writer, v interface{}) {
 	b, err := json.MarshalIndent(v, "", " ")
 	if err != nil {
-		Error(fmt.Sprintf("failed printing to json: %v", err))
+		Error(w, fmt.Sprintf("failed printing to json: %v", err))
 	}
-	fmt.Println(string(b))
+	fmt.Fprintln(w, string(b))
 }
 
-func printYAML(v interface{}) {
+func printYAML(w io.Writer, v interface{}) {
 	b, err := yaml.Marshal(v)
 	if err != nil {
-		Error(fmt.Sprintf("failed printing to yaml: %v", err))
+		Error(w, fmt.Sprintf("failed printing to yaml: %v", err))
 	}
-	fmt.Println(string(b))
+	fmt.Fprintln(w, string(b))
 }
 
-func printTable(header []string, rows [][]string) {
+func printTable(header []string, w io.Writer, rows [][]string) {
 	if len(header) > 5 {
 		panic("maximum allowed length of a table header is only 5.")
 	}
-	table := tablewriter.NewWriter(os.Stdout)
+	table := tablewriter.NewWriter(w)
 	table.SetHeader(header)
 	table.SetAutoWrapText(false)
 	table.SetAutoFormatHeaders(true)

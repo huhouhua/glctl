@@ -115,8 +115,8 @@ func StandardErrorMessage(err error) (string, bool) {
 	return "", false
 
 }
-func Error(msg interface{}) {
-	fmt.Println("Error:", msg)
+func Error(w io.Writer, msg interface{}) {
+	fmt.Fprintln(w, "Error:", msg)
 	os.Exit(1)
 }
 
