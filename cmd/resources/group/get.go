@@ -135,7 +135,7 @@ func (o *ListOptions) Run(args []string) error {
 		if err != nil {
 			return err
 		}
-		cmdutil.PrintGroupsOut(o.Out, group)
+		cmdutil.PrintGroupsOut(o.Out, o.ioStreams.Out, group)
 		return nil
 	}
 	var groups []*gitlab.Group
@@ -158,6 +158,6 @@ func (o *ListOptions) Run(args []string) error {
 	if err != nil {
 		return nil
 	}
-	cmdutil.PrintGroupsOut(o.Out, groups...)
+	cmdutil.PrintGroupsOut(o.Out, o.ioStreams.Out, groups...)
 	return nil
 }

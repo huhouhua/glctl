@@ -127,15 +127,15 @@ func (o *Options) Run() error {
 	switch o.Output {
 	case "":
 		if o.Short {
-			fmt.Fprintf(o.IOStreams.Out, "Client Version: %s\n", clientVersion.GitVersion)
+			_, _ = fmt.Fprintf(o.IOStreams.Out, "Client Version: %s\n", clientVersion.GitVersion)
 
 			if serverVersion != nil {
-				fmt.Fprintf(o.IOStreams.Out, "Server Version: %s\n", serverVersion.Version)
+				_, _ = fmt.Fprintf(o.IOStreams.Out, "Server Version: %s\n", serverVersion.Version)
 			}
 		} else {
-			fmt.Fprintf(o.IOStreams.Out, "Client Version: %s\n", fmt.Sprintf("%#v", clientVersion))
+			_, _ = fmt.Fprintf(o.IOStreams.Out, "Client Version: %s\n", fmt.Sprintf("%#v", clientVersion))
 			if serverVersion != nil {
-				fmt.Fprintf(o.IOStreams.Out, "Server Version: %s\n", fmt.Sprintf("%#v", *serverVersion))
+				_, _ = fmt.Fprintf(o.IOStreams.Out, "Server Version: %s\n", fmt.Sprintf("%#v", *serverVersion))
 			}
 		}
 	case "yaml":
@@ -144,14 +144,14 @@ func (o *Options) Run() error {
 			return err
 		}
 
-		fmt.Fprintln(o.IOStreams.Out, string(marshaled))
+		_, _ = fmt.Fprintln(o.IOStreams.Out, string(marshaled))
 	case "json":
 		marshaled, err := json.MarshalIndent(&versionInfo, "", "  ")
 		if err != nil {
 			return err
 		}
 
-		fmt.Fprintln(o.IOStreams.Out, string(marshaled))
+		_, _ = fmt.Fprintln(o.IOStreams.Out, string(marshaled))
 	default:
 		// There is a bug in the program if we hit this case.
 		// However, we follow a policy of never panicking.

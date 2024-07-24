@@ -123,6 +123,6 @@ func (o *ListOptions) Run(args []string) error {
 		}
 		o.branch.Page++
 	}
-	cmdutil.PrintBranchOut(o.Out, branches...)
+	cmdutil.PrintBranchOut(o.Out, o.ioStreams.Out, branches...)
 	return nil
 }
