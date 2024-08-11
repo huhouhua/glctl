@@ -66,7 +66,6 @@ func (f *ConfigFlags) toRawGLPersistentConfigLoader() ClientConfig {
 	if f.clientConfig == nil {
 		f.clientConfig = f.toRawGLConfigLoader()
 	}
-
 	return f.clientConfig
 }
 
