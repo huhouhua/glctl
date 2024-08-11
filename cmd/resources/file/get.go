@@ -143,6 +143,6 @@ func (o *ListOptions) Run(args []string) error {
 		}
 		o.file.ListOptions.Page++
 	}
-	cmdutil.PrintFilesOut(o.Out, list...)
+	cmdutil.PrintFilesOut(o.Out, o.ioStreams.Out, list...)
 	return nil
 }
