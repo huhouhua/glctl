@@ -160,7 +160,7 @@ func initConfig() {
 		// Find home directory.
 		home, err := homedir.Dir()
 		if err != nil {
-			cmdutil.Error(err)
+			cmdutil.Error(os.Stdout, err)
 		}
 
 		// Search config in home directory with name ".gl" (without extension).
@@ -173,7 +173,7 @@ func initConfig() {
 		// NOTE: the config file is not required to exists
 		// raise an error if error is other than config file not found
 		if !strings.Contains(err.Error(), `Config File ".glctl" Not Found`) {
-			cmdutil.Error(err)
+			cmdutil.Error(os.Stdout, err)
 		}
 	}
 }
