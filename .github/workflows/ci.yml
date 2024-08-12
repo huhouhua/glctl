@@ -65,7 +65,7 @@ jobs:
             --restart always \
             --volume /etc/localtime:/etc/localtime:ro \
             --shm-size 256m \
-            gitlab-ee:14.7.2-ee.0
+            gitlab/gitlab-ce:16.1.7-ce.0
       - name: Build source code for host platform
         run: |
           make build
