@@ -100,11 +100,11 @@ let item+=1
   exit 0
 fi
 
-if [ "$STOP" == "true" ]; then
-h2 "[Step $item]: unpause..."
+if [ "$UNPAUSE" == "true" ]; then
+h2 "[Step $item]: un pause..."
 let item+=1
 
   ${DOCKER_COMPOSE} -f ${DOCKER_COMPOSE_TEST_FILE} unpause
-  success $"---- unpause successfully.----"
+  success $"---- un pause successfully.----"
   exit 0
 fi
