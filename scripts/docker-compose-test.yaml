@@ -1,0 +1,24 @@
+version: '3'
+services:
+  gitlab:
+    #    image: gitlab/gitlab-ce:16.1.7-ce.0
+    image: 172.17.189.43/library/gitlab-ee:14.7.2-ee.0
+    container_name: gitlab
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/-/readiness"]
+      interval: 30s
+      timeout: 15s
+      retries: 8
+      start_period: 30s
+    environment:
+      TZ: 'Asia/Shanghai'
+      GITLAB_OMNIBUS_CONFIG: |
+        prometheus['enable'] = false
+        prometheus_monitoring['enable'] = false
+        alertmanager['enable'] = false
+        grafana['enable'] = false
+        gitlab_rails['initial_root_password'] = 'password'
+    ports:
+      - '8080:80'
+    shm_size: '256m'
