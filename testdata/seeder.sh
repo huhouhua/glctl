@@ -95,7 +95,7 @@ sgroup4_id=$(${CCURL} "${GITLAB_URL}/api/v4/groups" -d "access_token=${GITLAB_PR
 success "${sgroup4_id} SubGroup4 created"
 
 echo ""
-info sleeping for 5 seconds..
+info "sleeping for 5 seconds.."
 sleep 5
 
 echo ""
