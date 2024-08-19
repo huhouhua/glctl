@@ -14,171 +14,194 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-source ../scripts/lib/loggin.sh
+DIR="$(cd "$(dirname "$0")" && pwd)"
+source $DIR/../scripts/lib/loggin.sh
+source $DIR/credentials.sh
 
-Header="-HContent-Type: application/json"
-CCURL="curl -f -s -XPOST" # Create
-UCURL="curl -f -s -XPUT" # Update
-RCURL="curl -f -s -XGET" # Retrieve
-DCURL="curl -f -s -XDELETE" # Delete
+gitlab::credentials
 
-gitlab::credentials()
-{
-  export GITLAB_USERNAME=root
-  export GITLAB_PASSWORD=$(gitlab::get::password)
-  export GITLAB_URL=${GITLAB_URL:-http://localhost:8080}
-  export GITLAB_PRIVATE_TOKEN=$(gitlab:get::token)
-  export GITLAB_OAUTH_TOKEN=$(gitlab::get::oath_token)
-
-}
-
-# get access token
-gitlab::login(){
-  ${CCURL} "${GITLAB_URL}/oauth/token?grant_type=password&username=${GITLAB_USERNAME}&password=${GITLAB_PASSWORD}" | jq '.access_token' | tr -d '"'
-}
-
-gitlab::get::password()
-{
-
-
-}
-
-gitlab::get:oath_token()
-{
-  ${CCURL}  "${GITLAB_URL}/oauth/token?grant_type=password&username=${GITLAB_USERNAME}&password=${GITLAB_PASSWORD}" | jq '.access_token' | tr -d '"'
-}
-
-  #
-  # From: https://stackoverflow.com/questions/47948887/login-to-gitlab-using-curl
-  #
-gitlab::get:token()
-{
-  # curl for the login page to get a session cookie and the sources with the auth tokens
-  body_header=$(${RCURL} -c cookies.txt -i "${GITLAB_URL}/users/sign_in" -s)
-
-  # grep the auth token for the user login for
-  #   not sure whether another token on the page will work, too - there are 3 of them
-  csrf_token=$(echo $body_header | perl -ne 'print "$1\n" if /new_user.*?authenticity_token"[[:blank:]]value="(.+?)"/' | sed -n 1p)
-
-  # send login credentials with curl, using cookies and token from previous request
-  ${RCURL} -b cookies.txt -c cookies.txt -i "${GITLAB_URL}/users/sign_in" \
-      --data "user[login]=${GITLAB_USERNAME}&user[password]=${GITLAB_PASSWORD}" \
-      --data-urlencode "authenticity_token=${csrf_token}"
-
-  # send curl GET request to personal access token page to get auth token
-  body_header=$(${RCURL} -H 'user-agent: curl' -b cookies.txt -i "${GITLAB_URL}/profile/personal_access_tokens" -s)
-  csrf_token=$(echo $body_header | perl -ne 'print "$1\n" if /authenticity_token"[[:blank:]]value="(.+?)"/' | sed -n 1p)
-
-  # curl POST request to send the "generate personal access token form"
-  # the response will be a redirect, so we have to follow using `-L`
-  body_header=$(${RCURL} -L -b cookies.txt "${GITLAB_URL}/profile/personal_access_tokens" \
-      --data-urlencode "authenticity_token=${csrf_token}" \
-      --data 'personal_access_token[name]=golab-generated&personal_access_token[expires_at]=&personal_access_token[scopes][]=api')
-
-  # Scrape the personal access token from the response HTML
-  personal_access_token=$(echo $body_header | perl -ne 'print "$1\n" if /created-personal-access-token"[[:blank:]]value="(.+?)"/' | sed -n 1p)
-
-  return  $personal_access_token
-}
+info "GITLAB_USERNAME:${GITLAB_USERNAME}"
+info "GITLAB_PASSWORD:${GITLAB_PASSWORD}"
+info "GITLAB_URL:${GITLAB_URL}"
+info "GITLAB_PRIVATE_TOKEN:${GITLAB_PRIVATE_TOKEN}"
+info "GITLAB_OAUTH_TOKEN:${GITLAB_OAUTH_TOKEN}"
 
 echo "=============================================="
 echo "#              SEEDER SCRIPT                 #"
 echo "=============================================="
 
+set -e
 
+echo ""
 # create user
-echo "Creating users"
-user1_id=$(curl -X POST "${GITLAB_URL}/api/v4/users?access_token=${access_token}&name=John+Doe&email=john.doe@gmail.com&username=john.doe&password=123qwe123&skip_confirmation=true" | jq '.id')
-user2_id=$(curl -X POST "${GITLAB_URL}/api/v4/users?access_token=${access_token}&name=John+Smith&email=john.smith@gmail.com&username=john.smith&password=123qwe123&skip_confirmation=true" | jq '.id')
-user3_id=$(curl -X POST "${GITLAB_URL}/api/v4/users?access_token=${access_token}&name=Matt+Hunter&email=matt.hunter@gmail.com&username=matt.hunter&password=123qwe123&skip_confirmation=true" | jq '.id')
-user4_id=$(curl -X POST "${GITLAB_URL}/api/v4/users?access_token=${access_token}&name=Amelia+Walsh&email=amelia.walsh@gmail.com&username=amelia.walsh&password=123qwe123&skip_confirmation=true" | jq '.id')
-user5_id=$(curl -X POST "${GITLAB_URL}/api/v4/users?access_token=${access_token}&name=Kevin+McLean&email=kevin.mclean@gmail.com&username=kevin.mclean&password=123qwe123&skip_confirmation=true" | jq '.id')
-user6_id=$(curl -X POST "${GITLAB_URL}/api/v4/users?access_token=${access_token}&name=Kylie+Morrison&email=kylie.morrison@gmail.com&username=kylie.morrison&password=123qwe123&skip_confirmation=true" | jq '.id')
-user7_id=$(curl -X POST "${GITLAB_URL}/api/v4/users?access_token=${access_token}&name=Rebecca+Gray&email=rebecca.gray@gmail.com&username=rebecca.gray&password=123qwe123&skip_confirmation=true" | jq '.id')
-user8_id=$(curl -X POST "${GITLAB_URL}/api/v4/users?access_token=${access_token}&name=Simon+Turner&email=simon.turner@gmail.com&username=simon.turner&password=123qwe123&skip_confirmation=true" | jq '.id')
-user9_id=$(curl -X POST "${GITLAB_URL}/api/v4/users?access_token=${access_token}&name=Olivia+White&email=olivia.white@gmail.com&username=olivia.white&password=123qwe123&skip_confirmation=true" | jq '.id')
-user10_id=$(curl -X POST "${GITLAB_URL}/api/v4/users?access_token=${access_token}&name=Frank+Watson&email=frank.watson@gmail.com&username=frank.watson&password=123qwe123&skip_confirmation=true" | jq '.id')
-user11_id=$(curl -X POST "${GITLAB_URL}/api/v4/users?access_token=${access_token}&name=Paul+Lyman&email=paul.lyman@gmail.com&username=paul.lyman&password=123qwe123&skip_confirmation=true" | jq '.id')
+info "Creating users......"
+user1_id=$(${CCURL} "${GITLAB_URL}/api/v4/users" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=John+Doe&email=john.doe@gmail.com&username=john.doe&password=123qwe123&skip_confirmation=true" | jq '.id')
+success "${user1_id} john.doe created"
+user2_id=$(${CCURL} "${GITLAB_URL}/api/v4/users" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=John+Smith&email=john.smith@gmail.com&username=john.smith&password=123qwe123&skip_confirmation=true" | jq '.id')
+success "${user2_id} john.smith created"
+user3_id=$(${CCURL} "${GITLAB_URL}/api/v4/users" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Matt+Hunter&email=matt.hunter@gmail.com&username=matt.hunter&password=123qwe123&skip_confirmation=true" | jq '.id')
+success "${user3_id} matt.hunter created"
+user4_id=$(${CCURL} "${GITLAB_URL}/api/v4/users" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Amelia+Walsh&email=amelia.walsh@gmail.com&username=amelia.walsh&password=123qwe123&skip_confirmation=true" | jq '.id')
+success "${user4_id} amelia.walsh created"
+user5_id=$(${CCURL} "${GITLAB_URL}/api/v4/users" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Kevin+McLean&email=kevin.mclean@gmail.com&username=kevin.mclean&password=123qwe123&skip_confirmation=true" | jq '.id')
+success "${user5_id} kevin.mclean created"
+user6_id=$(${CCURL} "${GITLAB_URL}/api/v4/users" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Kylie+Morrison&email=kylie.morrison@gmail.com&username=kylie.morrison&password=123qwe123&skip_confirmation=true" | jq '.id')
+success "${user6_id} kylie.morrison created"
+user7_id=$(${CCURL} "${GITLAB_URL}/api/v4/users" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Rebecca+Gray&email=rebecca.gray@gmail.com&username=rebecca.gray&password=123qwe123&skip_confirmation=true" | jq '.id')
+success "${user7_id} rebecca.gray created"
+user8_id=$(${CCURL} "${GITLAB_URL}/api/v4/users" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Simon+Turner&email=simon.turner@gmail.com&username=simon.turner&password=123qwe123&skip_confirmation=true" | jq '.id')
+success "${user8_id} simon.turner created"
+user9_id=$(${CCURL} "${GITLAB_URL}/api/v4/users" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Olivia+White&email=olivia.white@gmail.com&username=olivia.white&password=123qwe123&skip_confirmation=true" | jq '.id')
+success "${user9_id} olivia.white created"
+user10_id=$(${CCURL} "${GITLAB_URL}/api/v4/users" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Frank+Watson&email=frank.watson@gmail.com&username=frank.watson&password=123qwe123&skip_confirmation=true" | jq '.id')
+success "${user10_id} frank.watson created"
+user11_id=$(${CCURL} "${GITLAB_URL}/api/v4/users" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Paul+Lyman&email=paul.lyman@gmail.com&username=paul.lyman&password=123qwe123&skip_confirmation=true" | jq '.id')
+success "${user11_id} paul.lyman created"
 
+echo ""
 # create group
-echo "Creating groups"
-pgroup1_id=$(curl -X POST "${GITLAB_URL}/api/v4/groups?access_token=${access_token}&name=Group1&path=Group1" | jq '.id')
-pgroup2_id=$(curl -X POST "${GITLAB_URL}/api/v4/groups?access_token=${access_token}&name=Group2&path=Group2" | jq '.id')
+info "Creating groups"
+pgroup1_id=$(${CCURL} "${GITLAB_URL}/api/v4/groups" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Group1&path=Group1" | jq '.id')
+success "${pgroup1_id} Group1 created"
+pgroup2_id=$(${CCURL} "${GITLAB_URL}/api/v4/groups" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Group2&path=Group2" | jq '.id')
+success "${pgroup2_id} Group2 created"
 
+echo ""
 # add user to group
-echo "Adding users to group"
-curl -X POST "${GITLAB_URL}/api/v4/groups/${pgroup1_id}/members?access_token=${access_token}&user_id=${user1_id}&access_level=30"
-curl -X POST "${GITLAB_URL}/api/v4/groups/${pgroup1_id}/members?access_token=${access_token}&user_id=${user2_id}&access_level=40"
-curl -X POST "${GITLAB_URL}/api/v4/groups/${pgroup1_id}/members?access_token=${access_token}&user_id=${user3_id}&access_level=50"
-curl -X POST "${GITLAB_URL}/api/v4/groups/${pgroup2_id}/members?access_token=${access_token}&user_id=${user4_id}&access_level=30"
-curl -X POST "${GITLAB_URL}/api/v4/groups/${pgroup2_id}/members?access_token=${access_token}&user_id=${user5_id}&access_level=40"
-curl -X POST "${GITLAB_URL}/api/v4/groups/${pgroup2_id}/members?access_token=${access_token}&user_id=${user6_id}&access_level=50"
+info "Adding users to group"
+${CCURL} "${GITLAB_URL}/api/v4/groups/${pgroup1_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user1_id}&access_level=30"
+success "add ${user1_id} to Group1"
+${CCURL} "${GITLAB_URL}/api/v4/groups/${pgroup1_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user2_id}&access_level=40"
+success "add ${user2_id} to Group1"
+${CCURL} "${GITLAB_URL}/api/v4/groups/${pgroup1_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user3_id}&access_level=50"
+success "add ${user3_id} to Group1"
+${CCURL} "${GITLAB_URL}/api/v4/groups/${pgroup2_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user4_id}&access_level=30"
+success "add ${user4_id} to Group2"
+${CCURL} "${GITLAB_URL}/api/v4/groups/${pgroup2_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user5_id}&access_level=40"
+success "add ${user5_id} to Group2"
+${CCURL} "${GITLAB_URL}/api/v4/groups/${pgroup2_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user6_id}&access_level=50"
+success "add ${user6_id} to Group2"
 
+echo ""
 # create subgroup
-echo "Creating subgroup"
-sgroup1_id=$(curl -X POST "${GITLAB_URL}/api/v4/groups?access_token=${access_token}&name=SubGroup1&path=SubGroup1&parent_id=${pgroup1_id}" | jq '.id')
-sgroup2_id=$(curl -X POST "${GITLAB_URL}/api/v4/groups?access_token=${access_token}&name=SubGroup2&path=SubGroup2&parent_id=${pgroup1_id}" | jq '.id')
-sgroup3_id=$(curl -X POST "${GITLAB_URL}/api/v4/groups?access_token=${access_token}&name=SubGroup3&path=SubGroup3&parent_id=${pgroup2_id}" | jq '.id')
-sgroup4_id=$(curl -X POST "${GITLAB_URL}/api/v4/groups?access_token=${access_token}&name=SubGroup4&path=SubGroup4&parent_id=${pgroup2_id}" | jq '.id')
+info "Creating subgroup"
+sgroup1_id=$(${CCURL} "${GITLAB_URL}/api/v4/groups" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=SubGroup1&path=SubGroup1&parent_id=${pgroup1_id}" | jq '.id')
+success "${sgroup1_id} SubGroup1 created"
+sgroup2_id=$(${CCURL} "${GITLAB_URL}/api/v4/groups" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=SubGroup2&path=SubGroup2&parent_id=${pgroup1_id}" | jq '.id')
+success "${sgroup2_id} SubGroup2 created"
+sgroup3_id=$(${CCURL} "${GITLAB_URL}/api/v4/groups" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=SubGroup3&path=SubGroup3&parent_id=${pgroup2_id}" | jq '.id')
+success "${sgroup3_id} SubGroup3 created"
+sgroup4_id=$(${CCURL} "${GITLAB_URL}/api/v4/groups" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=SubGroup4&path=SubGroup4&parent_id=${pgroup2_id}" | jq '.id')
+success "${sgroup4_id} SubGroup4 created"
 
-echo sleeping for 5 seconds..
+echo ""
+info sleeping for 5 seconds..
 sleep 5
 
+echo ""
 # create group project
-echo "Creating a project in group/subgroup"
-groupproject1_id=$(curl -X POST "${GITLAB_URL}/api/v4/projects?access_token=${access_token}&name=Project1&namespace_id=${pgroup1_id}" | jq '.id')
-groupproject2_id=$(curl -X POST "${GITLAB_URL}/api/v4/projects?access_token=${access_token}&name=Project2&namespace_id=${pgroup1_id}" | jq '.id')
-groupproject3_id=$(curl -X POST "${GITLAB_URL}/api/v4/projects?access_token=${access_token}&name=Project3&namespace_id=${pgroup1_id}" | jq '.id')
-groupproject4_id=$(curl -X POST "${GITLAB_URL}/api/v4/projects?access_token=${access_token}&name=Project4&namespace_id=${sgroup1_id}" | jq '.id')
-groupproject5_id=$(curl -X POST "${GITLAB_URL}/api/v4/projects?access_token=${access_token}&name=Project5&namespace_id=${sgroup1_id}" | jq '.id')
-groupproject6_id=$(curl -X POST "${GITLAB_URL}/api/v4/projects?access_token=${access_token}&name=Project6&namespace_id=${sgroup1_id}" | jq '.id')
-groupproject7_id=$(curl -X POST "${GITLAB_URL}/api/v4/projects?access_token=${access_token}&name=Project7&namespace_id=${sgroup2_id}" | jq '.id')
-groupproject8_id=$(curl -X POST "${GITLAB_URL}/api/v4/projects?access_token=${access_token}&name=Project8&namespace_id=${sgroup2_id}" | jq '.id')
-groupproject9_id=$(curl -X POST "${GITLAB_URL}/api/v4/projects?access_token=${access_token}&name=Project9&namespace_id=${sgroup2_id}" | jq '.id')
-groupproject10_id=$(curl -X POST "${GITLAB_URL}/api/v4/projects?access_token=${access_token}&name=Project10&namespace_id=${pgroup2_id}" | jq '.id')
-groupproject11_id=$(curl -X POST "${GITLAB_URL}/api/v4/projects?access_token=${access_token}&name=Project11&namespace_id=${pgroup2_id}" | jq '.id')
-groupproject12_id=$(curl -X POST "${GITLAB_URL}/api/v4/projects?access_token=${access_token}&name=Project12&namespace_id=${pgroup2_id}" | jq '.id')
-groupproject13_id=$(curl -X POST "${GITLAB_URL}/api/v4/projects?access_token=${access_token}&name=Project13&namespace_id=${sgroup3_id}" | jq '.id')
-groupproject14_id=$(curl -X POST "${GITLAB_URL}/api/v4/projects?access_token=${access_token}&name=Project14&namespace_id=${sgroup3_id}" | jq '.id')
-groupproject15_id=$(curl -X POST "${GITLAB_URL}/api/v4/projects?access_token=${access_token}&name=Project15&namespace_id=${sgroup3_id}" | jq '.id')
-groupproject16_id=$(curl -X POST "${GITLAB_URL}/api/v4/projects?access_token=${access_token}&name=Project16&namespace_id=${sgroup4_id}" | jq '.id')
-groupproject17_id=$(curl -X POST "${GITLAB_URL}/api/v4/projects?access_token=${access_token}&name=Project17&namespace_id=${sgroup4_id}" | jq '.id')
-groupproject18_id=$(curl -X POST "${GITLAB_URL}/api/v4/projects?access_token=${access_token}&name=Project18&namespace_id=${sgroup4_id}" | jq '.id')
+info "Creating a project in group/subgroup"
+group_project1_id=$(${CCURL} "${GITLAB_URL}/api/v4/projects" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Project1&namespace_id=${pgroup1_id}" | jq '.id')
+success "${group_project1_id} Group1/Project1 created"
+group_project2_id=$(${CCURL} "${GITLAB_URL}/api/v4/projects" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Project2&namespace_id=${pgroup1_id}" | jq '.id')
+success "${group_project2_id} Group1/Project2 created"
+group_project3_id=$(${CCURL} "${GITLAB_URL}/api/v4/projects" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Project3&namespace_id=${pgroup1_id}" | jq '.id')
+success "${group_project3_id} Group1/Project3 created"
+group_project4_id=$(${CCURL} "${GITLAB_URL}/api/v4/projects" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Project4&namespace_id=${sgroup1_id}" | jq '.id')
+success "${group_project4_id} Group1/SubGroup1/Project4 created"
+group_project5_id=$(${CCURL} "${GITLAB_URL}/api/v4/projects" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Project5&namespace_id=${sgroup1_id}" | jq '.id')
+success "${group_project5_id} Group1/SubGroup1/Project5 created"
+group_project6_id=$(${CCURL} "${GITLAB_URL}/api/v4/projects" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Project6&namespace_id=${sgroup1_id}" | jq '.id')
+success "${group_project6_id} Group1/SubGroup1/Project6 created"
+group_project7_id=$(${CCURL} "${GITLAB_URL}/api/v4/projects" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Project7&namespace_id=${sgroup2_id}" | jq '.id')
+success "${group_project7_id} Group1/SubGroup2/Project7 created"
+group_project8_id=$(${CCURL} "${GITLAB_URL}/api/v4/projects" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Project8&namespace_id=${sgroup2_id}" | jq '.id')
+success "${group_project8_id} Group1/SubGroup2/Project8 created"
+group_project9_id=$(${CCURL} "${GITLAB_URL}/api/v4/projects" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Project9&namespace_id=${sgroup2_id}" | jq '.id')
+success "${group_project9_id} Group1/SubGroup2/Project9 created"
+group_project10_id=$(${CCURL} "${GITLAB_URL}/api/v4/projects" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Project10&namespace_id=${pgroup2_id}" | jq '.id')
+success "${group_project10_id} Group2/Project10 created"
+group_project11_id=$(${CCURL} "${GITLAB_URL}/api/v4/projects" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Project11&namespace_id=${pgroup2_id}" | jq '.id')
+success "${group_project11_id} Group2/Project11 created"
+group_project12_id=$(${CCURL} "${GITLAB_URL}/api/v4/projects" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Project12&namespace_id=${pgroup2_id}" | jq '.id')
+success "${group_project12_id} Group2/Project12 created"
+group_project13_id=$(${CCURL} "${GITLAB_URL}/api/v4/projects" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Project13&namespace_id=${sgroup3_id}" | jq '.id')
+success "${group_project13_id} Group2/SubGroup3/Project13 created"
+group_project14_id=$(${CCURL} "${GITLAB_URL}/api/v4/projects" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Project14&namespace_id=${sgroup3_id}" | jq '.id')
+success "${group_project14_id} Group2/SubGroup3/Project14 created"
+group_project15_id=$(${CCURL} "${GITLAB_URL}/api/v4/projects" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Project15&namespace_id=${sgroup3_id}" | jq '.id')
+success "${group_project15_id} Group2/SubGroup3/Project15 created"
+group_project16_id=$(${CCURL} "${GITLAB_URL}/api/v4/projects" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Project16&namespace_id=${sgroup4_id}" | jq '.id')
+success "${group_project16_id} Group2/SubGroup4/Project16 created"
+group_project17_id=$(${CCURL} "${GITLAB_URL}/api/v4/projects" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Project17&namespace_id=${sgroup4_id}" | jq '.id')
+success "${group_project17_id} Group2/SubGroup4/Project17 created"
+group_project18_id=$(${CCURL} "${GITLAB_URL}/api/v4/projects" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Project18&namespace_id=${sgroup4_id}" | jq '.id')
+success "${group_project18_id} Group2/SubGroup4/Project18 created"
 
+echo ""
 # add user to project
-curl -X POST "${GITLAB_URL}/api/v4/projects/${groupproject1_id}/members?access_token=${access_token}&user_id=${user1_id}&access_level=30"
-curl -X POST "${GITLAB_URL}/api/v4/projects/${groupproject1_id}/members?access_token=${access_token}&user_id=${user2_id}&access_level=40"
-curl -X POST "${GITLAB_URL}/api/v4/projects/${groupproject1_id}/members?access_token=${access_token}&user_id=${user3_id}&access_level=50"
-curl -X POST "${GITLAB_URL}/api/v4/projects/${groupproject1_id}/members?access_token=${access_token}&user_id=${user4_id}&access_level=30"
-curl -X POST "${GITLAB_URL}/api/v4/projects/${groupproject2_id}/members?access_token=${access_token}&user_id=${user5_id}&access_level=40"
-curl -X POST "${GITLAB_URL}/api/v4/projects/${groupproject2_id}/members?access_token=${access_token}&user_id=${user6_id}&access_level=50"
-curl -X POST "${GITLAB_URL}/api/v4/projects/${groupproject2_id}/members?access_token=${access_token}&user_id=${user7_id}&access_level=40"
-curl -X POST "${GITLAB_URL}/api/v4/projects/${groupproject2_id}/members?access_token=${access_token}&user_id=${user8_id}&access_level=40"
+info "Add user to project"
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project1_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user1_id}&access_level=30"
+success "add ${user1_id} to Group1/Project1"
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project1_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user2_id}&access_level=40"
+success "add ${user2_id} to Group1/Project1"
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project1_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user3_id}&access_level=50"
+success "add ${user3_id} to Group1/Project1"
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project1_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user4_id}&access_level=30"
+success "add ${user4_id} to Group1/Project1"
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project2_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user5_id}&access_level=40"
+success "add ${user5_id} to Group1/Project2"
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project2_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user6_id}&access_level=50"
+success "add ${user6_id} to Group1/Project2"
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project2_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user7_id}&access_level=40"
+success "add ${user7_id} to Group1/Project2"
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project2_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user8_id}&access_level=40"
+success "add ${user8_id} to Group1/Project2"
 
+echo ""
 # create user project
-echo "Creating users project"
-project1_id=$(curl -X POST "${GITLAB_URL}/api/v4/projects/user/${user7_id}?access_token=${access_token}&name=Project19" | jq '.id')
-project2_id=$(curl -X POST "${GITLAB_URL}/api/v4/projects/user/${user8_id}?access_token=${access_token}&name=Project20" | jq '.id')
-project3_id=$(curl -X POST "${GITLAB_URL}/api/v4/projects/user/${user9_id}?access_token=${access_token}&name=Project21" | jq '.id')
-project4_id=$(curl -X POST "${GITLAB_URL}/api/v4/projects/user/${user10_id}?access_token=${access_token}&name=Project22" | jq '.id')
-project5_id=$(curl -X POST "${GITLAB_URL}/api/v4/projects/user/${user11_id}?access_token=${access_token}&name=Project23" | jq '.id')
+info "Creating users project"
+project1_id=$(${CCURL} "${GITLAB_URL}/api/v4/projects/user/${user7_id}" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Project19" | jq '.id')
+success "${user7_id} in Project19 created"
+project2_id=$(${CCURL} "${GITLAB_URL}/api/v4/projects/user/${user8_id}" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Project20" | jq '.id')
+success "${user8_id} in Project20 created"
+project3_id=$(${CCURL} "${GITLAB_URL}/api/v4/projects/user/${user9_id}" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Project21" | jq '.id')
+success "${user9_id} in Project21 created"
+project4_id=$(${CCURL} "${GITLAB_URL}/api/v4/projects/user/${user10_id}" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Project22" | jq '.id')
+success "${user10_id} in Project22 created"
+project5_id=$(${CCURL} "${GITLAB_URL}/api/v4/projects/user/${user11_id}" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Project23" | jq '.id')
+success "${user11_id} in Project23 created"
 
+echo ""
 # create hooks for projects
-echo "Creating hooks for projects"
-curl -X POST "${GITLAB_URL}/api/v4/projects/${project1_id}/hooks?access_token=${access_token}&url=http%3A%2F%2Fwww.sample1.com%2F"
-curl -X POST "${GITLAB_URL}/api/v4/projects/${project2_id}/hooks?access_token=${access_token}&url=http%3A%2F%2Fwww.sample2.com%2F"
-curl -X POST "${GITLAB_URL}/api/v4/projects/${project3_id}/hooks?access_token=${access_token}&url=http%3A%2F%2Fwww.sample3.com%2F"
-curl -X POST "${GITLAB_URL}/api/v4/projects/${project4_id}/hooks?access_token=${access_token}&url=http%3A%2F%2Fwww.sample4.com%2F"
-curl -X POST "${GITLAB_URL}/api/v4/projects/${project5_id}/hooks?access_token=${access_token}&url=http%3A%2F%2Fwww.sample5.com%2F"
+info "Creating hooks for projects"
+${CCURL} "${GITLAB_URL}/api/v4/projects/${project1_id}/hooks" -d "access_token=${GITLAB_PRIVATE_TOKEN}&url=http%3A%2F%2Fwww.sample1.com%2F"
+success "hooks in Project1 created"
+${CCURL} "${GITLAB_URL}/api/v4/projects/${project2_id}/hooks" -d "access_token=${GITLAB_PRIVATE_TOKEN}&url=http%3A%2F%2Fwww.sample2.com%2F"
+success "hooks in Project2 created"
+${CCURL} "${GITLAB_URL}/api/v4/projects/${project3_id}/hooks" -d "access_token=${GITLAB_PRIVATE_TOKEN}&url=http%3A%2F%2Fwww.sample3.com%2F"
+success "hooks in Project3 created"
+${CCURL} "${GITLAB_URL}/api/v4/projects/${project4_id}/hooks" -d "access_token=${GITLAB_PRIVATE_TOKEN}&url=http%3A%2F%2Fwww.sample4.com%2F"
+success "hooks in Project4 created"
+${CCURL} "${GITLAB_URL}/api/v4/projects/${project5_id}/hooks" -d "access_token=${GITLAB_PRIVATE_TOKEN}&url=http%3A%2F%2Fwww.sample5.com%2F"
+success "hooks in Project5 created"
 
+echo ""
 # push some commits in preparation for creation of git tags
-echo "Push commits for projects"
-curl -X POST "${GITLAB_URL}/api/v4/projects/${groupproject1_id}/repository/files/README.md?access_token=${access_token}&branch=master&content=Test&commit_message=First+commit"
-curl -X POST "${GITLAB_URL}/api/v4/projects/${groupproject2_id}/repository/files/README.md?access_token=${access_token}&branch=master&content=Test&commit_message=First+commit"
-curl -X POST "${GITLAB_URL}/api/v4/projects/${groupproject3_id}/repository/files/README.md?access_token=${access_token}&branch=master&content=Test&commit_message=First+commit"
+info "Push commits for projects"
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project1_id}/repository/files/README.md" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=master&content=Test&commit_message=First+commit"
+success "commit master branch to Group1/Project1"
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project2_id}/repository/files/README.md" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=master&content=Test&commit_message=First+commit"
+success "commit master branch to Group1/Project2"
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project3_id}/repository/files/README.md" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=master&content=Test&commit_message=First+commit"
+success "commit master branch to Group1/Project3"
 
+echo ""
 # create tags
-echo "Creating tags for projects"
-curl -X POST "${GITLAB_URL}/api/v4/projects/${groupproject1_id}/repository/tags?access_token=${access_token}&tag_name=sample_1.0&ref=master"
-curl -X POST "${GITLAB_URL}/api/v4/projects/${groupproject2_id}/repository/tags?access_token=${access_token}&tag_name=sample_1.0&ref=master"
-curl -X POST "${GITLAB_URL}/api/v4/projects/${groupproject3_id}/repository/tags?access_token=${access_token}&tag_name=sample_1.0&ref=master"
+info "Creating tags for projects"
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project1_id}/repository/tags" -d "access_token=${GITLAB_PRIVATE_TOKEN}&tag_name=sample_1.0&ref=master"
+success "Group1/Project1 sample_1.0 master branch tag created"
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project2_id}/repository/tags" -d "access_token=${GITLAB_PRIVATE_TOKEN}&tag_name=sample_1.0&ref=master"
+success "Group1/Project2 sample_1.0 master branch tag created"
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project3_id}/repository/tags" -d "access_token=${GITLAB_PRIVATE_TOKEN}&tag_name=sample_1.0&ref=master"
+success "Group1/Project3 sample_1.0 master branch tag created"
