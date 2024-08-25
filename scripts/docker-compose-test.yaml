@@ -14,8 +14,8 @@
 
 services:
   gitlab:
-    #    image: gitlab/gitlab-ce:16.1.7-ce.0
-    image: 172.17.189.43/library/gitlab-ee:14.7.2-ee.0
+    image: gitlab/gitlab-ce:16.1.7-ce.0
+#    image: 172.17.189.43/library/gitlab-ee:14.7.2-ee.0
     container_name: gitlab
     restart: on-failure
     healthcheck:
