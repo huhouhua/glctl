@@ -26,6 +26,7 @@ on:
 env:
   GO_VERSION: '1.22'
   DOCKER_REGISTRY: ghcr.io/glctl
+  DOCKER_COMPOSE_VERSION: v2.21.0
 jobs:
   # Check if there is any dirty change for go mod tidy
   go-mod:
@@ -57,6 +58,11 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
+      - name: Install docker-compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker-compose version
       - name: Run gitlab service
         run: |
           bash scripts/gitlab.sh --install
