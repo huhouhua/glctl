@@ -27,16 +27,14 @@ source $DIR/lib/check.sh
 
 INSTALL="false"
 UNINSTALL="false"
-UNPAUSE="false"
-PAUSE="false"
-TEST_DATA="false"
+START="false"
+STOP="false"
 
 usage=$'Provide Gitlab installation,uninstall,start, stop, and add test data
 If you need to install gitlab, please set --install
 If you need to un install gitlab, please set --uninstall
-If you need to un pause gitlab, please set --unpause
-If you need to pause gitlab, please set --pause
-If you need to add test data to gitlab, please set --data
+If you need to run gitlab service, please set --start
+If you need to stop gitlab service, please set --stop
 To view help information, please set --help'
 item=0
 while [ $# -gt 0 ]; do
@@ -51,14 +49,11 @@ while [ $# -gt 0 ]; do
   --uninstall)
     UNINSTALL="true"
     ;;
-  --pause)
-    PAUSE="true"
+  --stop)
+    STOP="true"
     ;;
-  --unpause)
-    UNPAUSE="true"
-    ;;
-  --data)
-    TEST_DATA="true"
+  --start)
+    START="true"
     ;;
   *)
     note "$usage"
@@ -68,7 +63,6 @@ while [ $# -gt 0 ]; do
   shift || true
 done
 
-export HOST_IP=$(hostname -I | awk '{print $1}')
 
 h2 "[Step $item]: checking if docker is installed ..."; let item+=1
 check::docker
@@ -89,11 +83,7 @@ h2 "[Step $item]: install..."
 let item+=1
 
   ${DOCKER_COMPOSE} --project-name gitlab -f ${DOCKER_COMPOSE_TEST_FILE} up -d
-  info "Waiting for GitLab to become healthy..."
-  until [ "$(${DOCKER} inspect --format='{{.State.Health.Status}}' gitlab)"  == "healthy" ]; do
-    sleep 5
-  done
-  success "GitLab is up and running!"
+  wait::gitlab
   exit 0
 fi
 
@@ -106,20 +96,20 @@ let item+=1
   exit 0
 fi
 
-if [ "$PAUSE" == "true" ]; then
-h2 "[Step $item]: pause..."
+if [ "$STOP" == "true" ]; then
+h2 "[Step $item]: stop..."
 let item+=1
 
-  ${DOCKER_COMPOSE} -f ${DOCKER_COMPOSE_TEST_FILE} pause
-  success $"---- pause successfully.----"
+  ${DOCKER_COMPOSE} -f ${DOCKER_COMPOSE_TEST_FILE} stop
+  success $"---- stop successfully.----"
   exit 0
 fi
 
-if [ "$UNPAUSE" == "true" ]; then
-h2 "[Step $item]: un pause..."
+if [ "$START" == "true" ]; then
+h2 "[Step $item]: start..."
 let item+=1
 
-  ${DOCKER_COMPOSE} -f ${DOCKER_COMPOSE_TEST_FILE} unpause
-  success $"---- un pause successfully.----"
+  ${DOCKER_COMPOSE} -f ${DOCKER_COMPOSE_TEST_FILE} start
+  wait::gitlab
   exit 0
 fi

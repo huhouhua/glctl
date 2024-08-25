@@ -79,3 +79,12 @@ function check::docker::compose()
 		exit 1
 	fi
 }
+
+function wait::gitlab()
+{
+   info "Waiting for GitLab to become healthy..."
+   until [ "$(${DOCKER} inspect --format='{{.State.Health.Status}}' gitlab)"  == "healthy" ]; do
+     sleep 5
+   done
+   success "GitLab is up and running!"
+}
