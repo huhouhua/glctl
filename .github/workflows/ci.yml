@@ -57,15 +57,12 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
+      - name: Run gitlab service
+        run: |
+          bash scripts/gitlab.sh --install
       - name: Run tests
         run: |
-          docker run --detach \
-            --publish 80:80 \
-            --name gitlab \
-            --restart always \
-            --volume /etc/localtime:/etc/localtime:ro \
-            --shm-size 256m \
-            gitlab/gitlab-ce:16.1.7-ce.0
+          bash testdata/seeder.sh
       - name: Build source code for host platform
         run: |
           make build
