@@ -49,7 +49,7 @@ jobs:
           git diff --exit-code go.sum
 
   docker:
-    name: Test
+    name: install-gitlab
     runs-on: ubuntu-latest
     steps:
       - name: Setup Go
@@ -63,10 +63,18 @@ jobs:
           sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose version
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ env.GO_VERSION }}
       - name: Run gitlab service
         run: |
           bash scripts/gitlab.sh --install
-      - name: Run tests
+      - name: Add test data
         run: |
           bash testdata/seeder.sh
       - name: Build source code for host platform
