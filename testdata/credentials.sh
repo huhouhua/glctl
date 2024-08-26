@@ -27,8 +27,7 @@ gitlab::credentials()
   export GITLAB_PASSWORD=password
   export GITLAB_URL=${GITLAB_URL:-http://localhost:8080}
   export GITLAB_PRIVATE_TOKEN=$(gitlab::login)
-  export GITLAB_OAUTH_TOKEN="dada"
-#$(gitlab::get::token)
+#  export GITLAB_OAUTH_TOKEN=$(gitlab::get::token)
 }
 
 # get access token
@@ -58,9 +57,6 @@ body_header=$(curl  -H 'user-agent: curl' -b cookies.txt -i "${GITLAB_URL}/profi
 
 csrf_token=$(echo $body_header | perl -ne 'print "$1\n" if /authenticity_token"[[:blank:]]value="(.+?)"/' | sed -n 1p)
 
-echo ${csrf_token}
-echo "\n************************************************************"
-
 # curl POST request to send the "generate personal access token form"
 # the response will be a redirect, so we have to follow using `-L`
 body_header=$(curl -L -b cookies.txt "${GITLAB_URL}/profile/personal_access_tokens" \
@@ -69,7 +65,5 @@ body_header=$(curl -L -b cookies.txt "${GITLAB_URL}/profile/personal_access_toke
 
 # Scrape the personal access token from the response HTML
 personal_access_token=$(echo $body_header | perl -ne 'print "$1\n" if /created-personal-access-token"[[:blank:]]value="(.+?)"/' | sed -n 1p)
-echo "************************************************************\n"
-echo ${personal_access_token}
-#echo $personal_access_token > token.txt
+return  $personal_access_token
 }

@@ -24,7 +24,6 @@ info "GITLAB_USERNAME:${GITLAB_USERNAME}"
 info "GITLAB_PASSWORD:${GITLAB_PASSWORD}"
 info "GITLAB_URL:${GITLAB_URL}"
 info "GITLAB_PRIVATE_TOKEN:${GITLAB_PRIVATE_TOKEN}"
-info "GITLAB_OAUTH_TOKEN:${GITLAB_OAUTH_TOKEN}"
 
 echo "=============================================="
 echo "#              SEEDER SCRIPT                 #"
