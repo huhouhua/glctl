@@ -13,6 +13,14 @@
 # limitations under the License.
 
 # Build all by default, even if it's not first
+.DEFAULT_GOAL := all
+
+.PHONY: all
+all: tidy copyright.add format lint testdata cover build
+
+# ==============================================================================
+# Build options
+
 GO := go
 OS = linux darwin
 architecture = amd64 arm64
@@ -48,7 +56,8 @@ endif
 
 include Makefile.tools.mk
 
-.DEFAULT_GOAL := help
+# ==============================================================================
+# Targets
 
 .PHONY: copyright.verify
 copyright.verify: tools.verify.licctl
