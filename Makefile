@@ -75,12 +75,6 @@ lint: tools.verify.golangci-lint
 	@echo "===========> Run golangci to lint source codes"
 	@golangci-lint run -c $(ROOT_DIR)/.golangci.yaml $(ROOT_DIR)/...
 
-## testdata: add test data to gitlab
-.PHONY: testdata
-testdata: tools.verify.golangci-lint
-	@echo "===========> Run golangci to lint source codes"
-	@golangci-lint run -c $(ROOT_DIR)/.golangci.yaml $(ROOT_DIR)/...
-
 ## test: Run unit test.
 .PHONY: test
 test: tools.verify.go-junit-report run-gitlab
