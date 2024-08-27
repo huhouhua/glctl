@@ -12,6 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+BLOCKER_TOOLS ?= golines go-junit-report golangci-lint licctl goimports
+CRITICAL_TOOLS ?= go-mod-outdated
+TRIVIAL_TOOLS ?=
+
+TOOLS ?=$(BLOCKER_TOOLS) $(CRITICAL_TOOLS) $(TRIVIAL_TOOLS)
+
 .PHONY: tools.install
 tools.install: $(addprefix tools.install., $(TOOLS))
 
