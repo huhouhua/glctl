@@ -15,7 +15,10 @@
 # limitations under the License.
 
 DIR="$(cd "$(dirname "$0")" && pwd)"
-source $DIR/../scripts/lib/loggin.sh
+source $DIR/loggin.sh
+source $DIR/tools.sh
+install::jq
+
 source $DIR/credentials.sh
 
 gitlab::credentials
