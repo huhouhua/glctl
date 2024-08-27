@@ -21,9 +21,9 @@ set -o nounset
 set -o pipefail
 
 DIR="$(cd "$(dirname "$0")" && pwd)"
-source $DIR/lib/loggin.sh
-source $DIR/lib/environment.sh
-source $DIR/lib/check.sh
+source $DIR/loggin.sh
+source $DIR/environment.sh
+source $DIR/check.sh
 
 INSTALL="false"
 UNINSTALL="false"

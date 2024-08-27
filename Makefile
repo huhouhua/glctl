@@ -75,9 +75,15 @@ lint: tools.verify.golangci-lint
 	@echo "===========> Run golangci to lint source codes"
 	@golangci-lint run -c $(ROOT_DIR)/.golangci.yaml $(ROOT_DIR)/...
 
+## testdata: add test data to gitlab
+.PHONY: testdata
+testdata: tools.verify.golangci-lint
+	@echo "===========> Run golangci to lint source codes"
+	@golangci-lint run -c $(ROOT_DIR)/.golangci.yaml $(ROOT_DIR)/...
+
 ## test: Run unit test.
 .PHONY: test
-test: tools.verify.go-junit-report
+test: tools.verify.go-junit-report run-gitlab
 	@echo "===========> Run unit test"
 	@set -o pipefail;$(GO) test ./cmd/... ./util/...  -cover -coverprofile=$(OUTPUT_DIR)/coverage.out \
 		-timeout=10m -shuffle=on -short \
@@ -111,13 +117,43 @@ clean: ## Remove building artifacts
 tools:
 	@$(MAKE) tools.install
 
-.PHONY: go.updates
-go.updates: tools.verify.go-mod-outdated
+.PHONY: check-updates
+check-updates: tools.verify.go-mod-outdated
 	@$(GO) list -u -m -json all | go-mod-outdated -update -direct
 
 .PHONY: tidy
 tidy:
 	@$(GO) mod tidy
+
+## testdata: run gitlab service and test data for e2e test
+.PHONY: testdata
+testdata: run-gitlab
+	@echo -e "\n\033[36mAdding test data for gitlab conformance tests...\033[0m"
+	$(ROOT_DIR)/testdata/scripts/seeder.sh
+
+## run-gitlab-e2e: run gitlab service
+.PHONY: run-gitlab
+run-gitlab:
+	@echo -e "\n\033[36mRunning gitlab conformance tests...\033[0m"
+	@$(MAKE) install.gitlab
+
+## kill-gitlab: kill gitlab service
+.PHONY: kill-gitlab
+kill-gitlab:
+	@echo -e "\n\033[36mKill gitlab conformance tests...\033[0m"
+	@$(MAKE) uninstall.gitlab
+
+## start-gitlab: start run gitlab service
+.PHONY: start-gitlab
+start-gitlab: run-gitlab
+	@echo -e "\n\033[36mStart gitlab conformance tests...\033[0m"
+	@$(MAKE) start.gitlab
+
+## stop-gitlab: stop gitlab service
+.PHONY: stop-gitlab
+stop-gitlab:
+	@echo -e "\n\033[36mStop gitlab conformance tests...\033[0m"
+	@$(MAKE) stop.gitlab
 
 ## help: Show this help info.
 .PHONY: help

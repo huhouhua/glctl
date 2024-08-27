@@ -36,4 +36,6 @@ install.golines:
 install.goimports:
 	@$(GO) install golang.org/x/tools/cmd/goimports@latest
 
-
+.PHONY: %.gitlab
+%.gitlab:
+	$(ROOT_DIR)/testdata/scripts/gitlab.sh --$*
