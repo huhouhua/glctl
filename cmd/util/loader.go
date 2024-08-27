@@ -15,11 +15,13 @@
 package util
 
 import (
+	"strings"
+
 	"github.com/AlekSi/pointer"
-	"github.com/huhouhua/glctl/cmd/types"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v3"
-	"strings"
+
+	"github.com/huhouhua/glctl/cmd/types"
 )
 
 // Load takes a byte slice and deserializes the contents into Config object.

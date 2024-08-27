@@ -16,6 +16,7 @@ package progress
 
 import (
 	"fmt"
+
 	"github.com/fatih/color"
 )
 

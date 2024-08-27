@@ -15,10 +15,12 @@
 package completion
 
 import (
-	"github.com/huhouhua/glctl/util/cli"
-	"github.com/spf13/cobra"
 	"strings"
 	"testing"
+
+	"github.com/spf13/cobra"
+
+	"github.com/huhouhua/glctl/util/cli"
 )
 
 func TestBashCompletions(t *testing.T) {

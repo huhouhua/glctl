@@ -16,11 +16,13 @@ package file
 
 import (
 	"errors"
+	"testing"
+
+	"github.com/spf13/cobra"
+
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
-	"github.com/spf13/cobra"
-	"testing"
 )
 
 func TestRunReplace(t *testing.T) {
@@ -46,7 +48,8 @@ func TestRunReplace(t *testing.T) {
 			})
 			//expectedOutput := fmt.Sprintf("%s edited", opt.path)
 			//if !strings.Contains(out, expectedOutput) {
-			//	err = errors.New(fmt.Sprintf("compare content : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out))
+			// 	err = errors.New(fmt.Sprintf("compare content : Unexpected output! Expected\n%s\ngot\n%s",
+			// expectedOutput, out))
 			//}
 			return err
 		},
@@ -67,7 +70,8 @@ func TestRunReplace(t *testing.T) {
 			})
 			//expectedOutput := fmt.Sprintf("%s edited", opt.path)
 			//if !strings.Contains(out, expectedOutput) {
-			//	err = errors.New(fmt.Sprintf("compare content : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out))
+			// 	err = errors.New(fmt.Sprintf("compare content : Unexpected output! Expected\n%s\ngot\n%s",
+			// expectedOutput, out))
 			//}
 			return err
 		},

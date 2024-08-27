@@ -15,15 +15,17 @@
 package project
 
 import (
+	"strconv"
+
 	"github.com/AlekSi/pointer"
+	"github.com/spf13/cobra"
+	"github.com/xanzy/go-gitlab"
+
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/cmd/validate"
 	"github.com/huhouhua/glctl/util/cli"
 	"github.com/huhouhua/glctl/util/templates"
-	"github.com/spf13/cobra"
-	"github.com/xanzy/go-gitlab"
-	"strconv"
 )
 
 type CreateOptions struct {
@@ -100,39 +102,85 @@ func (o *CreateOptions) AddFlags(cmd *cobra.Command) {
 	cmdutil.AddVisibilityVarFlag(cmd, (*string)(o.project.Visibility))
 	// unique flags for projects
 	f := cmd.Flags()
-	f.StringVar((*string)(o.project.IssuesAccessLevel), "issues_access_level", (string)(*o.project.IssuesAccessLevel), "issues access level "+
-		"(disabled,enabled,private,public)")
-	f.StringVar((*string)(o.project.MergeRequestsAccessLevel), "merge_requests_access_level", (string)(*o.project.MergeRequestsAccessLevel), "merge requests access level "+
-		"(disabled,enabled,private,public)")
-	f.StringVar((*string)(o.project.BuildsAccessLevel), "builds_access_level", (string)(*o.project.BuildsAccessLevel), "builds access level "+
-		"(disabled,enabled,private,public)")
-	f.StringVar((*string)(o.project.WikiAccessLevel), "wiki_access_level", (string)(*o.project.WikiAccessLevel), "wiki access level "+
-		"(disabled,enabled,private,public)")
-	f.StringVar((*string)(o.project.SnippetsAccessLevel), "snippets_access_level", (string)(*o.project.SnippetsAccessLevel), "snippets access level "+
-		"(disabled,enabled,private,public)")
-	f.BoolVar(o.project.ResolveOutdatedDiffDiscussions, "resolve-outdated-diff-discussions", *o.project.ResolveOutdatedDiffDiscussions,
+	f.StringVar(
+		(*string)(o.project.IssuesAccessLevel),
+		"issues_access_level",
+		(string)(*o.project.IssuesAccessLevel),
+		"issues access level "+
+			"(disabled,enabled,private,public)",
+	)
+	f.StringVar(
+		(*string)(o.project.MergeRequestsAccessLevel),
+		"merge_requests_access_level",
+		(string)(*o.project.MergeRequestsAccessLevel),
+		"merge requests access level "+
+			"(disabled,enabled,private,public)",
+	)
+	f.StringVar(
+		(*string)(o.project.BuildsAccessLevel),
+		"builds_access_level",
+		(string)(*o.project.BuildsAccessLevel),
+		"builds access level "+
+			"(disabled,enabled,private,public)",
+	)
+	f.StringVar(
+		(*string)(o.project.WikiAccessLevel),
+		"wiki_access_level",
+		(string)(*o.project.WikiAccessLevel),
+		"wiki access level "+
+			"(disabled,enabled,private,public)",
+	)
+	f.StringVar(
+		(*string)(o.project.SnippetsAccessLevel),
+		"snippets_access_level",
+		(string)(*o.project.SnippetsAccessLevel),
+		"snippets access level "+
+			"(disabled,enabled,private,public)",
+	)
+	f.BoolVar(
+		o.project.ResolveOutdatedDiffDiscussions,
+		"resolve-outdated-diff-discussions",
+		*o.project.ResolveOutdatedDiffDiscussions,
 		"Automatically resolve merge request diffs discussions on lines "+
-			"changed with a push")
-	f.StringVar((*string)(o.project.ContainerRegistryAccessLevel), "container_registry_access_level", (string)(*o.project.ContainerRegistryAccessLevel), "container registry access level for this project "+
-		"(disabled,enabled,private,public)")
+			"changed with a push",
+	)
+	f.StringVar(
+		(*string)(o.project.ContainerRegistryAccessLevel),
+		"container_registry_access_level",
+		(string)(*o.project.ContainerRegistryAccessLevel),
+		"container registry access level for this project "+
+			"(disabled,enabled,private,public)",
+	)
 	f.BoolVar(o.project.SharedRunnersEnabled, "shared-runners-enabled", *o.project.SharedRunnersEnabled,
 		"Enable shared runners for this project")
 	f.BoolVar(o.project.PublicBuilds, "public_builds", *o.project.PublicBuilds,
 		"enable public builds")
-	f.BoolVar(o.project.OnlyAllowMergeIfPipelineSucceeds, "only-allow-merge-if-pipeline-succeeds", *o.project.OnlyAllowMergeIfPipelineSucceeds,
-		"Set whether merge requests can only be merged with successful jobs")
-	f.BoolVar(o.project.OnlyAllowMergeIfAllDiscussionsAreResolved, "only-allow-merge-if-discussion-are-resolved", *o.project.OnlyAllowMergeIfAllDiscussionsAreResolved,
+	f.BoolVar(
+		o.project.OnlyAllowMergeIfPipelineSucceeds,
+		"only-allow-merge-if-pipeline-succeeds",
+		*o.project.OnlyAllowMergeIfPipelineSucceeds,
+		"Set whether merge requests can only be merged with successful jobs",
+	)
+	f.BoolVar(
+		o.project.OnlyAllowMergeIfAllDiscussionsAreResolved,
+		"only-allow-merge-if-discussion-are-resolved",
+		*o.project.OnlyAllowMergeIfAllDiscussionsAreResolved,
 		"Set whether merge requests can only be merged "+
-			"when all the discussions are resolved")
+			"when all the discussions are resolved",
+	)
 	f.StringVar((*string)(o.project.MergeMethod), "merge-method", (string)(*o.project.MergeMethod),
 		"Set the merge method used. (available: 'merge', 'rebase_merge', 'ff')")
 	f.StringSliceVar(o.project.Topics, "tag-list", *o.project.Topics,
 		"The list of tags for a project; put array of tags, "+
 			"that should be finally assigned to a project.\n"+
 			"Example: --tag-list='tag1,tag2'")
-	f.BoolVar(o.project.PrintingMergeRequestLinkEnabled, "printing-merge-request-link-enabled", *o.project.PrintingMergeRequestLinkEnabled,
+	f.BoolVar(
+		o.project.PrintingMergeRequestLinkEnabled,
+		"printing-merge-request-link-enabled",
+		*o.project.PrintingMergeRequestLinkEnabled,
 		"Show link to create/view merge request "+
-			"when pushing from the command line")
+			"when pushing from the command line",
+	)
 	f.StringVar(o.project.CIConfigPath, "ci-config-path", *o.project.CIConfigPath, "The path to CI config file")
 
 	f.StringVarP(&o.namespace, "namespace", "n",

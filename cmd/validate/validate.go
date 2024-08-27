@@ -16,10 +16,12 @@ package validate
 
 import (
 	"fmt"
-	"github.com/golang/glog"
-	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/spf13/cobra"
 	"strings"
+
+	"github.com/golang/glog"
+	"github.com/spf13/cobra"
+
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
 )
 
 func ValidateSortFlagValue(cmd *cobra.Command) error {

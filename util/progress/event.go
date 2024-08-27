@@ -16,10 +16,11 @@ package progress
 
 import (
 	"fmt"
-	"github.com/briandowns/spinner"
-	"github.com/fatih/color"
 	"strings"
 	"time"
+
+	"github.com/briandowns/spinner"
+	"github.com/fatih/color"
 )
 
 type EventStatus int

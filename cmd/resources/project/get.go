@@ -16,14 +16,16 @@ package project
 
 import (
 	"encoding/json"
+	"strings"
+
 	"github.com/AlekSi/pointer"
+	"github.com/spf13/cobra"
+	"github.com/xanzy/go-gitlab"
+
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/cmd/validate"
 	"github.com/huhouhua/glctl/util/cli"
 	"github.com/huhouhua/glctl/util/templates"
-	"github.com/spf13/cobra"
-	"github.com/xanzy/go-gitlab"
-	"strings"
 )
 
 type ListOptions struct {
@@ -117,7 +119,13 @@ func (o *ListOptions) AddFlags(cmd *cobra.Command) {
 		"Limit by enabled issues feature")
 	f.BoolVar(o.project.WithMergeRequestsEnabled, "with-merge-requests-enabled", *o.project.WithMergeRequestsEnabled,
 		"Limit by enabled merge requests feature")
-	f.BoolVarP(&o.AllGroups, "all-groups", "A", o.AllGroups, "If present, list the requested object(s) across all groups. group in current context is ignored even if specified with --group.")
+	f.BoolVarP(
+		&o.AllGroups,
+		"all-groups",
+		"A",
+		o.AllGroups,
+		"If present, list the requested object(s) across all groups. group in current context is ignored even if specified with --group.",
+	)
 }
 
 // Complete completes all the required options.

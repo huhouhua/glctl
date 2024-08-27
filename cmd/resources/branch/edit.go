@@ -16,14 +16,16 @@ package branch
 
 import (
 	"fmt"
+
 	"github.com/AlekSi/pointer"
+	"github.com/spf13/cobra"
+	"github.com/xanzy/go-gitlab"
+
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/cmd/validate"
 	"github.com/huhouhua/glctl/util/cli"
 	"github.com/huhouhua/glctl/util/templates"
-	"github.com/spf13/cobra"
-	"github.com/xanzy/go-gitlab"
 )
 
 type EditOptions struct {

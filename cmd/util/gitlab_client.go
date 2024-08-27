@@ -17,18 +17,27 @@ package util
 import (
 	"fmt"
 	//root "github.com/huhouhua/glctl/cmd"
-	"github.com/huhouhua/glctl/cmd/types"
-	"github.com/xanzy/go-gitlab"
 	"strings"
+
+	"github.com/xanzy/go-gitlab"
+
+	"github.com/huhouhua/glctl/cmd/types"
 )
 
 func NewForConfig(config *types.Config) (*gitlab.Client, error) {
 	authorization := newGitLabAuthorization(config.OathInfo, config.OathEnv)
 	switch {
 	case authorization.HasAuth():
-		return gitlab.NewOAuthClient(*authorization.OathInfo.AccessToken, gitlab.WithBaseURL(withApiUrl(*authorization.OathInfo.HostUrl)))
+		return gitlab.NewOAuthClient(
+			*authorization.OathInfo.AccessToken,
+			gitlab.WithBaseURL(withApiUrl(*authorization.OathInfo.HostUrl)),
+		)
 	case authorization.HasPasswordAuth():
-		return gitlab.NewBasicAuthClient(*authorization.OathEnv.UserName, *authorization.OathEnv.Password, gitlab.WithBaseURL(withApiUrl(*authorization.OathEnv.Url)))
+		return gitlab.NewBasicAuthClient(
+			*authorization.OathEnv.UserName,
+			*authorization.OathEnv.Password,
+			gitlab.WithBaseURL(withApiUrl(*authorization.OathEnv.Url)),
+		)
 	case authorization.HasBasicAuth():
 		return gitlab.NewClient(*authorization.OathEnv.PrivateToken, gitlab.WithBaseURL(*authorization.OathEnv.Url))
 	case authorization.HasOathAuth():

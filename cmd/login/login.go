@@ -18,21 +18,23 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"strings"
+
 	"github.com/AlekSi/pointer"
 	"github.com/howeyc/gopass"
+	"github.com/mitchellh/go-homedir"
+	"github.com/mitchellh/mapstructure"
+	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v3"
+
 	"github.com/huhouhua/glctl/cmd/require"
 	"github.com/huhouhua/glctl/cmd/types"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
 	"github.com/huhouhua/glctl/util/templates"
-	"github.com/mitchellh/go-homedir"
-	"github.com/mitchellh/mapstructure"
-	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v3"
-	"io"
-	"net/http"
-	"os"
-	"strings"
 )
 
 var loginLong = templates.LongDesc(`
@@ -105,7 +107,12 @@ func (o *Options) Validate(cmd *cobra.Command, args []string) error {
 
 // Run executes a create subcommand using the specified options.
 func (o *Options) Run(args []string) error {
-	uri := fmt.Sprintf("%s/oauth/token?grant_type=password&username=%s&password=%s", o.ServerAddress, o.User, o.Password)
+	uri := fmt.Sprintf(
+		"%s/oauth/token?grant_type=password&username=%s&password=%s",
+		o.ServerAddress,
+		o.User,
+		o.Password,
+	)
 	resp, err := http.Post(uri, "application/json", nil)
 	if err != nil {
 		return err

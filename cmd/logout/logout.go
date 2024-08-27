@@ -16,12 +16,14 @@ package logout
 
 import (
 	"fmt"
+	"os"
+
+	"github.com/mitchellh/go-homedir"
+	"github.com/spf13/cobra"
+
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
 	"github.com/huhouhua/glctl/util/templates"
-	"github.com/mitchellh/go-homedir"
-	"github.com/spf13/cobra"
-	"os"
 )
 
 var logoutLong = templates.LongDesc(`

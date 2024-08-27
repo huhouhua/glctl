@@ -16,9 +16,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/huhouhua/glctl/cmd"
 	"log"
 	"os"
+
+	"github.com/huhouhua/glctl/cmd"
 )
 
 func main() {

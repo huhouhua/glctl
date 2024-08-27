@@ -17,17 +17,19 @@ package file
 import (
 	"bytes"
 	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+
 	"github.com/AlekSi/pointer"
+	"github.com/spf13/cobra"
+	"github.com/xanzy/go-gitlab"
+
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/cmd/util/editor"
 	"github.com/huhouhua/glctl/util/cli"
 	"github.com/huhouhua/glctl/util/templates"
-	"github.com/spf13/cobra"
-	"github.com/xanzy/go-gitlab"
-	"os"
-	"path/filepath"
-	"strings"
 )
 
 type EditOptions struct {
@@ -77,7 +79,12 @@ func NewEditFileCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
 func (o *EditOptions) AddFlags(cmd *cobra.Command) {
 	cmdutil.AddProjectVarPFlag(cmd, &o.Project)
 	f := cmd.Flags()
-	f.StringVar(o.file.Ref, "ref", *o.file.Ref, "The name of a repository branch or tag or, if not given, the default branch.")
+	f.StringVar(
+		o.file.Ref,
+		"ref",
+		*o.file.Ref,
+		"The name of a repository branch or tag or, if not given, the default branch.",
+	)
 	cmdutil.VerifyMarkFlagRequired(cmd, "project")
 }
 
@@ -110,7 +117,11 @@ func (o *EditOptions) Run(args []string) error {
 	edit := editor.NewDefaultEditor([]string{"EDITOR"})
 	// generate the file to edit
 	buf := bytes.NewBuffer(raw)
-	edited, file, err := edit.LaunchTempFile(fmt.Sprintf("%s-edit-", filepath.Base(os.Args[0])), filepath.Ext(o.path), buf)
+	edited, file, err := edit.LaunchTempFile(
+		fmt.Sprintf("%s-edit-", filepath.Base(os.Args[0])),
+		filepath.Ext(o.path),
+		buf,
+	)
 	defer func() {
 		// cleanup any file from the previous pass
 		if len(file) > 0 {

@@ -15,11 +15,12 @@
 package replace
 
 import (
+	"github.com/spf13/cobra"
+
 	"github.com/huhouhua/glctl/cmd/resources/file"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
 	"github.com/huhouhua/glctl/util/templates"
-	"github.com/spf13/cobra"
 )
 
 var (

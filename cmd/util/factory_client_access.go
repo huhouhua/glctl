@@ -15,8 +15,9 @@
 package util
 
 import (
-	"github.com/huhouhua/glctl/cmd/types"
 	"github.com/xanzy/go-gitlab"
+
+	"github.com/huhouhua/glctl/cmd/types"
 )
 
 type factoryImpl struct {

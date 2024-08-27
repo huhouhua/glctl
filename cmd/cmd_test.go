@@ -16,10 +16,12 @@ package cmd
 
 import (
 	"bytes"
-	cmdutil "github.com/huhouhua/glctl/cmd/testing"
-	"github.com/spf13/cobra"
 	"net/url"
 	"testing"
+
+	"github.com/spf13/cobra"
+
+	cmdutil "github.com/huhouhua/glctl/cmd/testing"
 )
 
 func TestQueryEscape(t *testing.T) {

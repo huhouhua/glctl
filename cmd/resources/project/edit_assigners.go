@@ -16,9 +16,10 @@ package project
 
 import (
 	"github.com/AlekSi/pointer"
-	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
+
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
 )
 
 // assignOptions assigns the flags' values to gitlab.EditProjectOptions fields.
@@ -29,25 +30,39 @@ func (o *EditOptions) assignOptions(cmd *cobra.Command) error {
 		o.project.Description = pointer.ToString(cmdutil.GetFlagString(cmd, "desc"))
 	}
 	if cmd.Flag("issues_access_level").Changed {
-		o.project.IssuesAccessLevel = pointer.To(gitlab.AccessControlValue(cmdutil.GetFlagString(cmd, "issues_access_level")))
+		o.project.IssuesAccessLevel = pointer.To(
+			gitlab.AccessControlValue(cmdutil.GetFlagString(cmd, "issues_access_level")),
+		)
 	}
 	if cmd.Flag("merge_requests_access_level").Changed {
-		o.project.MergeRequestsAccessLevel = pointer.To(gitlab.AccessControlValue(cmdutil.GetFlagString(cmd, "merge_requests_access_level")))
+		o.project.MergeRequestsAccessLevel = pointer.To(
+			gitlab.AccessControlValue(cmdutil.GetFlagString(cmd, "merge_requests_access_level")),
+		)
 	}
 	if cmd.Flag("builds_access_level").Changed {
-		o.project.BuildsAccessLevel = pointer.To(gitlab.AccessControlValue(cmdutil.GetFlagString(cmd, "builds_access_level")))
+		o.project.BuildsAccessLevel = pointer.To(
+			gitlab.AccessControlValue(cmdutil.GetFlagString(cmd, "builds_access_level")),
+		)
 	}
 	if cmd.Flag("wiki_access_level").Changed {
-		o.project.WikiAccessLevel = pointer.To(gitlab.AccessControlValue(cmdutil.GetFlagString(cmd, "wiki_access_level")))
+		o.project.WikiAccessLevel = pointer.To(
+			gitlab.AccessControlValue(cmdutil.GetFlagString(cmd, "wiki_access_level")),
+		)
 	}
 	if cmd.Flag("snippets_access_level").Changed {
-		o.project.SnippetsAccessLevel = pointer.To(gitlab.AccessControlValue(cmdutil.GetFlagString(cmd, "snippets_access_level")))
+		o.project.SnippetsAccessLevel = pointer.To(
+			gitlab.AccessControlValue(cmdutil.GetFlagString(cmd, "snippets_access_level")),
+		)
 	}
 	if cmd.Flag("resolve-outdated-diff-discussions").Changed {
-		o.project.ResolveOutdatedDiffDiscussions = pointer.ToBool(cmdutil.GetFlagBool(cmd, "resolve-outdated-diff-discussions"))
+		o.project.ResolveOutdatedDiffDiscussions = pointer.ToBool(
+			cmdutil.GetFlagBool(cmd, "resolve-outdated-diff-discussions"),
+		)
 	}
 	if cmd.Flag("container_registry_access_level").Changed {
-		o.project.ContainerRegistryAccessLevel = pointer.To(gitlab.AccessControlValue(cmdutil.GetFlagString(cmd, "container_registry_access_level")))
+		o.project.ContainerRegistryAccessLevel = pointer.To(
+			gitlab.AccessControlValue(cmdutil.GetFlagString(cmd, "container_registry_access_level")),
+		)
 	}
 	if cmd.Flag("shared-runners-enabled").Changed {
 		o.project.SharedRunnersEnabled = pointer.ToBool(cmdutil.GetFlagBool(cmd, "shared-runners-enabled"))
@@ -56,10 +71,14 @@ func (o *EditOptions) assignOptions(cmd *cobra.Command) error {
 		o.project.PublicBuilds = pointer.ToBool(cmdutil.GetFlagBool(cmd, "public_builds"))
 	}
 	if cmd.Flag("only-allow-merge-if-pipeline-succeeds").Changed {
-		o.project.OnlyAllowMergeIfPipelineSucceeds = pointer.ToBool(cmdutil.GetFlagBool(cmd, "only-allow-merge-if-pipeline-succeeds"))
+		o.project.OnlyAllowMergeIfPipelineSucceeds = pointer.ToBool(
+			cmdutil.GetFlagBool(cmd, "only-allow-merge-if-pipeline-succeeds"),
+		)
 	}
 	if cmd.Flag("only-allow-merge-if-discussion-are-resolved").Changed {
-		o.project.OnlyAllowMergeIfAllDiscussionsAreResolved = pointer.ToBool(cmdutil.GetFlagBool(cmd, "only-allow-merge-if-discussion-are-resolved"))
+		o.project.OnlyAllowMergeIfAllDiscussionsAreResolved = pointer.ToBool(
+			cmdutil.GetFlagBool(cmd, "only-allow-merge-if-discussion-are-resolved"),
+		)
 	}
 	if cmd.Flag("merge-method").Changed {
 		o.project.MergeMethod = pointer.To(gitlab.MergeMethodValue(cmdutil.GetFlagString(cmd, "merge-method")))
@@ -70,7 +89,9 @@ func (o *EditOptions) assignOptions(cmd *cobra.Command) error {
 		o.project.TagList = p
 	}
 	if cmd.Flag("printing-merge-request-link-enabled").Changed {
-		o.project.PrintingMergeRequestLinkEnabled = pointer.ToBool(cmdutil.GetFlagBool(cmd, "printing-merge-request-link-enabled"))
+		o.project.PrintingMergeRequestLinkEnabled = pointer.ToBool(
+			cmdutil.GetFlagBool(cmd, "printing-merge-request-link-enabled"),
+		)
 	}
 	if cmd.Flag("ci-config-path").Changed {
 		o.project.CIConfigPath = pointer.ToString(cmdutil.GetFlagString(cmd, "ci-config-path"))

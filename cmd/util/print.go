@@ -17,12 +17,13 @@ package util
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/olekukonko/tablewriter"
-	gitlab "github.com/xanzy/go-gitlab"
-	"gopkg.in/yaml.v3"
 	"io"
 	"strconv"
 	"strings"
+
+	"github.com/olekukonko/tablewriter"
+	gitlab "github.com/xanzy/go-gitlab"
+	"gopkg.in/yaml.v3"
 )
 
 var (

@@ -16,10 +16,11 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/pflag"
 	"os"
 	"runtime"
 	"runtime/pprof"
+
+	"github.com/spf13/pflag"
 )
 
 var (

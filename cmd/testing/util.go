@@ -17,11 +17,13 @@ package testing
 import (
 	"bytes"
 	"fmt"
-	"github.com/huhouhua/glctl/util/cli"
-	"github.com/mattn/go-shellwords"
-	"github.com/spf13/cobra"
 	"io"
 	"os"
+
+	"github.com/mattn/go-shellwords"
+	"github.com/spf13/cobra"
+
+	"github.com/huhouhua/glctl/util/cli"
 )
 
 // cmdTestCase describes a test case that works with releases.

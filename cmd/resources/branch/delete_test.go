@@ -17,13 +17,15 @@ package branch
 import (
 	"errors"
 	"fmt"
+	"strings"
+	"testing"
+
+	"github.com/spf13/cobra"
+	"github.com/xanzy/go-gitlab"
+
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
-	"github.com/spf13/cobra"
-	"github.com/xanzy/go-gitlab"
-	"strings"
-	"testing"
 )
 
 func TestDeleteBranch(t *testing.T) {
@@ -47,7 +49,9 @@ func TestDeleteBranch(t *testing.T) {
 			})
 			expectedOutput := fmt.Sprintf("Branch (%s) from project (%s) has been deleted", opt.branch, opt.project)
 			if !strings.Contains(out, expectedOutput) {
-				err = errors.New(fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out))
+				err = errors.New(
+					fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out),
+				)
 			}
 			return err
 		},

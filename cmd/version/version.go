@@ -19,13 +19,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+
+	"github.com/spf13/cobra"
+	"github.com/xanzy/go-gitlab"
+	"gopkg.in/yaml.v3"
+
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
 	"github.com/huhouhua/glctl/util/templates"
 	"github.com/huhouhua/glctl/util/version"
-	"github.com/spf13/cobra"
-	"github.com/xanzy/go-gitlab"
-	"gopkg.in/yaml.v3"
 )
 
 // Version is a struct for version information.

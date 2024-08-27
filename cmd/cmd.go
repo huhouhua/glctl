@@ -17,6 +17,14 @@ package cmd
 import (
 	"flag"
 	"fmt"
+	"io"
+	"os"
+	"strings"
+
+	"github.com/mitchellh/go-homedir"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+
 	"github.com/huhouhua/glctl/cmd/completion"
 	"github.com/huhouhua/glctl/cmd/create"
 	delete "github.com/huhouhua/glctl/cmd/delete"
@@ -30,12 +38,6 @@ import (
 	"github.com/huhouhua/glctl/util/cli"
 	"github.com/huhouhua/glctl/util/progress"
 	"github.com/huhouhua/glctl/util/templates"
-	"github.com/mitchellh/go-homedir"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	"io"
-	"os"
-	"strings"
 )
 
 var AuthDoc = `

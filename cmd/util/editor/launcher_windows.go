@@ -22,6 +22,8 @@ import (
 	"path/filepath"
 	"strings"
 	"syscall"
+
+	"github.com/huhouhua/glctl/util/term"
 )
 
 // Enclose argument in double-quotes. Double each double-quote character as

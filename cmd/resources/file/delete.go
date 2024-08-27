@@ -16,13 +16,15 @@ package file
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/AlekSi/pointer"
+	"github.com/spf13/cobra"
+	"github.com/xanzy/go-gitlab"
+
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
 	"github.com/huhouhua/glctl/util/templates"
-	"github.com/spf13/cobra"
-	"github.com/xanzy/go-gitlab"
-	"strings"
 )
 
 type DeleteOptions struct {
@@ -75,12 +77,29 @@ func NewDeleteFilesCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Comman
 func (o *DeleteOptions) AddFlags(cmd *cobra.Command) {
 	cmdutil.AddProjectVarPFlag(cmd, &o.Project)
 	f := cmd.Flags()
-	f.StringVarP(o.file.Branch, "branch", "b", *o.file.Branch, "Name of the new branch to create. The commit is added to this branch.(default main)")
-	f.StringVarP(o.file.CommitMessage, "message", "m", *o.file.CommitMessage, "The commit message.(default delete file_path)")
+	f.StringVarP(
+		o.file.Branch,
+		"branch",
+		"b",
+		*o.file.Branch,
+		"Name of the new branch to create. The commit is added to this branch.(default main)",
+	)
+	f.StringVarP(
+		o.file.CommitMessage,
+		"message",
+		"m",
+		*o.file.CommitMessage,
+		"The commit message.(default delete file_path)",
+	)
 	f.StringVar(o.file.AuthorEmail, "author_email", *o.file.AuthorEmail, "The commit author’s email address.")
 	f.StringVar(o.file.AuthorName, "author_name", *o.file.AuthorName, "The commit author’s name.")
 	f.StringVar(o.file.LastCommitID, "last_commit_id", *o.file.LastCommitID, "Last known file commit ID.")
-	f.StringVar(o.file.StartBranch, "start_branch", *o.file.StartBranch, "Name of the base branch to create the new branch from.")
+	f.StringVar(
+		o.file.StartBranch,
+		"start_branch",
+		*o.file.StartBranch,
+		"Name of the base branch to create the new branch from.",
+	)
 }
 
 // Complete completes all the required options.
@@ -114,6 +133,12 @@ func (o *DeleteOptions) Run(args []string) error {
 	if err != nil {
 		return err
 	}
-	_, _ = fmt.Fprintf(o.ioStreams.Out, "file (%s) for %s branch with project id (%s) has been deleted\n", o.FileName, *o.file.Branch, o.Project)
+	_, _ = fmt.Fprintf(
+		o.ioStreams.Out,
+		"file (%s) for %s branch with project id (%s) has been deleted\n",
+		o.FileName,
+		*o.file.Branch,
+		o.Project,
+	)
 	return nil
 }

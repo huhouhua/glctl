@@ -17,13 +17,15 @@ package branch
 import (
 	"errors"
 	"fmt"
+	"strings"
+	"testing"
+
 	"github.com/AlekSi/pointer"
+	"github.com/spf13/cobra"
+
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
-	"github.com/spf13/cobra"
-	"strings"
-	"testing"
 )
 
 func TestEditBranch(t *testing.T) {
@@ -49,7 +51,9 @@ func TestEditBranch(t *testing.T) {
 			})
 			expectedOutput := fmt.Sprintf("branch %s un protect", args[0])
 			if !strings.Contains(out, expectedOutput) {
-				err = errors.New(fmt.Sprintf("unprotect main : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out))
+				err = errors.New(
+					fmt.Sprintf("unprotect main : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out),
+				)
 			}
 			return err
 		},
@@ -70,7 +74,9 @@ func TestEditBranch(t *testing.T) {
 			})
 			expectedOutput := fmt.Sprintf("branch %s updated", args[0])
 			if !strings.Contains(out, expectedOutput) {
-				err = errors.New(fmt.Sprintf("unprotect main : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out))
+				err = errors.New(
+					fmt.Sprintf("unprotect main : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out),
+				)
 			}
 			return err
 		},

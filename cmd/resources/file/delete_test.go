@@ -16,14 +16,16 @@ package file
 
 import (
 	"fmt"
+	"strings"
+	"testing"
+
 	"github.com/AlekSi/pointer"
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
-	"github.com/pkg/errors"
-	"github.com/spf13/cobra"
-	"strings"
-	"testing"
 )
 
 func TestDeleteFile(t *testing.T) {
@@ -46,9 +48,16 @@ func TestDeleteFile(t *testing.T) {
 			out := cmdtesting.Run(func() {
 				err = opt.Run(args)
 			})
-			expectedOutput := fmt.Sprintf("file (%s) for %s branch with project id (%s) has been deleted", opt.FileName, *opt.file.Branch, opt.Project)
+			expectedOutput := fmt.Sprintf(
+				"file (%s) for %s branch with project id (%s) has been deleted",
+				opt.FileName,
+				*opt.file.Branch,
+				opt.Project,
+			)
 			if !strings.Contains(out, expectedOutput) {
-				err = errors.New(fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out))
+				err = errors.New(
+					fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out),
+				)
 			}
 			return err
 		},
@@ -65,9 +74,16 @@ func TestDeleteFile(t *testing.T) {
 			out := cmdtesting.Run(func() {
 				err = opt.Run(args)
 			})
-			expectedOutput := fmt.Sprintf("file (%s) for %s branch with project id (%s) has been deleted", opt.FileName, *opt.file.Branch, opt.Project)
+			expectedOutput := fmt.Sprintf(
+				"file (%s) for %s branch with project id (%s) has been deleted",
+				opt.FileName,
+				*opt.file.Branch,
+				opt.Project,
+			)
 			if !strings.Contains(out, expectedOutput) {
-				err = errors.New(fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out))
+				err = errors.New(
+					fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out),
+				)
 			}
 			return err
 		},

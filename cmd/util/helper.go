@@ -17,12 +17,13 @@ package util
 import (
 	"errors"
 	"fmt"
-	"github.com/sirupsen/logrus"
-	"github.com/spf13/cobra"
 	"io"
 	"net/url"
 	"os"
 	"strings"
+
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
 )
 
 const (

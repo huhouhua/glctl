@@ -17,13 +17,15 @@ package project
 import (
 	"errors"
 	"fmt"
+	"strings"
+	"testing"
+
+	"github.com/spf13/cobra"
+	"github.com/xanzy/go-gitlab"
+
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
-	"github.com/spf13/cobra"
-	"github.com/xanzy/go-gitlab"
-	"strings"
-	"testing"
 )
 
 func TestDeleteProject(t *testing.T) {
@@ -43,7 +45,9 @@ func TestDeleteProject(t *testing.T) {
 			})
 			expectedOutput := fmt.Sprintf("project (%s) with id", "huhouhua/gitlab-repo-test")
 			if !strings.Contains(out, expectedOutput) {
-				err = errors.New(fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out))
+				err = errors.New(
+					fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out),
+				)
 			}
 			return err
 		},
@@ -58,7 +62,9 @@ func TestDeleteProject(t *testing.T) {
 			})
 			expectedOutput := fmt.Sprintf("with id (%d) has been deleted", 222)
 			if !strings.Contains(out, expectedOutput) {
-				err = errors.New(fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out))
+				err = errors.New(
+					fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out),
+				)
 			}
 			return err
 		},

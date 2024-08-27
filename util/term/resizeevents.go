@@ -15,9 +15,10 @@
 package term
 
 import (
-	"golang.org/x/sys/unix"
 	"os"
 	"os/signal"
+
+	"golang.org/x/sys/unix"
 )
 
 // monitorResizeEvents spawns a goroutine that waits for SIGWINCH signals (these indicate the

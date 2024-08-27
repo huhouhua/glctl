@@ -16,13 +16,15 @@ package branch
 
 import (
 	"fmt"
+	"strings"
+
+	"github.com/spf13/cobra"
+	"github.com/xanzy/go-gitlab"
+
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
 	"github.com/huhouhua/glctl/util/templates"
-	"github.com/spf13/cobra"
-	"github.com/xanzy/go-gitlab"
-	"strings"
 )
 
 type ListOptions struct {
@@ -87,7 +89,13 @@ func (o *ListOptions) AddFlags(cmd *cobra.Command) {
 	cmdutil.AddPaginationVarFlags(cmd, &o.branch.ListOptions)
 	cmdutil.AddOutFlag(cmd, &o.Out)
 	f := cmd.Flags()
-	f.BoolVarP(&o.All, "all", "A", o.All, "If present, list the across all project branch. branch in current context is ignored even if specified with --all.")
+	f.BoolVarP(
+		&o.All,
+		"all",
+		"A",
+		o.All,
+		"If present, list the across all project branch. branch in current context is ignored even if specified with --all.",
+	)
 }
 
 // Complete completes all the required options.

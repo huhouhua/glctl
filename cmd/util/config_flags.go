@@ -16,10 +16,12 @@ package util
 
 import (
 	"errors"
-	"github.com/AlekSi/pointer"
-	"github.com/huhouhua/glctl/cmd/types"
-	"github.com/spf13/pflag"
 	"sync"
+
+	"github.com/AlekSi/pointer"
+	"github.com/spf13/pflag"
+
+	"github.com/huhouhua/glctl/cmd/types"
 )
 
 type RESTClientGetter interface {

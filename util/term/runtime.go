@@ -39,7 +39,8 @@ var PanicHandlers = []func(context.Context, interface{}){logPanic}
 //
 // E.g., you can provide one or more additional handlers for something like shutting down go routines gracefully.
 //
-// TODO(pohly): logcheck:context // HandleCrashWithContext should be used instead of HandleCrash in code which supports contextual logging.
+// TODO(pohly): logcheck:context // HandleCrashWithContext should be used instead of HandleCrash in code which supports
+// contextual logging.
 func HandleCrash(additionalHandlers ...func(interface{})) {
 	if r := recover(); r != nil {
 		additionalHandlersWithContext := make([]func(context.Context, interface{}), len(additionalHandlers))

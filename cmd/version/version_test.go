@@ -16,11 +16,12 @@ package version
 
 import (
 	"fmt"
+	"strings"
+	"testing"
+
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
-	"strings"
-	"testing"
 )
 
 func TestRunVersion(t *testing.T) {

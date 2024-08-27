@@ -15,12 +15,14 @@
 package file
 
 import (
+	"testing"
+
 	"github.com/AlekSi/pointer"
+	"github.com/pkg/errors"
+
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
-	"github.com/pkg/errors"
-	"testing"
 )
 
 func TestGetFiles(t *testing.T) {

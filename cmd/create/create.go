@@ -15,12 +15,13 @@
 package create
 
 import (
+	"github.com/spf13/cobra"
+
 	"github.com/huhouhua/glctl/cmd/resources/branch"
 	"github.com/huhouhua/glctl/cmd/resources/group"
 	"github.com/huhouhua/glctl/cmd/resources/project"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	cli "github.com/huhouhua/glctl/util/cli"
-	"github.com/spf13/cobra"
 )
 
 var createDesc = "Create a Gitlab resource"

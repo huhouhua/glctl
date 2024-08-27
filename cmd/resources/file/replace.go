@@ -17,18 +17,20 @@ package file
 import (
 	"errors"
 	"fmt"
+	"net/http"
+	"strings"
+	"sync"
+
 	"github.com/AlekSi/pointer"
 	"github.com/fatih/color"
+	"github.com/spf13/cobra"
+	"github.com/xanzy/go-gitlab"
+
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
 	"github.com/huhouhua/glctl/util/progress"
 	"github.com/huhouhua/glctl/util/templates"
-	"github.com/spf13/cobra"
-	"github.com/xanzy/go-gitlab"
-	"net/http"
-	"strings"
-	"sync"
 )
 
 type ReplaceOptions struct {
@@ -86,9 +88,19 @@ func (o *ReplaceOptions) AddFlags(cmd *cobra.Command) {
 	cmdutil.AddProjectVarPFlag(cmd, &o.Project)
 	f := cmd.Flags()
 	f.StringVar(&o.Ref, "ref", o.Ref, "The name of a repository branch or tag or, if not given, the default branch.")
-	f.StringVar(&o.RefMatch, "ref-match", o.RefMatch, "match repository branch or tag or, if not given, the use --ref matching branch.")
+	f.StringVar(
+		&o.RefMatch,
+		"ref-match",
+		o.RefMatch,
+		"match repository branch or tag or, if not given, the use --ref matching branch.",
+	)
 	f.StringVarP(&o.FileName, "filename", "f", "", "to use to replace the repository file .")
-	f.BoolVar(&o.Force, "force", o.Force, "If true, immediately remove repository file from API and bypass graceful deletion. Note that immediate deletion of some  repository file may result in inconsistency or data loss and requires confirmation.")
+	f.BoolVar(
+		&o.Force,
+		"force",
+		o.Force,
+		"If true, immediately remove repository file from API and bypass graceful deletion. Note that immediate deletion of some  repository file may result in inconsistency or data loss and requires confirmation.",
+	)
 	cmdutil.VerifyMarkFlagRequired(cmd, "project")
 	cmdutil.VerifyMarkFlagRequired(cmd, "filename")
 }
@@ -174,7 +186,9 @@ func (o *ReplaceOptions) update(branch *gitlab.Branch) {
 }
 
 func (o *ReplaceOptions) next() ([]*gitlab.Branch, error) {
-	s := progress.CreatingEvent(true).WithText(fmt.Sprintf(" pull branch on page %d", o.branchList.ListOptions.Page)).Start()
+	s := progress.CreatingEvent(true).
+		WithText(fmt.Sprintf(" pull branch on page %d", o.branchList.ListOptions.Page)).
+		Start()
 	defer s.Stop()
 	branches, _, err := o.gitlabClient.Branches.ListBranches(o.Project, o.branchList)
 	o.branchList.ListOptions.Page++

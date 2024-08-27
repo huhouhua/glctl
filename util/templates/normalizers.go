@@ -15,8 +15,9 @@
 package templates
 
 import (
-	"github.com/MakeNowJust/heredoc/v2"
 	"strings"
+
+	"github.com/MakeNowJust/heredoc/v2"
 
 	"github.com/russross/blackfriday"
 	"github.com/spf13/cobra"

@@ -16,15 +16,17 @@ package branch
 
 import (
 	"fmt"
+	"strings"
+	"testing"
+
 	"github.com/AlekSi/pointer"
-	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
-	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
-	"strings"
-	"testing"
+
+	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
+	"github.com/huhouhua/glctl/util/cli"
 )
 
 func TestCreateBranch(t *testing.T) {
@@ -48,7 +50,9 @@ func TestCreateBranch(t *testing.T) {
 				err = opt.Run(args)
 			})
 			if !strings.Contains(out, *opt.branch.Branch) {
-				err = errors.New(fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", *opt.branch.Branch, out))
+				err = errors.New(
+					fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", *opt.branch.Branch, out),
+				)
 			}
 			return err
 		},

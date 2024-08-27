@@ -16,15 +16,17 @@ package group
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
+
 	"github.com/AlekSi/pointer"
+	"github.com/spf13/cobra"
+	"github.com/xanzy/go-gitlab"
+
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/cmd/validate"
 	"github.com/huhouhua/glctl/util/cli"
 	"github.com/huhouhua/glctl/util/templates"
-	"github.com/spf13/cobra"
-	"github.com/xanzy/go-gitlab"
-	"strconv"
-	"strings"
 )
 
 type ListOptions struct {
@@ -101,7 +103,13 @@ func (o *ListOptions) AddFlags(cmd *cobra.Command) {
 		"(defaults to false for authenticated users, true for admin)")
 	f.StringVar(o.group.OrderBy, "order-by", *o.group.OrderBy,
 		"Order groups by name or path. Default is name")
-	f.BoolVarP(&o.AllGroups, "all-groups", "A", o.AllGroups, "If present, list the requested object(s) across all groups. group in current context is ignored even if specified with --group.")
+	f.BoolVarP(
+		&o.AllGroups,
+		"all-groups",
+		"A",
+		o.AllGroups,
+		"If present, list the requested object(s) across all groups. group in current context is ignored even if specified with --group.",
+	)
 }
 
 // Complete completes all the required options.

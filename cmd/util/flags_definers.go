@@ -15,11 +15,12 @@
 package util
 
 import (
+	"strings"
+
 	"github.com/golang/glog"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/xanzy/go-gitlab"
-	"strings"
 )
 
 func VerifyMarkFlagRequired(cmd *cobra.Command, fName string) {

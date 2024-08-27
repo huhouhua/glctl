@@ -16,14 +16,16 @@ package file
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/AlekSi/pointer"
+	"github.com/spf13/cobra"
+	"github.com/xanzy/go-gitlab"
+
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
 	"github.com/huhouhua/glctl/util/templates"
-	"github.com/spf13/cobra"
-	"github.com/xanzy/go-gitlab"
-	"strings"
 )
 
 type ListOptions struct {
@@ -84,11 +86,33 @@ func (o *ListOptions) AddFlags(cmd *cobra.Command) {
 	cmdutil.AddOutFlag(cmd, &o.Out)
 	cmdutil.AddSortVarFlag(cmd, &o.file.Sort)
 	f := cmd.Flags()
-	f.StringVar(o.file.Ref, "ref", *o.file.Ref, "The name of a repository branch or tag or, if not given, the default branch.")
-	f.StringVar(o.file.Path, "path", *o.file.Path, "The path inside the repository. Used to get content of subdirectories.")
-	f.BoolVarP(o.file.Recursive, "recursive", "r", *o.file.Recursive, "Boolean value used to get a recursive tree. Default is true.")
+	f.StringVar(
+		o.file.Ref,
+		"ref",
+		*o.file.Ref,
+		"The name of a repository branch or tag or, if not given, the default branch.",
+	)
+	f.StringVar(
+		o.file.Path,
+		"path",
+		*o.file.Path,
+		"The path inside the repository. Used to get content of subdirectories.",
+	)
+	f.BoolVarP(
+		o.file.Recursive,
+		"recursive",
+		"r",
+		*o.file.Recursive,
+		"Boolean value used to get a recursive tree. Default is true.",
+	)
 	f.BoolVar(&o.Raw, "raw", o.Raw, "read to receive the raw file in repository.")
-	f.BoolVarP(&o.All, "all", "A", o.All, "If present, list the across all project file. file in current context is ignored even if specified with --all.")
+	f.BoolVarP(
+		&o.All,
+		"all",
+		"A",
+		o.All,
+		"If present, list the across all project file. file in current context is ignored even if specified with --all.",
+	)
 }
 
 // Complete completes all the required options.

@@ -16,10 +16,11 @@ package login
 
 import (
 	"fmt"
-	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
-	"github.com/huhouhua/glctl/util/cli"
 	"strings"
 	"testing"
+
+	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
+	"github.com/huhouhua/glctl/util/cli"
 )
 
 func TestLogin(t *testing.T) {

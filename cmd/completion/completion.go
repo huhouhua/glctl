@@ -16,11 +16,13 @@ package completion
 
 import (
 	"fmt"
+	"io"
+
+	"github.com/spf13/cobra"
+
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	cli "github.com/huhouhua/glctl/util/cli"
 	"github.com/huhouhua/glctl/util/templates"
-	"github.com/spf13/cobra"
-	"io"
 )
 
 const defaultBoilerPlate = `

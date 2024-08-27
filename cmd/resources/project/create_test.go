@@ -16,15 +16,17 @@ package project
 
 import (
 	"fmt"
+	"strings"
+	"testing"
+
 	"github.com/AlekSi/pointer"
-	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
-	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
-	"strings"
-	"testing"
+
+	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
+	"github.com/huhouhua/glctl/util/cli"
 )
 
 func TestCreateProject(t *testing.T) {
@@ -68,7 +70,9 @@ func TestCreateProject(t *testing.T) {
 			})
 			expectedOutput := fmt.Sprintf("%s/%s.git", opt.namespace, args[0])
 			if !strings.Contains(out, expectedOutput) {
-				err = errors.New(fmt.Sprintf("create a new project : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out))
+				err = errors.New(
+					fmt.Sprintf("create a new project : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out),
+				)
 			}
 			return err
 		},

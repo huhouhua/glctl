@@ -16,6 +16,7 @@ package testing
 
 import (
 	"github.com/AlekSi/pointer"
+
 	"github.com/huhouhua/glctl/cmd/types"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 )
