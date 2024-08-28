@@ -138,25 +138,25 @@ testdata: run-gitlab
 .PHONY: run-gitlab
 run-gitlab:
 	@echo -e "\n\033[36mRunning gitlab conformance tests...\033[0m"
-	@$(MAKE) install.gitlab
+	@$(MAKE) gitlab.install
 
 ## kill-gitlab: kill gitlab service
 .PHONY: kill-gitlab
 kill-gitlab:
 	@echo -e "\n\033[36mKill gitlab conformance tests...\033[0m"
-	@$(MAKE) uninstall.gitlab
+	@$(MAKE) gitlab.uninstall
 
 ## start-gitlab: start run gitlab service
 .PHONY: start-gitlab
 start-gitlab: run-gitlab
 	@echo -e "\n\033[36mStart gitlab conformance tests...\033[0m"
-	@$(MAKE) start.gitlab
+	@$(MAKE) gitlab.start
 
 ## stop-gitlab: stop gitlab service
 .PHONY: stop-gitlab
 stop-gitlab:
 	@echo -e "\n\033[36mStop gitlab conformance tests...\033[0m"
-	@$(MAKE) stop.gitlab
+	@$(MAKE) gitlab.stop
 
 ## help: Show this help info.
 .PHONY: help
