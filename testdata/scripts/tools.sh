@@ -50,6 +50,10 @@ install::jq::macos()
 # Detect OS and install jq
 install::jq()
 {
+   if command -v jq >/dev/null 2>&1; then
+       info "jq is already installed."
+       return 0
+  fi
   if [ -f /etc/os-release ]; then
       . /etc/os-release
       case "$ID" in
