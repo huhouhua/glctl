@@ -15,6 +15,7 @@
 package util
 
 import (
+	"github.com/AlekSi/pointer"
 	"github.com/golang/glog"
 	"github.com/spf13/cobra"
 	gitlab "github.com/xanzy/go-gitlab"
@@ -30,7 +31,7 @@ const (
 // GetFlagVisibility converts the string flag visiblity to gitlab.VisibilityValue.
 func GetFlagVisibility(cmd *cobra.Command) *gitlab.VisibilityValue {
 	v := GetFlagString(cmd, "visibility")
-	return gitlab.Visibility(gitlab.VisibilityValue(v))
+	return pointer.To(gitlab.VisibilityValue(v))
 }
 
 func GetFlagStringSlice(cmd *cobra.Command, flag string) []string {

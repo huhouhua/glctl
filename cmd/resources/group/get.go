@@ -152,12 +152,13 @@ func (o *ListOptions) Run(args []string) error {
 		groups, _, err = o.gitlabClient.Groups.ListSubGroups(o.FromGroup, o.subGroup)
 	} else {
 		for {
-			list, _, err := o.gitlabClient.Groups.ListGroups(o.group)
+			var portion []*gitlab.Group
+			portion, _, err = o.gitlabClient.Groups.ListGroups(o.group)
 			if err != nil {
 				return nil
 			}
-			groups = append(groups, list...)
-			if cap(list) == 0 || !o.AllGroups {
+			groups = append(groups, portion...)
+			if cap(portion) == 0 || !o.AllGroups {
 				break
 			}
 			o.group.Page++

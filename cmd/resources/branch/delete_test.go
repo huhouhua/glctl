@@ -49,8 +49,8 @@ func TestDeleteBranch(t *testing.T) {
 			})
 			expectedOutput := fmt.Sprintf("Branch (%s) from project (%s) has been deleted", opt.branch, opt.project)
 			if !strings.Contains(out, expectedOutput) {
-				err = errors.New(
-					fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out),
+				err = fmt.Errorf(
+					"delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out,
 				)
 			}
 			return err

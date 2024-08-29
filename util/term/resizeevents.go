@@ -21,6 +21,7 @@ import (
 	"golang.org/x/sys/unix"
 )
 
+// nolint
 // monitorResizeEvents spawns a goroutine that waits for SIGWINCH signals (these indicate the
 // terminal has resized). After receiving a SIGWINCH, this gets the terminal size and tries to send
 // it to the resizeEvents channel. The goroutine stops when the stop channel is closed.

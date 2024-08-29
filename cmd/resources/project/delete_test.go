@@ -45,8 +45,8 @@ func TestDeleteProject(t *testing.T) {
 			})
 			expectedOutput := fmt.Sprintf("project (%s) with id", "huhouhua/gitlab-repo-test")
 			if !strings.Contains(out, expectedOutput) {
-				err = errors.New(
-					fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out),
+				err = fmt.Errorf(
+					"delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out,
 				)
 			}
 			return err
@@ -62,8 +62,8 @@ func TestDeleteProject(t *testing.T) {
 			})
 			expectedOutput := fmt.Sprintf("with id (%d) has been deleted", 222)
 			if !strings.Contains(out, expectedOutput) {
-				err = errors.New(
-					fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out),
+				err = fmt.Errorf(
+					"delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out,
 				)
 			}
 			return err

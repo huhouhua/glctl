@@ -88,6 +88,6 @@ func (t TTY) Safe(fn SafeFunc) error {
 			t.sizeQueue.stop()
 		}
 
-		term.RestoreTerminal(inFd, state)
+		_ = term.RestoreTerminal(inFd, state)
 	}).Run(fn)
 }

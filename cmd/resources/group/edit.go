@@ -98,18 +98,21 @@ func (o *EditOptions) AddFlags(cmd *cobra.Command) {
 
 // Complete completes all the required options.
 func (o *EditOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []string) error {
-	var err error
-	o.gitlabClient, err = f.GitlabClient()
+	client, err := f.GitlabClient()
+	if err != nil {
+		return err
+	}
+	o.gitlabClient = client
 	if len(args) > 0 {
 		gid := args[0]
 		o.groupId, err = strconv.Atoi(gid)
 		// if group is not a number,
 		// search for the group path's id and assign it to gid
 		if err != nil {
-			groupInfo, _, err := o.gitlabClient.Groups.GetGroup(gid, &gitlab.GetGroupOptions{})
-			if err != nil {
+			groupInfo, _, errGroup := o.gitlabClient.Groups.GetGroup(gid, &gitlab.GetGroupOptions{})
+			if errGroup != nil {
 				return fmt.Errorf("couldn't find the id of group %s, got error: %v",
-					gid, err)
+					gid, errGroup)
 			}
 			o.groupId = groupInfo.ID
 		}

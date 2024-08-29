@@ -32,7 +32,6 @@ type EditOptions struct {
 	gitlabClient      *gitlab.Client
 	protectBranch     *gitlab.ProtectBranchOptions
 	protectRepository *gitlab.ProtectRepositoryBranchesOptions
-	branch            string
 	project           string
 	protect           bool
 	Unprotect         bool

@@ -48,6 +48,7 @@ func ExecuteCommand(cmdFunc TestCmdFunc, cmd string) (stdout string, err error) 
 
 func ExecuteCommandOfArgs(cmdFunc TestCmdFunc, args ...string) (stdout string, err error) {
 	buf := new(bytes.Buffer)
+	//nolint:gocritic
 	//root, err := NewRootCmd(buf)
 	cmd := cmdFunc(buf)
 	for i, arg := range args {

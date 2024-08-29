@@ -54,12 +54,14 @@ func GetSize(fd uintptr) *TerminalSize {
 
 // sizeQueue implements TerminalSizeQueue
 type sizeQueue struct {
+	// nolint
 	t TTY
 	// resizeChan receives a Size each time the user's terminal is resized.
 	resizeChan   chan TerminalSize
 	stopResizing chan struct{}
 }
 
+// nolint
 // monitorSize primes resizeChan with initialSizes and then monitors for resize events. With each
 // new event, it sends the current terminal size to resizeChan.
 func (s *sizeQueue) monitorSize(outFd uintptr, initialSizes ...*TerminalSize) {

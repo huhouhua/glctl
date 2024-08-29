@@ -117,9 +117,9 @@ func (o *Options) Run(args []string) error {
 	if err != nil {
 		return err
 	}
-	defer func(Body io.ReadCloser) {
-		_ = Body.Close()
-	}(resp.Body)
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -182,7 +182,7 @@ func (o *Options) promptUserNameInput() string {
 			fmt.Println(err.Error())
 			continue
 		}
-		username := strings.Replace(input, "\n", "", -1)
+		username := strings.ReplaceAll(input, "\n", "")
 		if strings.TrimSpace(username) != "" {
 			return username
 		}

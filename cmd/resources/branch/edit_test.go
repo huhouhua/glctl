@@ -51,8 +51,8 @@ func TestEditBranch(t *testing.T) {
 			})
 			expectedOutput := fmt.Sprintf("branch %s un protect", args[0])
 			if !strings.Contains(out, expectedOutput) {
-				err = errors.New(
-					fmt.Sprintf("unprotect main : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out),
+				err = fmt.Errorf(
+					"unprotect main : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out,
 				)
 			}
 			return err
@@ -74,8 +74,8 @@ func TestEditBranch(t *testing.T) {
 			})
 			expectedOutput := fmt.Sprintf("branch %s updated", args[0])
 			if !strings.Contains(out, expectedOutput) {
-				err = errors.New(
-					fmt.Sprintf("unprotect main : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out),
+				err = fmt.Errorf(
+					"unprotect main : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out,
 				)
 			}
 			return err

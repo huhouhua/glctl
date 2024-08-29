@@ -132,10 +132,12 @@ func (o *EditOptions) AddFlags(cmd *cobra.Command) {
 
 // Complete completes all the required options.
 func (o *EditOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []string) error {
-	var err error
-	o.gitlabClient, err = f.GitlabClient()
-	err = o.assignOptions(cmd)
-	return err
+	gitlabClient, err := f.GitlabClient()
+	if err != nil {
+		return err
+	}
+	o.gitlabClient = gitlabClient
+	return o.assignOptions(cmd)
 }
 
 // Validate makes sure there is no discrepency in command options.

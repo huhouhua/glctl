@@ -143,6 +143,6 @@ func (o *EditOptions) Run(args []string) error {
 	if err != nil {
 		return err
 	}
-	_, _ = fmt.Fprintln(o.ioStreams.Out, fmt.Sprintf("%s edited", o.path))
+	_, _ = fmt.Fprintln(o.ioStreams.Out, o.path, " edited")
 	return nil
 }

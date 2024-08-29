@@ -15,7 +15,6 @@
 package util
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"net/url"
@@ -74,11 +73,12 @@ func checkErr(err error, handleErr func(string, int)) {
 	case err == ErrExit:
 		handleErr("", DefaultErrorExitCode)
 	default:
-		switch err := err.(type) {
+		//nolint:gocritic
+		switch errType := err.(type) {
 		default: // for any other error type
-			msg, ok := StandardErrorMessage(err)
+			msg, ok := StandardErrorMessage(errType)
 			if !ok {
-				msg = err.Error()
+				msg = errType.Error()
 				if !strings.HasPrefix(msg, "error: ") {
 					msg = fmt.Sprintf("error: %s", msg)
 				}
@@ -155,10 +155,10 @@ const pathNotExistError = "the path %s does not exist"
 func ReadFile(path string) ([]byte, error) {
 	fi, err := os.Stat(path)
 	if os.IsNotExist(err) {
-		return nil, errors.New(fmt.Sprintf(pathNotExistError, path))
+		return nil, fmt.Errorf(pathNotExistError, path)
 	}
 	if fi.IsDir() {
-		return nil, errors.New(fmt.Sprintf("the path %s is dir", path))
+		return nil, fmt.Errorf("the path %s is dir", path)
 	}
 	return os.ReadFile(path)
 }

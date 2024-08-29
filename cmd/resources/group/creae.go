@@ -93,25 +93,28 @@ func (o *CreateOptions) AddFlags(cmd *cobra.Command) {
 
 // Complete completes all the required options.
 func (o *CreateOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []string) error {
-	var err error
-	o.gitlabClient, err = f.GitlabClient()
+	client, err := f.GitlabClient()
+	if err != nil {
+		return err
+	}
+	o.gitlabClient = client
 	o.Group.Path = pointer.ToString(args[0])
 	o.Group.Name = pointer.ToString(args[0])
 	if strings.TrimSpace(o.Namespace) != "" {
-		id, err := strconv.Atoi(o.Namespace)
+		id, convErr := strconv.Atoi(o.Namespace)
 		// if not nil take the given number
-		if err == nil {
+		if convErr == nil {
 			o.Group.ParentID = &id
 			// find the group as string and get it's id
 		} else {
-			groupInfo, _, err := o.gitlabClient.Groups.GetGroup("namespace", &gitlab.GetGroupOptions{})
-			if err != nil {
-				return err
+			groupInfo, _, errGroup := o.gitlabClient.Groups.GetGroup("namespace", &gitlab.GetGroupOptions{})
+			if errGroup != nil {
+				return errGroup
 			}
 			o.Group.ParentID = pointer.ToInt(groupInfo.ID)
 		}
 	}
-	return err
+	return nil
 }
 
 // Validate makes sure there is no discrepency in command options.

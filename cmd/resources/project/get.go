@@ -181,12 +181,13 @@ func (o *ListOptions) Run(args []string) error {
 			o.project.ListOptions.Page = 1
 		}
 		for {
-			list, _, err := o.gitlabClient.Projects.ListProjects(o.project)
+			var portion []*gitlab.Project
+			portion, _, err = o.gitlabClient.Projects.ListProjects(o.project)
 			if err != nil {
 				return nil
 			}
-			projects = append(projects, list...)
-			if cap(list) == 0 || !o.AllGroups {
+			projects = append(projects, portion...)
+			if cap(portion) == 0 || !o.AllGroups {
 				break
 			}
 			o.project.Page++

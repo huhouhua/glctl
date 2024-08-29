@@ -16,7 +16,6 @@ package util
 
 import (
 	"fmt"
-	//root "github.com/huhouhua/glctl/cmd"
 	"strings"
 
 	"github.com/xanzy/go-gitlab"

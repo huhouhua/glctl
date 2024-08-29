@@ -50,8 +50,8 @@ func TestRunEdit(t *testing.T) {
 			})
 			expectedOutput := fmt.Sprintf("%s edited", opt.path)
 			if !strings.Contains(out, expectedOutput) {
-				err = errors.New(
-					fmt.Sprintf("compare content : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out),
+				err = fmt.Errorf(
+					"compare content : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out,
 				)
 			}
 			return err

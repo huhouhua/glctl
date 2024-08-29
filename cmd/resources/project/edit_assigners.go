@@ -86,7 +86,7 @@ func (o *EditOptions) assignOptions(cmd *cobra.Command) error {
 	if cmd.Flag("tag-list").Changed {
 		p := new([]string)
 		*p = cmdutil.GetFlagStringSlice(cmd, "tag-list")
-		o.project.TagList = p
+		o.project.Topics = p
 	}
 	if cmd.Flag("printing-merge-request-link-enabled").Changed {
 		o.project.PrintingMergeRequestLinkEnabled = pointer.ToBool(

@@ -34,7 +34,7 @@ const (
 {{.NameAndAliases}}
 
 {{end}}`
-
+	// #nosec
 	// SectionExamples is the help template section that displays command examples.
 	SectionExamples = `{{if .HasExample}}Examples:
 {{trimRight .Example}}

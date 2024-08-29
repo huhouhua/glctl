@@ -107,7 +107,6 @@ func (o *ReplaceOptions) AddFlags(cmd *cobra.Command) {
 
 // Complete completes all the required options.
 func (o *ReplaceOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []string) error {
-	var err error
 	if len(args) > 0 {
 		o.path = args[0]
 	}
@@ -117,7 +116,11 @@ func (o *ReplaceOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []
 	if strings.TrimSpace(o.RefMatch) != "" {
 		o.branchList.Regex = pointer.ToString(o.RefMatch)
 	}
-	o.gitlabClient, err = f.GitlabClient()
+	gitlabClient, err := f.GitlabClient()
+	if err != nil {
+		return err
+	}
+	o.gitlabClient = gitlabClient
 	o.content, err = cmdutil.ReadFile(o.FileName)
 	return err
 }

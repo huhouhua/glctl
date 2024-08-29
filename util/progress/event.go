@@ -39,8 +39,9 @@ const (
 type Event struct {
 	isParent bool
 	status   EventStatus
-	color    string
-	spinner  *spinner.Spinner
+	// nolint
+	color   string
+	spinner *spinner.Spinner
 }
 
 // ErrorEvent creates a new Error Event

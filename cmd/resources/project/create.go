@@ -191,15 +191,19 @@ func (o *CreateOptions) AddFlags(cmd *cobra.Command) {
 
 // Complete completes all the required options.
 func (o *CreateOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []string) error {
-	var err error
-	o.gitlabClient, err = f.GitlabClient()
+	client, err := f.GitlabClient()
+	if err != nil {
+		return err
+	}
+	o.gitlabClient = client
 	o.project.Name = pointer.ToString(args[0])
 	o.project.Path = pointer.ToString(args[0])
 	gid, convErr := strconv.Atoi(o.namespace)
 	// if namespace is not a number,
 	// get the namespace's group id and assign it to gid
 	if convErr != nil {
-		ns, _, err := o.gitlabClient.Namespaces.GetNamespace(o.namespace)
+		var ns *gitlab.Namespace
+		ns, _, err = o.gitlabClient.Namespaces.GetNamespace(o.namespace)
 		if err == nil {
 			gid = ns.ID
 		}

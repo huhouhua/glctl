@@ -62,7 +62,8 @@ func TestDeleteFile(t *testing.T) {
 			return err
 		},
 		wantError: nil,
-	}, { //to do
+	}, {
+		// to do
 		name: "delete by dir",
 		args: []string{"/weqwee"},
 		optionsFunc: func(opt *DeleteOptions) {

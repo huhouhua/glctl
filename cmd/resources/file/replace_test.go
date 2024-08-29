@@ -46,11 +46,6 @@ func TestRunReplace(t *testing.T) {
 			_ = cmdtesting.Run(func() {
 				err = opt.Run(args)
 			})
-			//expectedOutput := fmt.Sprintf("%s edited", opt.path)
-			//if !strings.Contains(out, expectedOutput) {
-			// 	err = errors.New(fmt.Sprintf("compare content : Unexpected output! Expected\n%s\ngot\n%s",
-			// expectedOutput, out))
-			//}
 			return err
 		},
 		wantError: nil,
@@ -68,11 +63,6 @@ func TestRunReplace(t *testing.T) {
 			_ = cmdtesting.Run(func() {
 				err = opt.Run(args)
 			})
-			//expectedOutput := fmt.Sprintf("%s edited", opt.path)
-			//if !strings.Contains(out, expectedOutput) {
-			// 	err = errors.New(fmt.Sprintf("compare content : Unexpected output! Expected\n%s\ngot\n%s",
-			// expectedOutput, out))
-			//}
 			return err
 		},
 		wantError: nil,
