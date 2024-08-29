@@ -36,8 +36,10 @@ jobs:
           # - 1.18beta1 -> 1.18.0-beta.1
           # - 1.18rc1 -> 1.18.0-rc.1
           go-version: ${{ env.GO_VERSION }}
+
       - name: "Checkout ${{ github.ref }}"
         uses: actions/checkout@v4
+
       - name: Check go mod
         run: |
           make tidy
@@ -47,10 +49,13 @@ jobs:
     name: testdata
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
           go-version: ${{ env.GO_VERSION }}
+
       - name: Setup Golang Caches
         uses: actions/cache@v4
         with:
@@ -59,6 +64,7 @@ jobs:
             ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ github.run_id }}
           restore-keys: ${{ runner.os }}-go
+
       - name: Setup Submodule Caches
         uses: actions/cache@v4
         with:
@@ -66,14 +72,19 @@ jobs:
             .git/modules
           key: ${{ runner.os }}-submodules-cache-${{ github.run_id }}
           restore-keys: ${{ runner.os }}-submodules-cache
+
+      - run: git stash # restore patch
+
       - name: Install docker-compose
         run: |
           sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose version
+
       - name: Run gitlab service
         run: |
           make run-gitlab
+
       - name: Add test data
         run: |
           make testdata
@@ -81,10 +92,16 @@ jobs:
     runs-on: ubuntu-latest
     needs: testdata
     steps:
+      - name: "Checkout ${{ github.ref }}"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
           go-version: ${{ env.GO_VERSION }}
+
       - name: Setup Golang Caches
         uses: actions/cache@v4
         with:
@@ -93,6 +110,7 @@ jobs:
             ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ github.run_id }}
           restore-keys: ${{ runner.os }}-go
+
       - name: Setup Submodule Caches
         uses: actions/cache@v4
         with:
@@ -100,7 +118,9 @@ jobs:
             .git/modules
           key: ${{ runner.os }}-submodules-cache-${{ github.run_id }}
           restore-keys: ${{ runner.os }}-submodules-cache
+
       - run: git stash # restore patch
+
       - name: Check format
         run: |
           make format
