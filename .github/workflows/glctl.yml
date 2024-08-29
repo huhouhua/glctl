@@ -43,11 +43,76 @@ jobs:
           make tidy
           git diff --exit-code go.mod
           git diff --exit-code go.sum
-  testdata:
-    name: testdata
+  format:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: "Checkout ${{ github.ref }}"
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Setup Golang Caches
+        uses: actions/cache@v4
+        with:
+          path: |-
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ github.run_id }}
+          restore-keys: ${{ runner.os }}-go
+
+      - name: Setup Submodule Caches
+        uses: actions/cache@v4
+        with:
+          path: |-
+            .git/modules
+          key: ${{ runner.os }}-submodules-cache-${{ github.run_id }}
+          restore-keys: ${{ runner.os }}-submodules-cache
+
+      - run: git stash # restore patch
+      - name: Check format
+        run: |
+          make format
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout ${{ github.ref }}"
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Setup Golang Caches
+        uses: actions/cache@v4
+        with:
+          path: |-
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ github.run_id }}
+          restore-keys: ${{ runner.os }}-go
+
+      - name: Setup Submodule Caches
+        uses: actions/cache@v4
+        with:
+          path: |-
+            .git/modules
+          key: ${{ runner.os }}-submodules-cache-${{ github.run_id }}
+          restore-keys: ${{ runner.os }}-submodules-cache
+
+      - run: git stash # restore patch
+      - name: Check syntax and styling of go sources
+        run: |
+          make lint
+  conformance-test:
+    runs-on: ubuntu-latest
+    needs: [lint,format]
+    steps:
+      - name: "Checkout ${{ github.ref }}"
+        uses: actions/checkout@v4
 
       - name: Setup Go
         uses: actions/setup-go@v3
@@ -86,9 +151,18 @@ jobs:
       - name: Add test data
         run: |
           make testdata
-  glctl:
+
+      - name: Run unit test and get test coverage
+        run: |
+          make cover
+      - name: Collect Test Coverage File
+        uses: actions/upload-artifact@v1.0.0
+        with:
+          name: main-output
+          path: _output/coverage.out
+  build:
     runs-on: ubuntu-latest
-    needs: testdata
+    needs: [conformance-test]
     steps:
       - name: "Checkout ${{ github.ref }}"
         uses: actions/checkout@v4
@@ -119,24 +193,6 @@ jobs:
 
       - run: git stash # restore patch
 
-      - name: Check format
-        run: |
-          make format
-
-      - name: Check syntax and styling of go sources
-        run: |
-          make lint
-
-      - name: Run unit test and get test coverage
-        run: |
-          make cover
-
       - name: Build source code for host platform
         run: |
           make build
-
-      - name: Collect Test Coverage File
-        uses: actions/upload-artifact@v1.0.0
-        with:
-          name: main-output
-          path: _output/coverage.out
