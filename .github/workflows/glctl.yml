@@ -139,13 +139,17 @@ jobs:
         run: |
           make run-gitlab
 
+      - name: Set Gitlab Credentials
+        run: |
+          source testdata/scripts/credentials.sh
+          env | grep GITLAB
+
       - name: Add test data
         run: |
           make testdata
 
       - name: Run unit test and get test coverage
         run: |
-          env
           make cover
 
       - name: Collect Test Coverage File

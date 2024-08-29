@@ -21,15 +21,6 @@ UCURL="curl -f -s -XPUT" # Update
 RCURL="curl -f -s -XGET" # Retrieve
 DCURL="curl -f -s -XDELETE" # Delete
 
-gitlab::credentials()
-{
-  export GITLAB_USERNAME=root
-  export GITLAB_PASSWORD=password
-  export GITLAB_URL=${GITLAB_URL:-http://localhost:8080}
-  export GITLAB_PRIVATE_TOKEN=$(gitlab::login)
-#  export GITLAB_OAUTH_TOKEN=$(gitlab::get::token)
-}
-
 # get access token
 gitlab::login(){
   ${CCURL} "${GITLAB_URL}/oauth/token" -d "grant_type=password&username=${GITLAB_USERNAME}&password=${GITLAB_PASSWORD}" | jq '.access_token' | tr -d '"'
@@ -67,3 +58,8 @@ body_header=$(curl -L -b cookies.txt "${GITLAB_URL}/profile/personal_access_toke
 personal_access_token=$(echo $body_header | perl -ne 'print "$1\n" if /created-personal-access-token"[[:blank:]]value="(.+?)"/' | sed -n 1p)
 return  $personal_access_token
 }
+
+export GITLAB_USERNAME=${GITLAB_USERNAME:-root}
+export GITLAB_PASSWORD=${GITLAB_PASSWORD:-password}
+export GITLAB_URL=${GITLAB_URL:-http://localhost:8080}
+export GITLAB_PRIVATE_TOKEN=${GITLAB_PRIVATE_TOKEN:-$(gitlab::login)}

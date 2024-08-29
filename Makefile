@@ -16,7 +16,7 @@
 .DEFAULT_GOAL := all
 
 .PHONY: all
-all: tidy copyright.add format lint testdata cover build
+all: tidy add-copyright format lint testdata cover build
 
 # ==============================================================================
 # Build options
@@ -59,13 +59,13 @@ include Makefile.tools.mk
 # ==============================================================================
 # Targets
 
-.PHONY: copyright.verify
-copyright.verify: tools.verify.licctl
+.PHONY: verify-copyright
+verify-copyright: tools.verify.licctl
 	@echo "===========> Verifying the boilerplate headers for all files"
 	@licctl --check -f $(ROOT_DIR)/boilerplate.txt $(ROOT_DIR) --skip-dirs=.idea
 
-.PHONY: copyright.add
-copyright.add: tools.verify.licctl
+.PHONY: add-copyright
+add-copyright: tools.verify.licctl
 	@echo $(ROOT_DIR)
 	@licctl -v -f $(ROOT_DIR)/boilerplate.txt $(ROOT_DIR) --skip-dirs=.idea
 

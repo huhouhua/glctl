@@ -16,7 +16,7 @@
 
 
 # Function install jq on Debian/Ubuntu
-install::jq::debian()
+function  install::jq::debian()
 {
     info "Installing jq on Debian/Ubuntu..."
     sudo apt-get update
@@ -24,7 +24,7 @@ install::jq::debian()
 }
 
 # Function to install jq on CentOS/RHEL/Fedora
-install::jq::centos_fedora()
+function install::jq::centos_fedora()
 {
     info "Installing jq on CentOS/RHEL/Fedora..."
     if [ -f /etc/yum.repos.d/epel.repo ]; then
@@ -36,7 +36,7 @@ install::jq::centos_fedora()
 }
 
 # Function to install jq on macOS
-install::jq::macos()
+function install::jq::macos()
 {
     info "Installing jq on macOS..."
     if command -v brew >/dev/null 2>&1; then
@@ -48,7 +48,7 @@ install::jq::macos()
 }
 
 # Detect OS and install jq
-install::jq()
+function install::jq()
 {
    if command -v jq >/dev/null 2>&1; then
        info "jq is already installed."
@@ -74,4 +74,14 @@ install::jq()
       error "Unsupported operating system. Please install jq manually."
       exit 1
   fi
+}
+
+function print::result(){
+   local id=$1
+   local message=$2
+  if [ -z "${id}" ]; then
+      error "create fail!"
+      exit 1
+  fi
+  success "${message}"
 }
