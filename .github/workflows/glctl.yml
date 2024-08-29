@@ -139,7 +139,7 @@ jobs:
         run: |
           make run-gitlab
 
-      - name: Set Gitlab Credentials
+      - name: Set gitlab credentials
         run: |
           source testdata/scripts/credentials.sh
           env | grep GITLAB

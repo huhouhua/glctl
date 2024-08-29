@@ -16,17 +16,12 @@ package cmd
 
 import (
 	"bytes"
-	"net/url"
 	"testing"
 
 	"github.com/spf13/cobra"
 
 	cmdutil "github.com/huhouhua/glctl/cmd/testing"
 )
-
-func TestQueryEscape(t *testing.T) {
-	t.Log(url.QueryEscape("/weqweq/data.yaml"))
-}
 
 func TestRoot(t *testing.T) {
 	tests := []struct {
