@@ -145,6 +145,7 @@ jobs:
 
       - name: Run unit test and get test coverage
         run: |
+          env
           make cover
 
       - name: Collect Test Coverage File
