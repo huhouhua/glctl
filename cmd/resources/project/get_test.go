@@ -86,7 +86,3 @@ func TestGetProjects(t *testing.T) {
 		})
 	}
 }
-
-func TestValidate(t *testing.T) {
-
-}

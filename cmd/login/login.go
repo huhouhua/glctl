@@ -105,7 +105,7 @@ func (o *Options) Validate(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-// Run executes a create subcommand using the specified options.
+// Run performs the login operation.
 func (o *Options) Run(args []string) error {
 	uri := fmt.Sprintf(
 		"%s/oauth/token?grant_type=password&username=%s&password=%s",
