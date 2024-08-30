@@ -65,17 +65,16 @@ func TestLogin(t *testing.T) {
 				tc.optionsFunc(cmdOptions)
 			}
 			out := cmdtesting.RunForStdout(streams, func() {
-				var err error
-				if err = cmdOptions.Complete(cmd, tc.args); err != nil {
-					_, err = fmt.Fprint(streams.Out, err)
+				if err := cmdOptions.Complete(cmd, tc.args); err != nil {
+					_, _ = fmt.Fprint(streams.Out, err)
 					return
 				}
-				if err = cmdOptions.Validate(cmd, tc.args); err != nil {
-					_, err = fmt.Fprint(streams.Out, err)
+				if err := cmdOptions.Validate(cmd, tc.args); err != nil {
+					_, _ = fmt.Fprint(streams.Out, err)
 					return
 				}
-				if err = cmdOptions.Run(tc.args); err != nil {
-					_, err = fmt.Fprint(streams.Out, err)
+				if err := cmdOptions.Run(tc.args); err != nil {
+					_, _ = fmt.Fprint(streams.Out, err)
 					return
 				}
 			})

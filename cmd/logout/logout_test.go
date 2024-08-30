@@ -71,12 +71,12 @@ func TestLogout(t *testing.T) {
 				var err error
 				if tc.completeFunc != nil {
 					if err = tc.completeFunc(streams); err != nil {
-						_, err = fmt.Fprint(streams.Out, err)
+						_, _ = fmt.Fprint(streams.Out, err)
 						return
 					}
 				} else {
 					if err = cmdOptions.Complete(cmd, nil); err != nil {
-						_, err = fmt.Fprint(streams.Out, err)
+						_, _ = fmt.Fprint(streams.Out, err)
 						return
 					}
 				}
@@ -84,11 +84,11 @@ func TestLogout(t *testing.T) {
 					_ = os.Remove(cmdOptions.path)
 				}()
 				if err = cmdOptions.Validate(cmd, nil); err != nil {
-					_, err = fmt.Fprint(streams.Out, err)
+					_, _ = fmt.Fprint(streams.Out, err)
 					return
 				}
 				if err = cmdOptions.Run(nil); err != nil {
-					_, err = fmt.Fprint(streams.Out, err)
+					_, _ = fmt.Fprint(streams.Out, err)
 					return
 				}
 			})
