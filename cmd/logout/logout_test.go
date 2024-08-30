@@ -16,6 +16,7 @@ package logout
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 
@@ -26,106 +27,70 @@ import (
 func TestLogout(t *testing.T) {
 	tests := []struct {
 		name           string
-		optionsFunc    func(opt *Options)
-		args           []string
+		optionsFunc    func(opt *Options) error
+		completeFunc   func(streams cli.IOStreams) error
 		expectedOutput string
-	}{}
-	streams := cli.NewTestIOStreamsForPipe()
-	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
-			cmd := NewLogoutCmd(streams)
-			var cmdOptions = NewOptions(streams)
-			if tc.optionsFunc != nil {
-				tc.optionsFunc(cmdOptions)
-			}
-			out := cmdtesting.RunForStdout(streams, func() {
-				var err error
-				if err = cmdOptions.Complete(cmd, tc.args); err != nil {
-					fmt.Print(err)
-					return
-				}
-				if err = cmdOptions.Validate(cmd, tc.args); err != nil {
-					fmt.Print(err)
-					return
-				}
-				if err = cmdOptions.Run(tc.args); err != nil {
-					fmt.Print(err)
-					return
-				}
-			})
-			cmdtesting.TInfo(out)
-			if tc.expectedOutput == "" {
-				t.Errorf("%s: Invalid test case. Specify expected result.\n", tc.name)
-			}
-			if !strings.Contains(out, tc.expectedOutput) {
-				t.Errorf("%s: Unexpected output! Expected\n%s\ngot\n%s", tc.name, tc.expectedOutput, out)
-			}
-		})
-	}
-}
-
-func TestValidate(t *testing.T) {
-	tests := []struct {
-		name           string
-		optionsFunc    func(opt *Options)
-		args           []string
-		expectedOutput string
-	}{}
-	streams := cli.NewTestIOStreamsForPipe()
-	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
-			cmd := NewLogoutCmd(streams)
-			var cmdOptions = NewOptions(streams)
-			if tc.optionsFunc != nil {
-				tc.optionsFunc(cmdOptions)
-			}
-			out := cmdtesting.RunForStdout(streams, func() {
-				var err error
-				if err = cmdOptions.Complete(cmd, tc.args); err != nil {
-					fmt.Print(err)
-					return
-				}
-				if err = cmdOptions.Validate(cmd, tc.args); err != nil {
-					fmt.Print(err)
-					return
-				}
-			})
-			cmdtesting.TInfo(out)
-			if tc.expectedOutput == "" {
-				t.Errorf("%s: Invalid test case. Specify expected result.\n", tc.name)
-			}
-			if !strings.Contains(out, tc.expectedOutput) {
-				t.Errorf("%s: Unexpected output! Expected\n%s\ngot\n%s", tc.name, tc.expectedOutput, out)
-			}
-		})
-	}
-}
-
-func TestRunLogout(t *testing.T) {
-	tests := []struct {
-		name           string
-		args           []string
-		flags          map[string]string
-		expectedOutput string
-	}{}
-	streams, _, buf, _ := cli.NewTestIOStreams()
-	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
-			for i, arg := range tc.args {
-				cmdtesting.TInfo(fmt.Sprintf("(%d) %s", i, arg))
-			}
-			cmd := NewLogoutCmd(streams)
-			cmd.SetOut(buf)
-			cmd.SetErr(buf)
-			for flag, value := range tc.flags {
-				err := cmd.Flags().Set(flag, value)
+	}{
+		{
+			name: "logout Succeeded",
+			optionsFunc: func(opt *Options) error {
+				temp, err := os.CreateTemp("", ".glctl_logout_succeeded")
 				if err != nil {
-					t.Errorf("set %s flag error", err.Error())
+					return err
+				}
+				opt.path = temp.Name()
+				return nil
+			},
+			completeFunc: func(streams cli.IOStreams) error {
+				return nil
+			},
+			expectedOutput: "logout Succeeded",
+		},
+		{
+			name: "logout Fail",
+			optionsFunc: func(opt *Options) error {
+				opt.path = "/tmp/glctl/glctl_logout_fail"
+				return nil
+			},
+			expectedOutput: "not exist",
+		},
+	}
+	for _, tc := range tests {
+		streams := cli.NewTestIOStreamsForPipe()
+		t.Run(tc.name, func(t *testing.T) {
+			cmd := NewLogoutCmd(streams)
+			var cmdOptions = NewOptions(streams)
+			if tc.optionsFunc != nil {
+				err := tc.optionsFunc(cmdOptions)
+				if err != nil {
+					t.Errorf("%s: Invalid test case. Specify expected result.\n", tc.name)
 					return
 				}
 			}
 			out := cmdtesting.RunForStdout(streams, func() {
-				cmd.Run(cmd, tc.args)
+				var err error
+				if tc.completeFunc != nil {
+					if err = tc.completeFunc(streams); err != nil {
+						_, err = fmt.Fprint(streams.Out, err)
+						return
+					}
+				} else {
+					if err = cmdOptions.Complete(cmd, nil); err != nil {
+						_, err = fmt.Fprint(streams.Out, err)
+						return
+					}
+				}
+				defer func() {
+					_ = os.Remove(cmdOptions.path)
+				}()
+				if err = cmdOptions.Validate(cmd, nil); err != nil {
+					_, err = fmt.Fprint(streams.Out, err)
+					return
+				}
+				if err = cmdOptions.Run(nil); err != nil {
+					_, err = fmt.Fprint(streams.Out, err)
+					return
+				}
 			})
 			cmdtesting.TInfo(out)
 			if tc.expectedOutput == "" {
@@ -136,5 +101,4 @@ func TestRunLogout(t *testing.T) {
 			}
 		})
 	}
-
 }
