@@ -91,7 +91,6 @@ func TestCreateProject(t *testing.T) {
 			if tc.optionsFunc != nil {
 				tc.optionsFunc(cmdOptions)
 			}
-			err = cmdOptions.Complete(factory, cmd, tc.args)
 			if err = cmdOptions.Complete(factory, cmd, tc.args); err != nil && !errors.Is(err, tc.wantError) {
 				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
 				return
