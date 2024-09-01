@@ -17,6 +17,8 @@ package branch
 import (
 	"errors"
 	"fmt"
+	"github.com/AlekSi/pointer"
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"strings"
 	"testing"
 
@@ -24,7 +26,6 @@ import (
 	"github.com/xanzy/go-gitlab"
 
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
-	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
 )
 
@@ -38,12 +39,21 @@ func TestDeleteBranch(t *testing.T) {
 		wantError   error
 	}{{
 		name: "delete by name",
-		args: []string{"develop"},
+		args: []string{"develop-by-name"},
 		optionsFunc: func(opt *DeleteOptions) {
-			opt.project = "huhouhua/gitlab-repo-branch"
+			opt.project = "Group1/gitlab-repo-branch"
 		},
 		run: func(opt *DeleteOptions, args []string) error {
 			var err error
+			_, _, err = opt.gitlabClient.Branches.CreateBranch(opt.project, &gitlab.CreateBranchOptions{
+				Branch: pointer.ToString(opt.branch),
+			})
+			if err != nil {
+				return err
+			}
+			defer func() {
+				_, _ = opt.gitlabClient.Branches.DeleteBranch(opt.project, opt.branch)
+			}()
 			out := cmdtesting.Run(func() {
 				err = opt.Run(args)
 			})
@@ -60,7 +70,7 @@ func TestDeleteBranch(t *testing.T) {
 		name: "branch not found",
 		args: []string{"not-found"},
 		optionsFunc: func(opt *DeleteOptions) {
-			opt.project = "huhouhua/gitlab-repo-branch"
+			opt.project = "Group1/gitlab-repo-branch"
 		},
 		run: func(opt *DeleteOptions, args []string) error {
 			err := opt.Run(args)
@@ -70,6 +80,7 @@ func TestDeleteBranch(t *testing.T) {
 			}
 			return err
 		},
+		wantError: nil,
 	}, {
 		name: "project not found",
 		args: []string{"not-found"},
@@ -84,6 +95,7 @@ func TestDeleteBranch(t *testing.T) {
 			}
 			return err
 		},
+		wantError: nil,
 	}, {
 		name: "not definition branch",
 		args: []string{},
@@ -95,8 +107,8 @@ func TestDeleteBranch(t *testing.T) {
 			return nil
 		},
 	}}
-	streams := cli.NewTestIOStreamsDiscard()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
+	streams := cli.NewTestIOStreamsDiscard()
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			cmd := NewDeleteBranchCmd(factory, streams)

@@ -41,10 +41,13 @@ func TestCreateBranch(t *testing.T) {
 		name: "create a new branch",
 		args: []string{"create1"},
 		optionsFunc: func(opt *CreateOptions) {
-			opt.project = "huhouhua/gitlab-repo-branch"
+			opt.project = "Group1/gitlab-repo-branch"
 			opt.branch.Ref = pointer.ToString("main")
 		},
 		run: func(opt *CreateOptions, args []string) error {
+			defer func() {
+				_, _ = opt.gitlabClient.Branches.DeleteBranch(opt.project, *opt.branch.Branch)
+			}()
 			var err error
 			out := cmdtesting.Run(func() {
 				err = opt.Run(args)
@@ -59,9 +62,9 @@ func TestCreateBranch(t *testing.T) {
 		wantError: nil,
 	}, {
 		name: "create an existing branch",
-		args: []string{"create1"},
+		args: []string{"main"},
 		optionsFunc: func(opt *CreateOptions) {
-			opt.project = "huhouhua/gitlab-repo-branch"
+			opt.project = "huGroup1/gitlab-repo-branch"
 		},
 		run: func(opt *CreateOptions, args []string) error {
 			err := opt.Run(args)
@@ -72,8 +75,8 @@ func TestCreateBranch(t *testing.T) {
 			return err
 		},
 	}}
-	streams := cli.NewTestIOStreamsDiscard()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
+	streams := cli.NewTestIOStreamsDiscard()
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			cmd := NewCreateBranchCmd(factory, streams)

@@ -81,7 +81,7 @@ func (o *DeleteOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []s
 // Validate makes sure there is no discrepency in command options.
 func (o *DeleteOptions) Validate(cmd *cobra.Command, args []string) error {
 	if len(args) == 0 {
-		return fmt.Errorf("please enter projectName and id")
+		return fmt.Errorf("please enter project name or id")
 	}
 	if strings.TrimSpace(args[0]) == "" {
 		return fmt.Errorf("error from server (NotFound): project %s not found", args[0])

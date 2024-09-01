@@ -17,8 +17,10 @@ package testing
 import (
 	"bytes"
 	"fmt"
+	"github.com/stretchr/testify/assert"
 	"io"
 	"os"
+	"testing"
 
 	"github.com/mattn/go-shellwords"
 	"github.com/spf13/cobra"
@@ -33,6 +35,16 @@ func TInfo(msg interface{}) {
 }
 func TOut(msg interface{}) {
 	fmt.Println("--- OUTPUT:", msg)
+}
+
+func ErrorAssertionWithEqual(t *testing.T, wantErr, err error) bool {
+	var fu assert.ErrorAssertionFunc = func(t assert.TestingT, err error, i ...interface{}) bool {
+		if err == nil {
+			return true
+		}
+		return assert.Equal(t, wantErr, err)
+	}
+	return fu(t, err)
 }
 
 type TestCmdFunc = func(buffer *bytes.Buffer) *cobra.Command

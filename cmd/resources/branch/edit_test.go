@@ -41,7 +41,7 @@ func TestEditBranch(t *testing.T) {
 		name: "set unprotect",
 		args: []string{"main"},
 		optionsFunc: func(opt *EditOptions) {
-			opt.project = "huhouhua/gitlab-repo-branch"
+			opt.project = "Group1/gitlab-repo-branch"
 			opt.Unprotect = true
 		},
 		run: func(opt *EditOptions, args []string) error {
@@ -62,7 +62,7 @@ func TestEditBranch(t *testing.T) {
 		name: "set protect",
 		args: []string{"main"},
 		optionsFunc: func(opt *EditOptions) {
-			opt.project = "huhouhua/gitlab-repo-branch"
+			opt.project = "Group1/gitlab-repo-branch"
 			opt.protect = true
 			opt.protectBranch.DevelopersCanMerge = pointer.ToBool(true)
 			opt.protectBranch.DevelopersCanPush = pointer.ToBool(true)

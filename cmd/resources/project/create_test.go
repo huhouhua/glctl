@@ -40,9 +40,9 @@ func TestCreateProject(t *testing.T) {
 		wantError   error
 	}{{
 		name: "create a new project using all flags",
-		args: []string{"gitlab-repo-test"},
+		args: []string{"glctl-from-create"},
 		optionsFunc: func(opt *CreateOptions) {
-			opt.namespace = "test-project"
+			opt.namespace = "Group1"
 			opt.project.Description = pointer.ToString("Created by go test")
 			opt.project.IssuesAccessLevel = pointer.To(gitlab.EnabledAccessControl)
 			opt.project.MergeRequestsAccessLevel = pointer.To(gitlab.EnabledAccessControl)
@@ -65,10 +65,14 @@ func TestCreateProject(t *testing.T) {
 		},
 		run: func(opt *CreateOptions, args []string) error {
 			var err error
+			projectPath := fmt.Sprintf("%s/%s", opt.namespace, args[0])
+			defer func() {
+				_, _ = opt.gitlabClient.Projects.DeleteProject(projectPath)
+			}()
+			expectedOutput := fmt.Sprintf("%s.git", projectPath)
 			out := cmdtesting.RunForStdout(streams, func() {
 				err = opt.Run(args)
 			})
-			expectedOutput := fmt.Sprintf("%s/%s.git", opt.namespace, args[0])
 			if !strings.Contains(out, expectedOutput) {
 				err = errors.New(
 					fmt.Sprintf("create a new project : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out),
@@ -87,6 +91,7 @@ func TestCreateProject(t *testing.T) {
 			if tc.optionsFunc != nil {
 				tc.optionsFunc(cmdOptions)
 			}
+			err = cmdOptions.Complete(factory, cmd, tc.args)
 			if err = cmdOptions.Complete(factory, cmd, tc.args); err != nil && !errors.Is(err, tc.wantError) {
 				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
 				return
