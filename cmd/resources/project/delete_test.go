@@ -17,14 +17,16 @@ package project
 import (
 	"errors"
 	"fmt"
-	"github.com/AlekSi/pointer"
-	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
-	"github.com/stretchr/testify/assert"
-	"golang.org/x/exp/rand"
 	"strconv"
 	"testing"
 	"time"
+
+	"github.com/AlekSi/pointer"
+	"github.com/stretchr/testify/assert"
+	"golang.org/x/exp/rand"
+
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
+	"github.com/huhouhua/glctl/util/cli"
 
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
@@ -63,7 +65,14 @@ func TestDeleteProject(t *testing.T) {
 				err = opt.Run(args)
 			})
 			expectedOutput := fmt.Sprintf("project (%s) with id", args[0])
-			assert.Containsf(t, out, expectedOutput, "delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out)
+			assert.Containsf(
+				t,
+				out,
+				expectedOutput,
+				"delete by path : Unexpected output! Expected\n%s\ngot\n%s",
+				expectedOutput,
+				out,
+			)
 			return err
 		},
 		wantError: nil,
@@ -86,7 +95,14 @@ func TestDeleteProject(t *testing.T) {
 				err = opt.Run(args)
 			})
 			expectedOutput := fmt.Sprintf("with id (%s) has been deleted", args[0])
-			assert.Containsf(t, out, expectedOutput, "delete by id : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out)
+			assert.Containsf(
+				t,
+				out,
+				expectedOutput,
+				"delete by id : Unexpected output! Expected\n%s\ngot\n%s",
+				expectedOutput,
+				out,
+			)
 			return err
 		},
 		wantError: nil,

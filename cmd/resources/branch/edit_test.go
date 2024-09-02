@@ -16,10 +16,12 @@ package branch
 
 import (
 	"fmt"
-	"github.com/huhouhua/glctl/util/cli"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/xanzy/go-gitlab"
-	"testing"
+
+	"github.com/huhouhua/glctl/util/cli"
 
 	"github.com/AlekSi/pointer"
 	"github.com/spf13/cobra"
@@ -45,9 +47,12 @@ func TestEditBranch(t *testing.T) {
 		},
 		run: func(opt *EditOptions, args []string) error {
 			var err error
-			_, _, err = opt.gitlabClient.ProtectedBranches.ProtectRepositoryBranches(opt.project, &gitlab.ProtectRepositoryBranchesOptions{
-				Name: pointer.ToString(args[0]),
-			})
+			_, _, err = opt.gitlabClient.ProtectedBranches.ProtectRepositoryBranches(
+				opt.project,
+				&gitlab.ProtectRepositoryBranchesOptions{
+					Name: pointer.ToString(args[0]),
+				},
+			)
 			if err != nil {
 				return err
 			}
@@ -58,7 +63,14 @@ func TestEditBranch(t *testing.T) {
 				err = opt.Run(args)
 			})
 			expectedOutput := fmt.Sprintf("branch %s un protect", args[0])
-			assert.Containsf(t, out, expectedOutput, "set \"unprotect\" branch s unprotect : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out)
+			assert.Containsf(
+				t,
+				out,
+				expectedOutput,
+				"set \"unprotect\" branch s unprotect : Unexpected output! Expected\n%s\ngot\n%s",
+				expectedOutput,
+				out,
+			)
 			return err
 		},
 		wantError: nil,
@@ -80,7 +92,14 @@ func TestEditBranch(t *testing.T) {
 				err = opt.Run(args)
 			})
 			expectedOutput := fmt.Sprintf("branch %s updated", args[0])
-			assert.Containsf(t, out, expectedOutput, "set \"updated\" branch s updated : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out)
+			assert.Containsf(
+				t,
+				out,
+				expectedOutput,
+				"set \"updated\" branch s updated : Unexpected output! Expected\n%s\ngot\n%s",
+				expectedOutput,
+				out,
+			)
 			return err
 		},
 		wantError: nil,

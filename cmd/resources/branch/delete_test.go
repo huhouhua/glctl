@@ -17,10 +17,12 @@ package branch
 import (
 	"errors"
 	"fmt"
-	"github.com/AlekSi/pointer"
-	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/AlekSi/pointer"
+	"github.com/stretchr/testify/assert"
+
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
 
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
@@ -59,7 +61,14 @@ func TestDeleteBranch(t *testing.T) {
 				err = opt.Run(args)
 			})
 			expectedOutput := fmt.Sprintf("Branch (%s) from project (%s) has been deleted", opt.branch, opt.project)
-			assert.Containsf(t, out, expectedOutput, "delete branch success: Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out)
+			assert.Containsf(
+				t,
+				out,
+				expectedOutput,
+				"delete branch success: Unexpected output! Expected\n%s\ngot\n%s",
+				expectedOutput,
+				out,
+			)
 			return err
 		},
 		wantError: nil,

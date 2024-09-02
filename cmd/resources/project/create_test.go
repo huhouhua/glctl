@@ -16,8 +16,9 @@ package project
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 
 	"github.com/AlekSi/pointer"
 	"github.com/spf13/cobra"
@@ -71,7 +72,14 @@ func TestCreateProject(t *testing.T) {
 				err = opt.Run(args)
 			})
 			expectedOutput := fmt.Sprintf("%s.git", projectPath)
-			assert.Containsf(t, out, expectedOutput, "create a new project: Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out)
+			assert.Containsf(
+				t,
+				out,
+				expectedOutput,
+				"create a new project: Unexpected output! Expected\n%s\ngot\n%s",
+				expectedOutput,
+				out,
+			)
 			return err
 		},
 		wantError: nil,

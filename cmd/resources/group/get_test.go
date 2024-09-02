@@ -18,6 +18,7 @@ import (
 	"testing"
 
 	"github.com/AlekSi/pointer"
+
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"

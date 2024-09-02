@@ -15,9 +15,10 @@
 package testing
 
 import (
+	"github.com/spf13/viper"
+
 	"github.com/huhouhua/glctl/cmd/types"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/spf13/viper"
 )
 
 var _ cmdutil.RESTClientGetter = &FakeRESTClientGetter{}

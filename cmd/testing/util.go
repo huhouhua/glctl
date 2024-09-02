@@ -17,10 +17,11 @@ package testing
 import (
 	"bytes"
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"io"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 
 	"github.com/mattn/go-shellwords"
 	"github.com/spf13/cobra"

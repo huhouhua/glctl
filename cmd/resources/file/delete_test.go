@@ -16,10 +16,12 @@ package file
 
 import (
 	"fmt"
-	"github.com/huhouhua/glctl/util/cli"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/xanzy/go-gitlab"
-	"testing"
+
+	"github.com/huhouhua/glctl/util/cli"
 
 	"github.com/AlekSi/pointer"
 	"github.com/spf13/cobra"
@@ -60,7 +62,14 @@ func TestDeleteFile(t *testing.T) {
 				*opt.file.Branch,
 				opt.Project,
 			)
-			assert.Containsf(t, out, expectedOutput, "delete a file: Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out)
+			assert.Containsf(
+				t,
+				out,
+				expectedOutput,
+				"delete a file: Unexpected output! Expected\n%s\ngot\n%s",
+				expectedOutput,
+				out,
+			)
 			return err
 		},
 		wantError: nil,
@@ -73,28 +82,28 @@ func TestDeleteFile(t *testing.T) {
 			opt.file.Branch = pointer.ToString("main")
 		},
 		run: func(opt *DeleteOptions, args []string) error {
-			//err := createTestFile(opt.gitlabClient, "glctl-dir/glctl.yaml", opt)
-			//if err != nil {
+			// err := createTestFile(opt.gitlabClient, "glctl-dir/glctl.yaml", opt)
+			// if err != nil {
 			//	return err
-			//}
-			//defer func() {
+			// }
+			// defer func() {
 			//	clearTestFile(opt.gitlabClient, opt)
-			//}()
-			//out := cmdtesting.RunForStdout(opt.ioStreams, func() {
+			// }()
+			// out := cmdtesting.RunForStdout(opt.ioStreams, func() {
 			//	err = opt.Run(args)
-			//})
-			//expectedOutput := fmt.Sprintf(
+			// })
+			// expectedOutput := fmt.Sprintf(
 			//	"file (%s) for %s branch with project id (%s) has been deleted",
 			//	opt.FileName,
 			//	*opt.file.Branch,
 			//	opt.Project,
-			//)
-			//if !strings.Contains(out, expectedOutput) {
+			// )
+			// if !strings.Contains(out, expectedOutput) {
 			//	err = errors.New(
 			//		fmt.Sprintf("delete dir : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out),
 			//	)
 			//}
-			//return err
+			// return err
 			return nil
 		},
 		wantError: nil,

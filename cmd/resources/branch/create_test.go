@@ -15,8 +15,9 @@
 package branch
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 
 	"github.com/AlekSi/pointer"
 	"github.com/spf13/cobra"
@@ -50,7 +51,14 @@ func TestCreateBranch(t *testing.T) {
 			out := cmdtesting.RunForStdout(opt.ioStreams, func() {
 				err = opt.Run(args)
 			})
-			assert.Containsf(t, out, *opt.branch.Branch, "create a new branch: Unexpected output! Expected\n%s\ngot\n%s", *opt.branch.Branch, out)
+			assert.Containsf(
+				t,
+				out,
+				*opt.branch.Branch,
+				"create a new branch: Unexpected output! Expected\n%s\ngot\n%s",
+				*opt.branch.Branch,
+				out,
+			)
 			return err
 		},
 		wantError: nil,

@@ -41,13 +41,14 @@ func TestRunEdit(t *testing.T) {
 			opt.file.Ref = pointer.ToString("main")
 		},
 		run: func(opt *EditOptions, args []string) error {
-			//var err error
-			//out := cmdtesting.RunForStdout(opt.ioStreams, func() {
+			// var err error
+			// out := cmdtesting.RunForStdout(opt.ioStreams, func() {
 			//	err = opt.Run(args)
-			//})
-			//expectedOutput := fmt.Sprintf("%s edited", opt.path)
-			//assert.Containsf(t, out, expectedOutput, "compare content: Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out)
-			//return err
+			// })
+			// expectedOutput := fmt.Sprintf("%s edited", opt.path)
+			// assert.Containsf(t, out, expectedOutput, "compare content: Unexpected output! Expected\n%s\ngot\n%s",
+			// expectedOutput, out)
+			// return err
 			return nil
 		},
 		wantError: nil,
