@@ -53,6 +53,8 @@ func NewEditOptions(ioStreams cli.IOStreams) *EditOptions {
 	return &EditOptions{
 		ioStreams: ioStreams,
 		Group: &gitlab.UpdateGroupOptions{
+			Path:                 pointer.ToString(""),
+			Name:                 pointer.ToString(""),
 			Description:          pointer.ToString(""),
 			RequestAccessEnabled: pointer.ToBool(false),
 			Visibility:           pointer.To(gitlab.PrivateVisibility),

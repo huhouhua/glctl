@@ -82,22 +82,22 @@ echo ""
 # add user to group
 info "Adding users to group"
 
-${CCURL} -s "${GITLAB_URL}/api/v4/groups/${pgroup1_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user1_id}&access_level=30"; echo
+${CCURL} "${GITLAB_URL}/api/v4/groups/${pgroup1_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user1_id}&access_level=30"; echo
 success "add ${user1_id} to Group1"
 
-${CCURL} -s "${GITLAB_URL}/api/v4/groups/${pgroup1_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user2_id}&access_level=40";
+${CCURL} "${GITLAB_URL}/api/v4/groups/${pgroup1_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user2_id}&access_level=40";
 success "add ${user2_id} to Group1"
 
-${CCURL} -s "${GITLAB_URL}/api/v4/groups/${pgroup1_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user3_id}&access_level=50"; echo
+${CCURL} "${GITLAB_URL}/api/v4/groups/${pgroup1_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user3_id}&access_level=50"; echo
 success "add ${user3_id} to Group1"
 
-${CCURL} -s "${GITLAB_URL}/api/v4/groups/${pgroup2_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user4_id}&access_level=30"; echo
+${CCURL} "${GITLAB_URL}/api/v4/groups/${pgroup2_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user4_id}&access_level=30"; echo
 success "add ${user4_id} to Group2"
 
-${CCURL} -s "${GITLAB_URL}/api/v4/groups/${pgroup2_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user5_id}&access_level=40"; echo
+${CCURL} "${GITLAB_URL}/api/v4/groups/${pgroup2_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user5_id}&access_level=40"; echo
 success "add ${user5_id} to Group2"
 
-${CCURL} -s "${GITLAB_URL}/api/v4/groups/${pgroup2_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user6_id}&access_level=50"; echo
+${CCURL} "${GITLAB_URL}/api/v4/groups/${pgroup2_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user6_id}&access_level=50"; echo
 success "add ${user6_id} to Group2"
 
 echo ""
@@ -177,24 +177,46 @@ group_project18_id=$(${CCURL} "${GITLAB_URL}/api/v4/projects" -d "access_token=$
 print::result "${group_project18_id}" "Group2/SubGroup4/Project18 created"
 
 echo ""
+# add test branch to project
+info "Add test branch to project"
+project1_branch_unprotect=$(${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project1_id}/repository/branches" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=unprotect&ref=main" | jq '.name')
+print::result "${project1_branch_unprotect}" "Group1/Project1 ${project1_branch_unprotect} created"
+
+project1_branch_protect=$(${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project1_id}/repository/branches" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=protect&ref=main" | jq '.name')
+print::result "${project1_branch_protect}" "Group1/Project1 ${project1_branch_protect} created"
+
+project2_branch_unprotect=$(${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project2_id}/repository/branches" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=unprotect&ref=main" | jq '.name')
+print::result "${project2_branch_unprotect}" "Group1/Project2 ${project2_branch_unprotect} created"
+
+project2_branch_protect=$(${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project2_id}/repository/branches" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=protect&ref=main" | jq '.name')
+print::result "${project2_branch_protect}" "Group1/Project2 ${project2_branch_protect} created"
+
+project3_branch_unprotect=$(${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project3_id}/repository/branches" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=unprotect&ref=main" | jq '.name')
+print::result "${project3_branch_unprotect}" "Group1/Project3 ${project3_branch_unprotect} created"
+
+project3_branch_protect=$(${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project3_id}/repository/branches" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=protect&ref=main" | jq '.name')
+print::result "${project3_branch_protect}" "Group1/Project3 ${project3_branch_protect} created"
+
+
+echo ""
 # add user to project
 info "Add user to project"
-${CCURL} -s "${GITLAB_URL}/api/v4/projects/${group_project1_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user1_id}&access_level=30"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project1_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user1_id}&access_level=30"; echo
 success "add ${user1_id} to Group1/Project1"
 
-${CCURL} -s "${GITLAB_URL}/api/v4/projects/${group_project1_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user2_id}&access_level=40"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project1_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user2_id}&access_level=40"; echo
 success "add ${user2_id} to Group1/Project1"
 
-${CCURL} -s "${GITLAB_URL}/api/v4/projects/${group_project1_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user4_id}&access_level=30"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project1_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user4_id}&access_level=30"; echo
 success "add ${user4_id} to Group1/Project1"
 
-${CCURL} -s "${GITLAB_URL}/api/v4/projects/${group_project2_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user5_id}&access_level=40"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project2_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user5_id}&access_level=40"; echo
 success "add ${user5_id} to Group1/Project2"
 
-${CCURL} -s "${GITLAB_URL}/api/v4/projects/${group_project2_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user7_id}&access_level=40"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project2_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user7_id}&access_level=40"; echo
 success "add ${user7_id} to Group1/Project2"
 
-${CCURL} -s "${GITLAB_URL}/api/v4/projects/${group_project2_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user8_id}&access_level=40"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project2_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user8_id}&access_level=40"; echo
 success "add ${user8_id} to Group1/Project2"
 
 echo ""
@@ -218,43 +240,68 @@ print::result "${project5_id}" "${user11_id} in Project23 created"
 echo ""
 # create hooks for projects
 info "Creating hooks for projects"
-${CCURL} -s "${GITLAB_URL}/api/v4/projects/${project1_id}/hooks" -d "access_token=${GITLAB_PRIVATE_TOKEN}&url=http%3A%2F%2Fwww.sample1.com%2F"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${project1_id}/hooks" -d "access_token=${GITLAB_PRIVATE_TOKEN}&url=http%3A%2F%2Fwww.sample1.com%2F"; echo
 success "hooks in Project1 created"
 
-${CCURL} -s "${GITLAB_URL}/api/v4/projects/${project2_id}/hooks" -d "access_token=${GITLAB_PRIVATE_TOKEN}&url=http%3A%2F%2Fwww.sample2.com%2F"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${project2_id}/hooks" -d "access_token=${GITLAB_PRIVATE_TOKEN}&url=http%3A%2F%2Fwww.sample2.com%2F"; echo
 success "hooks in Project2 created"
 
-${CCURL} -s "${GITLAB_URL}/api/v4/projects/${project3_id}/hooks" -d "access_token=${GITLAB_PRIVATE_TOKEN}&url=http%3A%2F%2Fwww.sample3.com%2F"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${project3_id}/hooks" -d "access_token=${GITLAB_PRIVATE_TOKEN}&url=http%3A%2F%2Fwww.sample3.com%2F"; echo
 success "hooks in Project3 created"
 
-${CCURL} -s "${GITLAB_URL}/api/v4/projects/${project4_id}/hooks" -d "access_token=${GITLAB_PRIVATE_TOKEN}&url=http%3A%2F%2Fwww.sample4.com%2F"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${project4_id}/hooks" -d "access_token=${GITLAB_PRIVATE_TOKEN}&url=http%3A%2F%2Fwww.sample4.com%2F"; echo
 success "hooks in Project4 created"
 
-${CCURL} -s "${GITLAB_URL}/api/v4/projects/${project5_id}/hooks" -d "access_token=${GITLAB_PRIVATE_TOKEN}&url=http%3A%2F%2Fwww.sample5.com%2F"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${project5_id}/hooks" -d "access_token=${GITLAB_PRIVATE_TOKEN}&url=http%3A%2F%2Fwww.sample5.com%2F"; echo
 success "hooks in Project5 created"
 
 echo ""
 # push some commits in preparation for creation of git tags
 info "Push commits for projects"
-${CCURL} -s "${GITLAB_URL}/api/v4/projects/${group_project1_id}/repository/files/README.md" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=master&content=Test&commit_message=First+commit"; echo
-success "commit master branch to Group1/Project1"
+${UCURL} "${GITLAB_URL}/api/v4/projects/${group_project1_id}/repository/files/README.md" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=main&content=Test&commit_message=First+commit"; echo
+success "commit main branch to Group1/Project1"
 
-${CCURL} -s "${GITLAB_URL}/api/v4/projects/${group_project2_id}/repository/files/README.md" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=master&content=Test&commit_message=First+commit"; echo
-success "commit master branch to Group1/Project2"
+${UCURL} "${GITLAB_URL}/api/v4/projects/${group_project2_id}/repository/files/README.md" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=main&content=Test&commit_message=First+commit"; echo
+success "commit main branch to Group1/Project2"
 
-${CCURL} -s "${GITLAB_URL}/api/v4/projects/${group_project3_id}/repository/files/README.md" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=master&content=Test&commit_message=First+commit"; echo
-success "commit master branch to Group1/Project3"
+${UCURL} "${GITLAB_URL}/api/v4/projects/${group_project3_id}/repository/files/README.md" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=main&content=Test&commit_message=First+commit"; echo
+success "commit main branch to Group1/Project3"
+
+
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project13_id}/repository/files/README.md" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=main&content=Test&commit_message=First+commit"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project13_id}/repository/files/test%2Ftest.yaml" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=main&content=test: 1&commit_message=First+commit"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project13_id}/repository/files/test%2Ftest2.yaml" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=main&content=test: 2&commit_message=First+commit"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project13_id}/repository/files/test%2Ftest3.yaml" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=main&content=test: 3&commit_message=First+commit"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project13_id}/repository/files/test%2Ftest4.yaml" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=main&content=test: 4&commit_message=First+commit"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project13_id}/repository/files/test%2Ftest5.yaml" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=main&content=test: 5&commit_message=First+commit"; echo
+success "commit main branch to Group2/SubGroup3/Project13"
+
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project14_id}/repository/files/README.md" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=main&content=Test&commit_message=First+commit"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project14_id}/repository/files/test%2Ftest.yaml" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=main&content=test: 1&commit_message=First+commit"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project14_id}/repository/files/test%2Ftest2.yaml" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=main&content=test: 2&commit_message=First+commit"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project14_id}/repository/files/test%2Ftest3.yaml" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=main&content=test: 3&commit_message=First+commit"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project14_id}/repository/files/test%2Ftest4.yaml" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=main&content=test: 4&commit_message=First+commit"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project14_id}/repository/files/test%2Ftest5.yaml" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=main&content=test: 5&commit_message=First+commit"; echo
+success "commit main branch to Group2/SubGroup3/Project14"
+
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project15_id}/repository/files/README.md" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=main&content=Test&commit_message=First+commit"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project15_id}/repository/files/test%2Ftest.yaml" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=main&content=test: 1&commit_message=First+commit"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project15_id}/repository/files/test%2Ftest2.yaml" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=main&content=test: 2&commit_message=First+commit"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project15_id}/repository/files/test%2Ftest3.yaml" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=main&content=test: 3&commit_message=First+commit"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project15_id}/repository/files/test%2Ftest4.yaml" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=main&content=test: 4&commit_message=First+commit"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project15_id}/repository/files/test%2Ftest5.yaml" -d "access_token=${GITLAB_PRIVATE_TOKEN}&branch=main&content=test: 5&commit_message=First+commit"; echo
+success "commit main branch to Group2/SubGroup3/Project15"
 
 echo ""
 # create tags
 info "Creating tags for projects"
-${CCURL} -s "${GITLAB_URL}/api/v4/projects/${group_project1_id}/repository/tags" -d "access_token=${GITLAB_PRIVATE_TOKEN}&tag_name=sample_1.0&ref=master"; echo
-success "Group1/Project1 sample_1.0 master branch tag created"
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project1_id}/repository/tags" -d "access_token=${GITLAB_PRIVATE_TOKEN}&tag_name=sample_1.0&ref=main"; echo
+success "Group1/Project1 sample_1.0 main branch tag created"
 
-${CCURL} -s "${GITLAB_URL}/api/v4/projects/${group_project2_id}/repository/tags" -d "access_token=${GITLAB_PRIVATE_TOKEN}&tag_name=sample_1.0&ref=master"; echo
-success "Group1/Project2 sample_1.0 master branch tag created"
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project2_id}/repository/tags" -d "access_token=${GITLAB_PRIVATE_TOKEN}&tag_name=sample_1.0&ref=main"; echo
+success "Group1/Project2 sample_1.0 main branch tag created"
 
-${CCURL} -s "${GITLAB_URL}/api/v4/projects/${group_project3_id}/repository/tags" -d "access_token=${GITLAB_PRIVATE_TOKEN}&tag_name=sample_1.0&ref=master"; echo
-success "Group1/Project3 sample_1.0 master branch tag created"; echo
+${CCURL} "${GITLAB_URL}/api/v4/projects/${group_project3_id}/repository/tags" -d "access_token=${GITLAB_PRIVATE_TOKEN}&tag_name=sample_1.0&ref=main"; echo
+success "Group1/Project3 sample_1.0 main branch tag created"; echo
 
 success "Add test data successful"

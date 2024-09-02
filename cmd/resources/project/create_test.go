@@ -16,11 +16,10 @@ package project
 
 import (
 	"fmt"
-	"strings"
+	"github.com/stretchr/testify/assert"
 	"testing"
 
 	"github.com/AlekSi/pointer"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 
@@ -30,7 +29,6 @@ import (
 )
 
 func TestCreateProject(t *testing.T) {
-	streams := cli.NewTestIOStreamsForPipe()
 	tests := []struct {
 		name        string
 		args        []string
@@ -69,54 +67,46 @@ func TestCreateProject(t *testing.T) {
 			defer func() {
 				_, _ = opt.gitlabClient.Projects.DeleteProject(projectPath)
 			}()
-			expectedOutput := fmt.Sprintf("%s.git", projectPath)
-			out := cmdtesting.RunForStdout(streams, func() {
+			out := cmdtesting.RunForStdout(opt.ioStreams, func() {
 				err = opt.Run(args)
 			})
-			if !strings.Contains(out, expectedOutput) {
-				err = errors.New(
-					fmt.Sprintf("create a new project : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out),
-				)
-			}
+			expectedOutput := fmt.Sprintf("%s.git", projectPath)
+			assert.Containsf(t, out, expectedOutput, "create a new project: Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out)
 			return err
 		},
 		wantError: nil,
 	}}
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
+	streams := cli.NewTestIOStreamsForPipe()
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			cmd := NewCreateProjectCmd(factory, streams)
 			cmdOptions := NewCreateOptions(streams)
-			var err error
 			if tc.optionsFunc != nil {
 				tc.optionsFunc(cmdOptions)
 			}
-			if err = cmdOptions.Complete(factory, cmd, tc.args); err != nil && !errors.Is(err, tc.wantError) {
-				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
+			var err error
+			err = cmdOptions.Complete(factory, cmd, tc.args)
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
+			if err != nil {
 				return
 			}
 			if tc.validate != nil {
 				err = tc.validate(cmdOptions, cmd, tc.args)
-				if err != nil {
-					return
-				}
 			} else {
-				if err = cmdOptions.Validate(cmd, tc.args); err != nil && !errors.Is(err, tc.wantError) {
-					t.Errorf("expected %v, got: '%v'", tc.wantError, err)
-					return
-				}
+				err = cmdOptions.Validate(cmd, tc.args)
+			}
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
+			if err != nil {
+				return
 			}
 			if tc.run != nil {
 				err = tc.run(cmdOptions, tc.args)
-				if err != nil {
-					t.Error(err)
-				}
+				cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
 				return
 			}
-			if err = cmdOptions.Run(tc.args); !errors.Is(err, tc.wantError) {
-				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
-				return
-			}
+			err = cmdOptions.Run(tc.args)
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
 		})
 	}
 }

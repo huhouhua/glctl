@@ -15,12 +15,10 @@
 package branch
 
 import (
-	"fmt"
-	"strings"
+	"github.com/stretchr/testify/assert"
 	"testing"
 
 	"github.com/AlekSi/pointer"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 
@@ -41,42 +39,39 @@ func TestCreateBranch(t *testing.T) {
 		name: "create a new branch",
 		args: []string{"create1"},
 		optionsFunc: func(opt *CreateOptions) {
-			opt.project = "Group1/gitlab-repo-branch"
-			opt.branch.Ref = pointer.ToString("main")
+			opt.project = "Group1/Project2"
+			opt.branch.Ref = pointer.ToString("master")
 		},
 		run: func(opt *CreateOptions, args []string) error {
 			defer func() {
 				_, _ = opt.gitlabClient.Branches.DeleteBranch(opt.project, *opt.branch.Branch)
 			}()
 			var err error
-			out := cmdtesting.Run(func() {
+			out := cmdtesting.RunForStdout(opt.ioStreams, func() {
 				err = opt.Run(args)
 			})
-			if !strings.Contains(out, *opt.branch.Branch) {
-				err = errors.New(
-					fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", *opt.branch.Branch, out),
-				)
-			}
+			assert.Containsf(t, out, *opt.branch.Branch, "create a new branch: Unexpected output! Expected\n%s\ngot\n%s", *opt.branch.Branch, out)
 			return err
 		},
 		wantError: nil,
 	}, {
 		name: "create an existing branch",
-		args: []string{"main"},
+		args: []string{"master"},
 		optionsFunc: func(opt *CreateOptions) {
-			opt.project = "huGroup1/gitlab-repo-branch"
+			opt.project = "Group1/Project2"
 		},
 		run: func(opt *CreateOptions, args []string) error {
 			err := opt.Run(args)
-			var repo *gitlab.ErrorResponse
-			if errors.As(err, &repo) && repo.Message == "{error: ref is empty}" {
+			var repoErr *gitlab.ErrorResponse
+			assert.ErrorAs(t, err, &repoErr)
+			if assert.Equal(t, repoErr.Message, "{error: ref is empty}") {
 				return nil
 			}
 			return err
 		},
 	}}
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
-	streams := cli.NewTestIOStreamsDiscard()
+	streams := cli.NewTestIOStreamsForPipe()
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			cmd := NewCreateBranchCmd(factory, streams)
@@ -85,32 +80,27 @@ func TestCreateBranch(t *testing.T) {
 				tc.optionsFunc(cmdOptions)
 			}
 			var err error
-			if err = cmdOptions.Complete(factory, cmd, tc.args); err != nil && !errors.Is(err, tc.wantError) {
-				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
+			err = cmdOptions.Complete(factory, cmd, tc.args)
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
+			if err != nil {
 				return
 			}
 			if tc.validate != nil {
 				err = tc.validate(cmdOptions, cmd, tc.args)
-				if err != nil {
-					return
-				}
 			} else {
-				if err = cmdOptions.Validate(cmd, tc.args); err != nil && !errors.Is(err, tc.wantError) {
-					t.Errorf("expected %v, got: '%v'", tc.wantError, err)
-					return
-				}
+				err = cmdOptions.Validate(cmd, tc.args)
+			}
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
+			if err != nil {
+				return
 			}
 			if tc.run != nil {
 				err = tc.run(cmdOptions, tc.args)
-				if err != nil {
-					t.Error(err)
-				}
+				cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
 				return
 			}
-			if err = cmdOptions.Run(tc.args); !errors.Is(err, tc.wantError) {
-				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
-				return
-			}
+			err = cmdOptions.Run(tc.args)
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
 		})
 	}
 }

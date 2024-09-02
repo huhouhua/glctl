@@ -15,7 +15,6 @@
 package file
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/spf13/cobra"
@@ -34,10 +33,10 @@ func TestRunReplace(t *testing.T) {
 		run         func(opt *ReplaceOptions, args []string) error
 		wantError   error
 	}{{
-		name: "replace all branch",
-		args: []string{"resources/pipeline/buildserver/package.yaml"},
+		name: "replace all branch test/test.yaml file",
+		args: []string{"test/test.yaml"},
 		optionsFunc: func(opt *ReplaceOptions) {
-			opt.Project = "224"
+			opt.Project = "Group2/SubGroup3/Project13"
 			opt.RefMatch = "*"
 			opt.FileName = "../../../testdata/replace/new_test.yaml"
 		},
@@ -51,11 +50,11 @@ func TestRunReplace(t *testing.T) {
 		wantError: nil,
 	}, {
 		name: "force replace",
-		args: []string{"package.yaml"},
+		args: []string{"test/test-force.yaml"},
 		optionsFunc: func(opt *ReplaceOptions) {
-			opt.Project = "224"
+			opt.Project = "Group2/SubGroup3/Project13"
 			opt.RefMatch = "*"
-			opt.FileName = "../../../testdata/replace/new_test.yaml"
+			opt.FileName = "../../../testdata/replace/force_replace.yaml"
 			opt.Force = true
 		},
 		run: func(opt *ReplaceOptions, args []string) error {
@@ -77,32 +76,27 @@ func TestRunReplace(t *testing.T) {
 				tc.optionsFunc(cmdOptions)
 			}
 			var err error
-			if err = cmdOptions.Complete(factory, cmd, tc.args); err != nil && !errors.Is(err, tc.wantError) {
-				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
+			err = cmdOptions.Complete(factory, cmd, tc.args)
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
+			if err != nil {
 				return
 			}
 			if tc.validate != nil {
 				err = tc.validate(cmdOptions, cmd, tc.args)
-				if err != nil {
-					return
-				}
 			} else {
-				if err = cmdOptions.Validate(cmd, tc.args); err != nil && !errors.Is(err, tc.wantError) {
-					t.Errorf("expected %v, got: '%v'", tc.wantError, err)
-					return
-				}
+				err = cmdOptions.Validate(cmd, tc.args)
+			}
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
+			if err != nil {
+				return
 			}
 			if tc.run != nil {
 				err = tc.run(cmdOptions, tc.args)
-				if err != nil {
-					t.Error(err)
-				}
+				cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
 				return
 			}
-			if err = cmdOptions.Run(tc.args); !errors.Is(err, tc.wantError) {
-				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
-				return
-			}
+			err = cmdOptions.Run(tc.args)
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
 		})
 	}
 }

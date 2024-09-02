@@ -15,9 +15,10 @@
 package branch
 
 import (
-	"errors"
 	"fmt"
-	"strings"
+	"github.com/huhouhua/glctl/util/cli"
+	"github.com/stretchr/testify/assert"
+	"github.com/xanzy/go-gitlab"
 	"testing"
 
 	"github.com/AlekSi/pointer"
@@ -25,11 +26,9 @@ import (
 
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
 )
 
 func TestEditBranch(t *testing.T) {
-	streams := cli.NewTestIOStreamsForPipe()
 	tests := []struct {
 		name        string
 		args        []string
@@ -39,51 +38,56 @@ func TestEditBranch(t *testing.T) {
 		wantError   error
 	}{{
 		name: "set unprotect",
-		args: []string{"main"},
+		args: []string{"unprotect"},
 		optionsFunc: func(opt *EditOptions) {
-			opt.project = "Group1/gitlab-repo-branch"
+			opt.project = "Group1/Project1"
 			opt.Unprotect = true
 		},
 		run: func(opt *EditOptions, args []string) error {
 			var err error
-			out := cmdtesting.RunForStdout(streams, func() {
+			_, _, err = opt.gitlabClient.ProtectedBranches.ProtectRepositoryBranches(opt.project, &gitlab.ProtectRepositoryBranchesOptions{
+				Name: pointer.ToString(args[0]),
+			})
+			if err != nil {
+				return err
+			}
+			defer func() {
+				_, _ = opt.gitlabClient.ProtectedBranches.UnprotectRepositoryBranches(opt.project, args[0])
+			}()
+			out := cmdtesting.RunForStdout(opt.ioStreams, func() {
 				err = opt.Run(args)
 			})
 			expectedOutput := fmt.Sprintf("branch %s un protect", args[0])
-			if !strings.Contains(out, expectedOutput) {
-				err = fmt.Errorf(
-					"unprotect main : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out,
-				)
-			}
+			assert.Containsf(t, out, expectedOutput, "set \"unprotect\" branch s unprotect : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out)
 			return err
 		},
 		wantError: nil,
 	}, {
 		name: "set protect",
-		args: []string{"main"},
+		args: []string{"protect"},
 		optionsFunc: func(opt *EditOptions) {
-			opt.project = "Group1/gitlab-repo-branch"
+			opt.project = "Group1/Project2"
 			opt.protect = true
 			opt.protectBranch.DevelopersCanMerge = pointer.ToBool(true)
 			opt.protectBranch.DevelopersCanPush = pointer.ToBool(true)
 		},
 		run: func(opt *EditOptions, args []string) error {
+			defer func() {
+				_, _ = opt.gitlabClient.ProtectedBranches.UnprotectRepositoryBranches(opt.project, args[0])
+			}()
 			var err error
-			out := cmdtesting.RunForStdout(streams, func() {
+			out := cmdtesting.RunForStdout(opt.ioStreams, func() {
 				err = opt.Run(args)
 			})
 			expectedOutput := fmt.Sprintf("branch %s updated", args[0])
-			if !strings.Contains(out, expectedOutput) {
-				err = fmt.Errorf(
-					"unprotect main : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out,
-				)
-			}
+			assert.Containsf(t, out, expectedOutput, "set \"updated\" branch s updated : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out)
 			return err
 		},
 		wantError: nil,
 	}}
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
+		streams := cli.NewTestIOStreamsForPipe()
 		t.Run(tc.name, func(t *testing.T) {
 			cmd := NewEditBranchCmd(factory, streams)
 			var cmdOptions = NewEditOptions(streams)
@@ -91,32 +95,27 @@ func TestEditBranch(t *testing.T) {
 				tc.optionsFunc(cmdOptions)
 			}
 			var err error
-			if err = cmdOptions.Complete(factory, cmd, tc.args); err != nil && !errors.Is(err, tc.wantError) {
-				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
+			err = cmdOptions.Complete(factory, cmd, tc.args)
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
+			if err != nil {
 				return
 			}
 			if tc.validate != nil {
 				err = tc.validate(cmdOptions, cmd, tc.args)
-				if err != nil {
-					return
-				}
 			} else {
-				if err = cmdOptions.Validate(cmd, tc.args); err != nil && !errors.Is(err, tc.wantError) {
-					t.Errorf("expected %v, got: '%v'", tc.wantError, err)
-					return
-				}
+				err = cmdOptions.Validate(cmd, tc.args)
+			}
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
+			if err != nil {
+				return
 			}
 			if tc.run != nil {
 				err = tc.run(cmdOptions, tc.args)
-				if err != nil {
-					t.Error(err)
-				}
+				cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
 				return
 			}
-			if err = cmdOptions.Run(tc.args); !errors.Is(err, tc.wantError) {
-				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
-				return
-			}
+			err = cmdOptions.Run(tc.args)
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
 		})
 	}
 }

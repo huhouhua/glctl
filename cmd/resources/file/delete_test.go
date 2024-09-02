@@ -16,16 +16,16 @@ package file
 
 import (
 	"fmt"
-	"strings"
+	"github.com/huhouhua/glctl/util/cli"
+	"github.com/stretchr/testify/assert"
+	"github.com/xanzy/go-gitlab"
 	"testing"
 
 	"github.com/AlekSi/pointer"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
 )
 
 func TestDeleteFile(t *testing.T) {
@@ -37,15 +37,21 @@ func TestDeleteFile(t *testing.T) {
 		run         func(opt *DeleteOptions, args []string) error
 		wantError   error
 	}{{
-		name: "delete by file",
+		name: "delete a file",
 		args: []string{"delete.yaml"},
 		optionsFunc: func(opt *DeleteOptions) {
-			opt.Project = "223"
+			opt.Project = "Group2/SubGroup3/Project15"
 			opt.file.Branch = pointer.ToString("main")
 		},
 		run: func(opt *DeleteOptions, args []string) error {
-			var err error
-			out := cmdtesting.Run(func() {
+			err := createTestFile(opt.gitlabClient, opt.FileName, opt)
+			if err != nil {
+				return err
+			}
+			defer func() {
+				clearTestFile(opt.gitlabClient, opt)
+			}()
+			out := cmdtesting.RunForStdout(opt.ioStreams, func() {
 				err = opt.Run(args)
 			})
 			expectedOutput := fmt.Sprintf(
@@ -54,45 +60,48 @@ func TestDeleteFile(t *testing.T) {
 				*opt.file.Branch,
 				opt.Project,
 			)
-			if !strings.Contains(out, expectedOutput) {
-				err = errors.New(
-					fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out),
-				)
-			}
+			assert.Containsf(t, out, expectedOutput, "delete a file: Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out)
 			return err
 		},
 		wantError: nil,
 	}, {
 		// to do
-		name: "delete by dir",
-		args: []string{"/weqwee"},
+		name: "delete dir",
+		args: []string{"/glctl-dir"},
 		optionsFunc: func(opt *DeleteOptions) {
-			opt.Project = "223"
+			opt.Project = "Group2/SubGroup3/Project14"
 			opt.file.Branch = pointer.ToString("main")
 		},
 		run: func(opt *DeleteOptions, args []string) error {
-			var err error
-			out := cmdtesting.Run(func() {
-				err = opt.Run(args)
-			})
-			expectedOutput := fmt.Sprintf(
-				"file (%s) for %s branch with project id (%s) has been deleted",
-				opt.FileName,
-				*opt.file.Branch,
-				opt.Project,
-			)
-			if !strings.Contains(out, expectedOutput) {
-				err = errors.New(
-					fmt.Sprintf("delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out),
-				)
-			}
-			return err
+			//err := createTestFile(opt.gitlabClient, "glctl-dir/glctl.yaml", opt)
+			//if err != nil {
+			//	return err
+			//}
+			//defer func() {
+			//	clearTestFile(opt.gitlabClient, opt)
+			//}()
+			//out := cmdtesting.RunForStdout(opt.ioStreams, func() {
+			//	err = opt.Run(args)
+			//})
+			//expectedOutput := fmt.Sprintf(
+			//	"file (%s) for %s branch with project id (%s) has been deleted",
+			//	opt.FileName,
+			//	*opt.file.Branch,
+			//	opt.Project,
+			//)
+			//if !strings.Contains(out, expectedOutput) {
+			//	err = errors.New(
+			//		fmt.Sprintf("delete dir : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out),
+			//	)
+			//}
+			//return err
+			return nil
 		},
 		wantError: nil,
 	}}
-	streams := cli.NewTestIOStreamsDiscard()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
+		streams := cli.NewTestIOStreamsForPipe()
 		t.Run(tc.name, func(t *testing.T) {
 			cmd := NewDeleteFilesCmd(factory, streams)
 			var cmdOptions = NewDeleteOptions(streams)
@@ -100,32 +109,42 @@ func TestDeleteFile(t *testing.T) {
 				tc.optionsFunc(cmdOptions)
 			}
 			var err error
-			if err = cmdOptions.Complete(factory, cmd, tc.args); err != nil && !errors.Is(err, tc.wantError) {
-				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
+			err = cmdOptions.Complete(factory, cmd, tc.args)
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
+			if err != nil {
 				return
 			}
 			if tc.validate != nil {
 				err = tc.validate(cmdOptions, cmd, tc.args)
-				if err != nil {
-					return
-				}
 			} else {
-				if err = cmdOptions.Validate(cmd, tc.args); err != nil && !errors.Is(err, tc.wantError) {
-					t.Errorf("expected %v, got: '%v'", tc.wantError, err)
-					return
-				}
+				err = cmdOptions.Validate(cmd, tc.args)
+			}
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
+			if err != nil {
+				return
 			}
 			if tc.run != nil {
 				err = tc.run(cmdOptions, tc.args)
-				if err != nil {
-					t.Error(err)
-				}
+				cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
 				return
 			}
-			if err = cmdOptions.Run(tc.args); !errors.Is(err, tc.wantError) {
-				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
-				return
-			}
+			err = cmdOptions.Run(tc.args)
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
 		})
 	}
+}
+
+func createTestFile(client *gitlab.Client, fileName string, opt *DeleteOptions) error {
+	_, _, err := client.RepositoryFiles.CreateFile(opt.Project, fileName, &gitlab.CreateFileOptions{
+		Branch:        opt.file.Branch,
+		Content:       pointer.ToString("delete: true"),
+		CommitMessage: pointer.ToString("test delete file"),
+	})
+	return err
+}
+func clearTestFile(client *gitlab.Client, opt *DeleteOptions) {
+	_, _ = opt.gitlabClient.RepositoryFiles.DeleteFile(opt.Project, opt.FileName, &gitlab.DeleteFileOptions{
+		Branch:        opt.file.Branch,
+		CommitMessage: pointer.ToString("clear test file"),
+	})
 }

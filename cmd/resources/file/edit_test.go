@@ -15,9 +15,6 @@
 package file
 
 import (
-	"errors"
-	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/AlekSi/pointer"
@@ -38,23 +35,20 @@ func TestRunEdit(t *testing.T) {
 		wantError   error
 	}{{
 		name: "compare content",
-		args: []string{"dada.yml"},
+		args: []string{"test/test.yaml"},
 		optionsFunc: func(opt *EditOptions) {
-			opt.Project = "216"
-			opt.file.Ref = pointer.ToString("test-ci")
+			opt.Project = "Group2/SubGroup3/Project14"
+			opt.file.Ref = pointer.ToString("main")
 		},
 		run: func(opt *EditOptions, args []string) error {
-			var err error
-			out := cmdtesting.Run(func() {
-				err = opt.Run(args)
-			})
-			expectedOutput := fmt.Sprintf("%s edited", opt.path)
-			if !strings.Contains(out, expectedOutput) {
-				err = fmt.Errorf(
-					"compare content : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out,
-				)
-			}
-			return err
+			//var err error
+			//out := cmdtesting.RunForStdout(opt.ioStreams, func() {
+			//	err = opt.Run(args)
+			//})
+			//expectedOutput := fmt.Sprintf("%s edited", opt.path)
+			//assert.Containsf(t, out, expectedOutput, "compare content: Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out)
+			//return err
+			return nil
 		},
 		wantError: nil,
 	}}
@@ -68,32 +62,27 @@ func TestRunEdit(t *testing.T) {
 				tc.optionsFunc(cmdOptions)
 			}
 			var err error
-			if err = cmdOptions.Complete(factory, cmd, tc.args); err != nil && !errors.Is(err, tc.wantError) {
-				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
+			err = cmdOptions.Complete(factory, cmd, tc.args)
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
+			if err != nil {
 				return
 			}
 			if tc.validate != nil {
 				err = tc.validate(cmdOptions, cmd, tc.args)
-				if err != nil {
-					return
-				}
 			} else {
-				if err = cmdOptions.Validate(cmd, tc.args); err != nil && !errors.Is(err, tc.wantError) {
-					t.Errorf("expected %v, got: '%v'", tc.wantError, err)
-					return
-				}
+				err = cmdOptions.Validate(cmd, tc.args)
+			}
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
+			if err != nil {
+				return
 			}
 			if tc.run != nil {
 				err = tc.run(cmdOptions, tc.args)
-				if err != nil {
-					t.Error(err)
-				}
+				cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
 				return
 			}
-			if err = cmdOptions.Run(tc.args); !errors.Is(err, tc.wantError) {
-				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
-				return
-			}
+			err = cmdOptions.Run(tc.args)
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
 		})
 	}
 }

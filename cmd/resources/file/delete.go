@@ -44,7 +44,6 @@ func NewDeleteOptions(ioStreams cli.IOStreams) *DeleteOptions {
 			AuthorName:    pointer.ToString(""),
 			AuthorEmail:   pointer.ToString(""),
 			LastCommitID:  pointer.ToString(""),
-			StartBranch:   pointer.ToString(""),
 		},
 	}
 }
@@ -94,12 +93,7 @@ func (o *DeleteOptions) AddFlags(cmd *cobra.Command) {
 	f.StringVar(o.file.AuthorEmail, "author_email", *o.file.AuthorEmail, "The commit author’s email address.")
 	f.StringVar(o.file.AuthorName, "author_name", *o.file.AuthorName, "The commit author’s name.")
 	f.StringVar(o.file.LastCommitID, "last_commit_id", *o.file.LastCommitID, "Last known file commit ID.")
-	f.StringVar(
-		o.file.StartBranch,
-		"start_branch",
-		*o.file.StartBranch,
-		"Name of the base branch to create the new branch from.",
-	)
+	f.String("start_branch", "", "Name of the base branch to create the new branch from.")
 }
 
 // Complete completes all the required options.
@@ -107,6 +101,9 @@ func (o *DeleteOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []s
 	var err error
 	if len(args) > 0 {
 		o.FileName = args[0]
+	}
+	if cmd.Flag("start_branch").Changed {
+		o.file.StartBranch = pointer.To(cmdutil.GetFlagString(cmd, "start_branch"))
 	}
 	if strings.TrimSpace(*o.file.CommitMessage) == "" {
 		o.file.CommitMessage = pointer.ToString(fmt.Sprintf("delete %s file!", o.FileName))

@@ -15,7 +15,9 @@
 package branch
 
 import (
+	"errors"
 	"fmt"
+	"github.com/spf13/cobra"
 	"strings"
 	"testing"
 
@@ -26,16 +28,18 @@ import (
 
 func TestGetBranch(t *testing.T) {
 	tests := []struct {
-		name           string
-		optionsFunc    func(opt *ListOptions)
-		args           []string
-		expectedOutput string
+		name        string
+		args        []string
+		optionsFunc func(opt *ListOptions)
+		validate    func(opt *ListOptions, cmd *cobra.Command, args []string) error
+		run         func(opt *ListOptions, args []string) error
+		wantError   error
 	}{{
-		name:           "project name is an empty string",
-		args:           []string{""},
-		expectedOutput: fmt.Sprintf("error from server (NotFound): project %s not found", ""),
+		name:      "project name is an empty string",
+		args:      []string{""},
+		wantError: errors.New("error from server (NotFound): project  not found"),
 	}}
-	streams := cli.NewTestIOStreamsDiscard()
+	streams := cli.NewTestIOStreamsForPipe()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
@@ -44,28 +48,28 @@ func TestGetBranch(t *testing.T) {
 			if tc.optionsFunc != nil {
 				tc.optionsFunc(cmdOptions)
 			}
-			out := cmdtesting.Run(func() {
-				var err error
-				if err = cmdOptions.Complete(factory, cmd, tc.args); err != nil {
-					fmt.Print(err)
-					return
-				}
-				if err = cmdOptions.Validate(cmd, tc.args); err != nil {
-					fmt.Print(err)
-					return
-				}
-				if err = cmdOptions.Run(tc.args); err != nil {
-					fmt.Print(err)
-					return
-				}
-			})
-			cmdtesting.TInfo(out)
-			if tc.expectedOutput == "" {
-				t.Errorf("%s: Invalid test case. Specify expected result.\n", tc.name)
+			var err error
+			err = cmdOptions.Complete(factory, cmd, tc.args)
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
+			if err != nil {
+				return
 			}
-			if !strings.Contains(out, tc.expectedOutput) {
-				t.Errorf("%s: Unexpected output! Expected\n%s\ngot\n%s", tc.name, tc.expectedOutput, out)
+			if tc.validate != nil {
+				err = tc.validate(cmdOptions, cmd, tc.args)
+			} else {
+				err = cmdOptions.Validate(cmd, tc.args)
 			}
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
+			if err != nil {
+				return
+			}
+			if tc.run != nil {
+				err = tc.run(cmdOptions, tc.args)
+				cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
+				return
+			}
+			err = cmdOptions.Run(tc.args)
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
 		})
 	}
 }
@@ -78,30 +82,30 @@ func TestRunGetBranch(t *testing.T) {
 		expectedOutput string
 	}{{
 		name:           "list all branch with project",
-		args:           []string{"devops-olympus/loki"},
+		args:           []string{"Group1/Project1"},
 		flags:          map[string]string{"all": "true"},
 		expectedOutput: "main",
 	}, {
 		name:           "list all branch with project id",
-		args:           []string{"220"},
+		args:           []string{"2"},
 		flags:          map[string]string{"all": "true"},
 		expectedOutput: "main",
 	}, {
 		name:           "list all branch default",
-		args:           []string{"220"},
+		args:           []string{"3"},
 		flags:          map[string]string{},
 		expectedOutput: "main",
 	}}
-	streams, _, buf, _ := cli.NewTestIOStreams()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
+		streams := cli.NewTestIOStreamsForPipe()
 		t.Run(tc.name, func(t *testing.T) {
 			for i, arg := range tc.args {
 				cmdtesting.TInfo(fmt.Sprintf("(%d) %s", i, arg))
 			}
 			cmd := NewGetBranchesCmd(factory, streams)
-			cmd.SetOut(buf)
-			cmd.SetErr(buf)
+			cmd.SetOut(streams.Out)
+			cmd.SetErr(streams.ErrOut)
 			for flag, value := range tc.flags {
 				err := cmd.Flags().Set(flag, value)
 				if err != nil {
@@ -109,7 +113,7 @@ func TestRunGetBranch(t *testing.T) {
 					return
 				}
 			}
-			out := cmdtesting.Run(func() {
+			out := cmdtesting.RunForStdout(streams, func() {
 				cmd.Run(cmd, tc.args)
 			})
 			cmdtesting.TInfo(out)

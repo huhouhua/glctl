@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"github.com/AlekSi/pointer"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"strings"
+	"github.com/stretchr/testify/assert"
 	"testing"
 
 	"github.com/spf13/cobra"
@@ -38,15 +38,16 @@ func TestDeleteBranch(t *testing.T) {
 		run         func(opt *DeleteOptions, args []string) error
 		wantError   error
 	}{{
-		name: "delete by name",
+		name: "delete branch success",
 		args: []string{"develop-by-name"},
 		optionsFunc: func(opt *DeleteOptions) {
-			opt.project = "Group1/gitlab-repo-branch"
+			opt.project = "Group1/Project3"
 		},
 		run: func(opt *DeleteOptions, args []string) error {
 			var err error
 			_, _, err = opt.gitlabClient.Branches.CreateBranch(opt.project, &gitlab.CreateBranchOptions{
 				Branch: pointer.ToString(opt.branch),
+				Ref:    pointer.ToString("master"),
 			})
 			if err != nil {
 				return err
@@ -54,15 +55,11 @@ func TestDeleteBranch(t *testing.T) {
 			defer func() {
 				_, _ = opt.gitlabClient.Branches.DeleteBranch(opt.project, opt.branch)
 			}()
-			out := cmdtesting.Run(func() {
+			out := cmdtesting.RunForStdout(opt.ioStreams, func() {
 				err = opt.Run(args)
 			})
 			expectedOutput := fmt.Sprintf("Branch (%s) from project (%s) has been deleted", opt.branch, opt.project)
-			if !strings.Contains(out, expectedOutput) {
-				err = fmt.Errorf(
-					"delete by path : Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out,
-				)
-			}
+			assert.Containsf(t, out, expectedOutput, "delete branch success: Unexpected output! Expected\n%s\ngot\n%s", expectedOutput, out)
 			return err
 		},
 		wantError: nil,
@@ -70,12 +67,13 @@ func TestDeleteBranch(t *testing.T) {
 		name: "branch not found",
 		args: []string{"not-found"},
 		optionsFunc: func(opt *DeleteOptions) {
-			opt.project = "Group1/gitlab-repo-branch"
+			opt.project = "Group1/Project3"
 		},
 		run: func(opt *DeleteOptions, args []string) error {
 			err := opt.Run(args)
-			var repo *gitlab.ErrorResponse
-			if errors.As(err, &repo) && repo.Message == "{message: 404 Branch Not Found}" {
+			var repoErr *gitlab.ErrorResponse
+			assert.ErrorAs(t, err, &repoErr)
+			if assert.Equal(t, repoErr.Message, "{message: 404 Branch Not Found}") {
 				return nil
 			}
 			return err
@@ -89,26 +87,20 @@ func TestDeleteBranch(t *testing.T) {
 		},
 		run: func(opt *DeleteOptions, args []string) error {
 			err := opt.Run(args)
-			var repo *gitlab.ErrorResponse
-			if errors.As(err, &repo) && repo.Message == "{message: 404 Project Not Found}" {
+			var repoErr *gitlab.ErrorResponse
+			assert.ErrorAs(t, err, &repoErr)
+			if assert.Equal(t, repoErr.Message, "{message: 404 Project Not Found}") {
 				return nil
 			}
 			return err
 		},
 		wantError: nil,
 	}, {
-		name: "not definition branch",
-		args: []string{},
-		validate: func(opt *DeleteOptions, cmd *cobra.Command, args []string) error {
-			err := opt.Validate(cmd, args)
-			if err.Error() == "please enter branch" {
-				return err
-			}
-			return nil
-		},
+		name:      "not definition branch",
+		wantError: errors.New("please enter branch"),
 	}}
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
-	streams := cli.NewTestIOStreamsDiscard()
+	streams := cli.NewTestIOStreamsForPipe()
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			cmd := NewDeleteBranchCmd(factory, streams)
@@ -117,32 +109,27 @@ func TestDeleteBranch(t *testing.T) {
 				tc.optionsFunc(cmdOptions)
 			}
 			var err error
-			if err = cmdOptions.Complete(factory, cmd, tc.args); err != nil && !errors.Is(err, tc.wantError) {
-				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
+			err = cmdOptions.Complete(factory, cmd, tc.args)
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
+			if err != nil {
 				return
 			}
 			if tc.validate != nil {
 				err = tc.validate(cmdOptions, cmd, tc.args)
-				if err != nil {
-					return
-				}
 			} else {
-				if err = cmdOptions.Validate(cmd, tc.args); err != nil && !errors.Is(err, tc.wantError) {
-					t.Errorf("expected %v, got: '%v'", tc.wantError, err)
-					return
-				}
+				err = cmdOptions.Validate(cmd, tc.args)
+			}
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
+			if err != nil {
+				return
 			}
 			if tc.run != nil {
 				err = tc.run(cmdOptions, tc.args)
-				if err != nil {
-					t.Error(err)
-				}
+				cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
 				return
 			}
-			if err = cmdOptions.Run(tc.args); !errors.Is(err, tc.wantError) {
-				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
-				return
-			}
+			err = cmdOptions.Run(tc.args)
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
 		})
 	}
 }

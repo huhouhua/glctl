@@ -18,8 +18,6 @@ import (
 	"testing"
 
 	"github.com/AlekSi/pointer"
-	"github.com/pkg/errors"
-
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
@@ -34,7 +32,7 @@ func TestGetFiles(t *testing.T) {
 		wantError      error
 	}{{
 		name: "list all file",
-		args: []string{"70"},
+		args: []string{"Group2/SubGroup3/Project13"},
 		optionsFunc: func(opt *ListOptions) {
 			opt.All = true
 		},
@@ -42,43 +40,43 @@ func TestGetFiles(t *testing.T) {
 	}, {
 		name: "get specified branch",
 		args: []string{
-			"70",
+			"Group2/SubGroup3/Project14",
 		},
 		optionsFunc: func(opt *ListOptions) {
-			opt.file.Ref = pointer.ToString("develop")
+			opt.file.Ref = pointer.ToString("main")
 		},
 		wantError: nil,
 	}, {
 		name: "read to receive the raw file in repository",
 		args: []string{
-			"70",
+			"Group2/SubGroup3/Project15",
 		},
 		optionsFunc: func(opt *ListOptions) {
-			opt.file.Ref = pointer.ToString("develop")
-			opt.file.Path = pointer.ToString("clusters/devops/manifests/local-path-provisioner.yaml")
+			opt.file.Ref = pointer.ToString("main")
+			opt.file.Path = pointer.ToString("test/test.yaml")
 			opt.Raw = true
 		},
 		wantError: nil,
 	}, {
 		name: "Get specified directory",
-		args: []string{"70"},
+		args: []string{"Group2/SubGroup3/Project15"},
 		optionsFunc: func(opt *ListOptions) {
-			opt.file.Ref = pointer.ToString("develop")
-			opt.file.Path = pointer.ToString("clusters")
+			opt.file.Ref = pointer.ToString("main")
+			opt.file.Path = pointer.ToString("test")
 		},
 		wantError: nil,
 	}, {
 		name: "list all projects with page",
-		args: []string{"70"},
+		args: []string{"Group2/SubGroup3/Project15"},
 		optionsFunc: func(opt *ListOptions) {
-			opt.file.Ref = pointer.ToString("develop")
+			opt.file.Ref = pointer.ToString("main")
 			opt.file.ListOptions.Page = 1
 			opt.file.ListOptions.PerPage = 100
 		},
 		wantError: nil,
 	}, {
 		name: "desc sort",
-		args: []string{},
+		args: []string{"Group2/SubGroup3/Project13"},
 		optionsFunc: func(opt *ListOptions) {
 			opt.file.Sort = "desc"
 		},
@@ -94,16 +92,19 @@ func TestGetFiles(t *testing.T) {
 				tc.optionsFunc(cmdOptions)
 			}
 			var err error
-			if err = cmdOptions.Complete(factory, cmd, tc.args); !errors.Is(err, tc.wantError) {
-				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
+			err = cmdOptions.Complete(factory, cmd, tc.args)
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
+			if err != nil {
 				return
 			}
-			if err = cmdOptions.Validate(cmd, tc.args); !errors.Is(err, tc.wantError) {
-				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
+			err = cmdOptions.Validate(cmd, tc.args)
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
+			if err != nil {
 				return
 			}
-			if err = cmdOptions.Run(tc.args); !errors.Is(err, tc.wantError) {
-				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
+			err = cmdOptions.Run(tc.args)
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
+			if err != nil {
 				return
 			}
 		})

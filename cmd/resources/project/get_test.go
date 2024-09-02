@@ -18,8 +18,6 @@ import (
 	"testing"
 
 	"github.com/AlekSi/pointer"
-	"github.com/pkg/errors"
-
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/util/cli"
@@ -42,7 +40,7 @@ func TestGetProjects(t *testing.T) {
 	}, {
 		name: "project by id",
 		args: []string{
-			"6",
+			"1",
 		},
 		wantError: nil,
 	}, {
@@ -70,17 +68,19 @@ func TestGetProjects(t *testing.T) {
 			if tc.optionsFunc != nil {
 				tc.optionsFunc(cmdOptions)
 			}
-			var err error
-			if err = cmdOptions.Complete(factory, cmd, tc.args); !errors.Is(err, tc.wantError) {
-				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
+			err := cmdOptions.Complete(factory, cmd, tc.args)
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
+			if err != nil {
 				return
 			}
-			if err = cmdOptions.Validate(cmd, tc.args); !errors.Is(err, tc.wantError) {
-				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
+			err = cmdOptions.Validate(cmd, tc.args)
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
+			if err != nil {
 				return
 			}
-			if err = cmdOptions.Run(tc.args); !errors.Is(err, tc.wantError) {
-				t.Errorf("expected %v, got: '%v'", tc.wantError, err)
+			err = cmdOptions.Run(tc.args)
+			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
+			if err != nil {
 				return
 			}
 		})
