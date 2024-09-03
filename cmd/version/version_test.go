@@ -54,15 +54,15 @@ func TestRunVersion(t *testing.T) {
 			out := cmdtesting.RunForStdout(streams, func() {
 				var err error
 				if err = cmdOptions.Complete(factory, cmd); err != nil {
-					_, _ = fmt.Fprintf(streams.Out, err.Error())
+					_, _ = fmt.Fprint(streams.Out, err.Error())
 					return
 				}
 				if err = cmdOptions.Validate(); err != nil {
-					_, _ = fmt.Fprintf(streams.Out, err.Error())
+					_, _ = fmt.Fprint(streams.Out, err.Error())
 					return
 				}
 				if err = cmdOptions.Run(); err != nil {
-					_, _ = fmt.Fprintf(streams.Out, err.Error())
+					_, _ = fmt.Fprint(streams.Out, err.Error())
 					return
 				}
 			})
