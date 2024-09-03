@@ -152,10 +152,9 @@ func TestDeleteProject(t *testing.T) {
 			}
 			if tc.run != nil {
 				err = tc.run(cmdOptions, args)
-				cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
-				return
+			} else {
+				err = cmdOptions.Run(args)
 			}
-			err = cmdOptions.Run(args)
 			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
 		})
 	}

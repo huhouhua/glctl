@@ -16,7 +16,7 @@ package version
 
 import (
 	"fmt"
-	"strings"
+	"github.com/stretchr/testify/assert"
 	"testing"
 
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
@@ -42,9 +42,9 @@ func TestRunVersion(t *testing.T) {
 		},
 		expectedOutput: "Client Version",
 	}}
-	streams := cli.NewTestIOStreamsForPipe()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
+		streams := cli.NewTestIOStreamsForPipe()
 		t.Run(tc.name, func(t *testing.T) {
 			cmd := NewCmdVersion(factory, streams)
 			cmdOptions := NewOptions(streams)
@@ -54,15 +54,15 @@ func TestRunVersion(t *testing.T) {
 			out := cmdtesting.RunForStdout(streams, func() {
 				var err error
 				if err = cmdOptions.Complete(factory, cmd); err != nil {
-					fmt.Print(err)
+					_, _ = fmt.Fprintf(streams.Out, err.Error())
 					return
 				}
 				if err = cmdOptions.Validate(); err != nil {
-					fmt.Print(err)
+					_, _ = fmt.Fprintf(streams.Out, err.Error())
 					return
 				}
 				if err = cmdOptions.Run(); err != nil {
-					fmt.Print(err)
+					_, _ = fmt.Fprintf(streams.Out, err.Error())
 					return
 				}
 			})
@@ -70,9 +70,15 @@ func TestRunVersion(t *testing.T) {
 			if tc.expectedOutput == "" {
 				t.Errorf("%s: Invalid test case. Specify expected result.\n", tc.name)
 			}
-			if !strings.Contains(out, tc.expectedOutput) {
-				t.Errorf("%s: Unexpected output! Expected\n%s\ngot\n%s", tc.name, tc.expectedOutput, out)
-			}
+			assert.Containsf(
+				t,
+				out,
+				tc.expectedOutput,
+				"%s : Unexpected output! Expected\n%s\ngot\n%s",
+				tc.name,
+				tc.expectedOutput,
+				out,
+			)
 		})
 	}
 }

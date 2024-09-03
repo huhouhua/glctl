@@ -49,7 +49,7 @@ func TestDeleteBranch(t *testing.T) {
 			var err error
 			_, _, err = opt.gitlabClient.Branches.CreateBranch(opt.project, &gitlab.CreateBranchOptions{
 				Branch: pointer.ToString(opt.branch),
-				Ref:    pointer.ToString("master"),
+				Ref:    pointer.ToString("main"),
 			})
 			if err != nil {
 				return err
@@ -134,10 +134,9 @@ func TestDeleteBranch(t *testing.T) {
 			}
 			if tc.run != nil {
 				err = tc.run(cmdOptions, tc.args)
-				cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
-				return
+			} else {
+				err = cmdOptions.Run(tc.args)
 			}
-			err = cmdOptions.Run(tc.args)
 			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
 		})
 	}

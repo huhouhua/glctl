@@ -41,7 +41,7 @@ func TestCreateBranch(t *testing.T) {
 		args: []string{"create1"},
 		optionsFunc: func(opt *CreateOptions) {
 			opt.project = "Group1/Project2"
-			opt.branch.Ref = pointer.ToString("master")
+			opt.branch.Ref = pointer.ToString("main")
 		},
 		run: func(opt *CreateOptions, args []string) error {
 			defer func() {
@@ -104,10 +104,9 @@ func TestCreateBranch(t *testing.T) {
 			}
 			if tc.run != nil {
 				err = tc.run(cmdOptions, tc.args)
-				cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
-				return
+			} else {
+				err = cmdOptions.Run(tc.args)
 			}
-			err = cmdOptions.Run(tc.args)
 			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
 		})
 	}

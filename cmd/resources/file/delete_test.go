@@ -134,10 +134,9 @@ func TestDeleteFile(t *testing.T) {
 			}
 			if tc.run != nil {
 				err = tc.run(cmdOptions, tc.args)
-				cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
-				return
+			} else {
+				err = cmdOptions.Run(tc.args)
 			}
-			err = cmdOptions.Run(tc.args)
 			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
 		})
 	}

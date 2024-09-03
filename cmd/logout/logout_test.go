@@ -16,8 +16,8 @@ package logout
 
 import (
 	"fmt"
+	"github.com/stretchr/testify/assert"
 	"os"
-	"strings"
 	"testing"
 
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
@@ -96,9 +96,15 @@ func TestLogout(t *testing.T) {
 			if tc.expectedOutput == "" {
 				t.Errorf("%s: Invalid test case. Specify expected result.\n", tc.name)
 			}
-			if !strings.Contains(out, tc.expectedOutput) {
-				t.Errorf("%s: Unexpected output! Expected\n%s\ngot\n%s", tc.name, tc.expectedOutput, out)
-			}
+			assert.Containsf(
+				t,
+				out,
+				tc.expectedOutput,
+				"%s : Unexpected output! Expected\n%s\ngot\n%s",
+				tc.name,
+				tc.expectedOutput,
+				out,
+			)
 		})
 	}
 }
