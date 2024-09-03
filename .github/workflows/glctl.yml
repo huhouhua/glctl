@@ -150,6 +150,7 @@ jobs:
 
       - name: Run unit test and get test coverage
         run: |
+          env | grep GITLAB
           make cover
 
       - name: Collect Test Coverage File
