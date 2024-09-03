@@ -63,13 +63,23 @@ func AddProjectVarPFlag(cmd *cobra.Command, p *string) {
 func AddDescriptionVarFlag(cmd *cobra.Command, p *string) {
 	cmd.Flags().StringVar(p, "desc", "", "The description of the resource")
 }
+func AddDescriptionFlag(cmd *cobra.Command) {
+	cmd.Flags().String("desc", "", "The description of the resource")
+}
 
 func AddLFSenabledVarPFlag(cmd *cobra.Command, p *bool) {
 	cmd.Flags().BoolVar(p, "lfs-enabled", *p, "Enable LFS")
 }
+func AddLFSenabledFlag(cmd *cobra.Command, value bool) {
+	cmd.Flags().Bool("lfs-enabled", value, "Enable LFS")
+}
 
 func AddRequestAccessEnabledVarFlag(cmd *cobra.Command, p *bool) {
 	cmd.Flags().BoolVar(p, "request-access-enabled", *p, "Enable request access")
+}
+
+func AddRequestAccessEnabledFlag(cmd *cobra.Command, value bool) {
+	cmd.Flags().Bool("request-access-enabled", value, "Enable request access")
 }
 
 func AddSearchVarFlag(cmd *cobra.Command, p *string) {
@@ -92,6 +102,9 @@ func AddSortVarFlag(cmd *cobra.Command, p *string) {
 }
 func AddVisibilityVarFlag(cmd *cobra.Command, p *string) {
 	cmd.Flags().StringVar(p, "visibility", *p, "public, internal or private")
+}
+func AddVisibilityFlag(cmd *cobra.Command) {
+	cmd.Flags().String("visibility", "private", "public, internal or private")
 }
 
 // WarnWordSepNormalizeFunc changes and warns for flags that contain "_" separators.

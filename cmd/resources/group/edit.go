@@ -16,11 +16,10 @@ package group
 
 import (
 	"fmt"
-	"strconv"
-
 	"github.com/AlekSi/pointer"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
+	"strconv"
 
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
@@ -52,15 +51,8 @@ gctl edit group 23 --visibility="public`)
 func NewEditOptions(ioStreams cli.IOStreams) *EditOptions {
 	return &EditOptions{
 		ioStreams: ioStreams,
-		Group: &gitlab.UpdateGroupOptions{
-			Path:                 pointer.ToString(""),
-			Name:                 pointer.ToString(""),
-			Description:          pointer.ToString(""),
-			RequestAccessEnabled: pointer.ToBool(false),
-			Visibility:           pointer.To(gitlab.PrivateVisibility),
-			LFSEnabled:           pointer.ToBool(false),
-		},
-		Out: "simple",
+		Group:     &gitlab.UpdateGroupOptions{},
+		Out:       "simple",
 	}
 }
 
@@ -86,16 +78,16 @@ func NewEditGroupCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command 
 }
 
 func (o *EditOptions) AddFlags(cmd *cobra.Command) {
-	cmdutil.AddDescriptionVarFlag(cmd, o.Group.Description)
-	cmdutil.AddRequestAccessEnabledVarFlag(cmd, o.Group.RequestAccessEnabled)
-	cmdutil.AddVisibilityVarFlag(cmd, (*string)(o.Group.Visibility))
+	cmdutil.AddDescriptionFlag(cmd)
+	cmdutil.AddRequestAccessEnabledFlag(cmd, false)
+	cmdutil.AddVisibilityFlag(cmd)
 	cmdutil.AddOutFlag(cmd, &o.Out)
 	f := cmd.Flags()
-	f.StringVar(o.Group.Name, "name", *o.Group.Name,
+	f.String("name", "",
 		"New group name")
-	f.StringVar(o.Group.Path, "path", *o.Group.Path,
+	f.String("path", "",
 		"New group path")
-	f.BoolVar(o.Group.LFSEnabled, "lfs-enabled", *o.Group.LFSEnabled, "Enable LFS")
+	f.Bool("lfs-enabled", false, "Enable LFS")
 }
 
 // Complete completes all the required options.
@@ -105,21 +97,23 @@ func (o *EditOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []str
 		return err
 	}
 	o.gitlabClient = client
-	if len(args) > 0 {
-		gid := args[0]
-		o.groupId, err = strconv.Atoi(gid)
-		// if group is not a number,
-		// search for the group path's id and assign it to gid
-		if err != nil {
-			groupInfo, _, errGroup := o.gitlabClient.Groups.GetGroup(gid, &gitlab.GetGroupOptions{})
-			if errGroup != nil {
-				return fmt.Errorf("couldn't find the id of group %s, got error: %v",
-					gid, errGroup)
-			}
-			o.groupId = groupInfo.ID
-		}
+	o.assignOptions(cmd)
+	gid, err := GroupNameFromCommandArgs(cmd, args)
+	if err != nil {
+		return err
 	}
-	return err
+	o.groupId, err = strconv.Atoi(gid)
+	// if group is not a number,
+	// search for the group path's id and assign it to gid
+	if err != nil {
+		groupInfo, _, errGroup := o.gitlabClient.Groups.GetGroup(gid, &gitlab.GetGroupOptions{})
+		if errGroup != nil {
+			return fmt.Errorf("couldn't find the id of group %s, got error: %v",
+				gid, errGroup)
+		}
+		o.groupId = groupInfo.ID
+	}
+	return nil
 }
 
 // Validate makes sure there is no discrepency in command options.
@@ -134,6 +128,41 @@ func (o *EditOptions) Run(args []string) error {
 	if err != nil {
 		return err
 	}
-	cmdutil.PrintGroupsOut(o.Out, o.ioStreams.Out, group)
+	_, _ = fmt.Fprintf(o.ioStreams.Out, "%s configured \n", group.FullPath)
 	return nil
+}
+
+// assign cmd flag to options
+func (o *EditOptions) assignOptions(cmd *cobra.Command) {
+	if cmd.Flag("desc").Changed {
+		o.Group.Description = pointer.ToString(cmdutil.GetFlagString(cmd, "desc"))
+	}
+	if cmd.Flag("request-access-enabled").Changed {
+		o.Group.RequestAccessEnabled = pointer.ToBool(cmdutil.GetFlagBool(cmd, "request-access-enabled"))
+	}
+	if cmd.Flag("visibility").Changed {
+		o.Group.Visibility = pointer.To(gitlab.VisibilityValue(cmdutil.GetFlagString(cmd, "visibility")))
+	}
+	if cmd.Flag("name").Changed {
+		o.Group.Name = pointer.ToString(cmdutil.GetFlagString(cmd, "name"))
+	}
+	if cmd.Flag("path").Changed {
+		o.Group.Path = pointer.ToString(cmdutil.GetFlagString(cmd, "path"))
+	}
+	if cmd.Flag("lfs-enabled").Changed {
+		o.Group.LFSEnabled = pointer.ToBool(cmdutil.GetFlagBool(cmd, "lfs-enabled"))
+	}
+}
+
+// GroupNameFromCommandArgs is a utility function for commands that assume the first argument is a group name
+func GroupNameFromCommandArgs(cmd *cobra.Command, args []string) (string, error) {
+	argsLen := cmd.ArgsLenAtDash()
+	// ArgsLenAtDash returns -1 when -- was not specified
+	if argsLen == -1 {
+		argsLen = len(args)
+	}
+	if argsLen != 1 {
+		return "", cmdutil.UsageErrorf(cmd, "exactly one NAME is required, got %d", argsLen)
+	}
+	return args[0], nil
 }
