@@ -39,32 +39,23 @@ func TestCreateGroup(t *testing.T) {
 		name: "create sub group",
 		args: []string{"Test_New_Group_Under_Group1"},
 		optionsFunc: func(opt *CreateOptions) {
-			opt.Group.Visibility = pointer.To(gitlab.PrivateVisibility)
 			opt.Group.Description = pointer.ToString("Created by to test")
 			opt.Namespace = "Group1"
-			opt.Group.LFSEnabled = pointer.ToBool(false)
-			opt.Group.RequestAccessEnabled = pointer.ToBool(false)
 		},
 		wantError: nil,
 	}, {
 		name: "create group with on namespace",
 		args: []string{"Test_New_Group_Without_Namespace"},
 		optionsFunc: func(opt *CreateOptions) {
-			opt.Group.Visibility = pointer.To(gitlab.PrivateVisibility)
 			opt.Group.Description = pointer.ToString("Created by to test")
-			opt.Group.LFSEnabled = pointer.ToBool(false)
-			opt.Group.RequestAccessEnabled = pointer.ToBool(false)
 		},
 		wantError: nil,
 	}, {
 		name: "create group using id in namespace",
 		args: []string{"Test_New_Group_Using_Namespace"},
 		optionsFunc: func(opt *CreateOptions) {
-			opt.Group.Visibility = pointer.To(gitlab.PrivateVisibility)
 			opt.Group.Description = pointer.ToString("Created by to test")
 			opt.Namespace = "2" // is GitLab Instance
-			opt.Group.LFSEnabled = pointer.ToBool(false)
-			opt.Group.RequestAccessEnabled = pointer.ToBool(false)
 		},
 		wantError: nil,
 	}, {

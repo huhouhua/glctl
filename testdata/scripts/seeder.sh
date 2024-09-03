@@ -78,6 +78,15 @@ print::result "${pgroup1_id}" "${pgroup1_id} Group1 created"
 pgroup2_id=$(${CCURL} "${GITLAB_URL}/api/v4/groups" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Group2&path=Group2" | jq '.id')
 print::result "${pgroup2_id}" "${pgroup2_id} Group2 created"
 
+pgroup3_id=$(${CCURL} "${GITLAB_URL}/api/v4/groups" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Group3&path=Group3" | jq '.id')
+print::result "${pgroup3_id}" "${pgroup3_id} Group3 created"
+
+pgroup4_id=$(${CCURL} "${GITLAB_URL}/api/v4/groups" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Group4&path=Group4" | jq '.id')
+print::result "${pgroup4_id}" "${pgroup4_id} Group4 created"
+
+pgroup5_id=$(${CCURL} "${GITLAB_URL}/api/v4/groups" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=Group5&path=Group5" | jq '.id')
+print::result "${pgroup5_id}" "${pgroup5_id} Group5 created"
+
 echo ""
 # add user to group
 info "Adding users to group"
@@ -100,6 +109,33 @@ success "add ${user5_id} to Group2"
 ${CCURL} "${GITLAB_URL}/api/v4/groups/${pgroup2_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user6_id}&access_level=50"; echo
 success "add ${user6_id} to Group2"
 
+${CCURL} "${GITLAB_URL}/api/v4/groups/${pgroup3_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user7_id}&access_level=30"; echo
+success "add ${user7_id} to Group3"
+
+${CCURL} "${GITLAB_URL}/api/v4/groups/${pgroup3_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user8_id}&access_level=40"; echo
+success "add ${user8_id} to Group3"
+
+${CCURL} "${GITLAB_URL}/api/v4/groups/${pgroup3_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user9_id}&access_level=50"; echo
+success "add ${user9_id} to Group3"
+
+${CCURL} "${GITLAB_URL}/api/v4/groups/${pgroup4_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user10_id}&access_level=30"; echo
+success "add ${user10_id} to Group4"
+
+${CCURL} "${GITLAB_URL}/api/v4/groups/${pgroup4_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user11_id}&access_level=40"; echo
+success "add ${user11_id} to Group4"
+
+${CCURL} "${GITLAB_URL}/api/v4/groups/${pgroup4_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user1_id}&access_level=50"; echo
+success "add ${user1_id} to Group4"
+
+${CCURL} "${GITLAB_URL}/api/v4/groups/${pgroup5_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user2_id}&access_level=30"; echo
+success "add ${user2_id} to Group5"
+
+${CCURL} "${GITLAB_URL}/api/v4/groups/${pgroup5_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user3_id}&access_level=40"; echo
+success "add ${user3_id} to Group5"
+
+${CCURL} "${GITLAB_URL}/api/v4/groups/${pgroup5_id}/members" -d "access_token=${GITLAB_PRIVATE_TOKEN}&user_id=${user4_id}&access_level=50"; echo
+success "add ${user4_id} to Group5"
+
 echo ""
 # create subgroup
 info "Creating subgroup"
@@ -114,6 +150,24 @@ print::result "${sgroup3_id}" "${sgroup3_id} SubGroup3 created"
 
 sgroup4_id=$(${CCURL} "${GITLAB_URL}/api/v4/groups" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=SubGroup4&path=SubGroup4&parent_id=${pgroup2_id}" | jq '.id')
 print::result "${sgroup4_id}" "${sgroup4_id} SubGroup4 created"
+
+sgroup5_id=$(${CCURL} "${GITLAB_URL}/api/v4/groups" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=SubGroup5&path=SubGroup5&parent_id=${pgroup3_id}" | jq '.id')
+print::result "${sgroup5_id}" "${sgroup5_id} SubGroup5 created"
+
+sgroup6_id=$(${CCURL} "${GITLAB_URL}/api/v4/groups" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=SubGroup6&path=SubGroup6&parent_id=${pgroup3_id}" | jq '.id')
+print::result "${sgroup6_id}" "${sgroup6_id} SubGroup6 created"
+
+sgroup7_id=$(${CCURL} "${GITLAB_URL}/api/v4/groups" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=SubGroup7&path=SubGroup7&parent_id=${pgroup4_id}" | jq '.id')
+print::result "${sgroup7_id}" "${sgroup7_id} SubGroup7 created"
+
+sgroup8_id=$(${CCURL} "${GITLAB_URL}/api/v4/groups" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=SubGroup8&path=SubGroup8&parent_id=${pgroup4_id}" | jq '.id')
+print::result "${sgroup8_id}" "${sgroup8_id} SubGroup8 created"
+
+sgroup9_id=$(${CCURL} "${GITLAB_URL}/api/v4/groups" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=SubGroup9&path=SubGroup9&parent_id=${pgroup5_id}" | jq '.id')
+print::result "${sgroup9_id}" "${sgroup9_id} SubGroup9 created"
+
+sgroup10_id=$(${CCURL} "${GITLAB_URL}/api/v4/groups" -d "access_token=${GITLAB_PRIVATE_TOKEN}&name=SubGroup10&path=SubGroup10&parent_id=${pgroup5_id}" | jq '.id')
+print::result "${sgroup10_id}" "${sgroup10_id} SubGroup10 created"
 
 echo ""
 info "sleeping for 5 seconds.."
