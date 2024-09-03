@@ -15,6 +15,7 @@
 package group
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -107,7 +108,7 @@ func (o *CreateOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []s
 			o.Group.ParentID = &id
 			// find the group as string and get it's id
 		} else {
-			groupInfo, _, errGroup := o.gitlabClient.Groups.GetGroup("namespace", &gitlab.GetGroupOptions{})
+			groupInfo, _, errGroup := o.gitlabClient.Groups.GetGroup(o.Namespace, &gitlab.GetGroupOptions{})
 			if errGroup != nil {
 				return errGroup
 			}
@@ -129,6 +130,6 @@ func (o *CreateOptions) Run(args []string) error {
 	if err != nil {
 		return err
 	}
-	cmdutil.PrintGroupsOut(o.Out, o.ioStreams.Out, group)
+	_, _ = fmt.Fprintf(o.ioStreams.Out, "%s created \n", group.FullPath)
 	return nil
 }
