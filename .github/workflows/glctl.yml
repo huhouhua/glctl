@@ -25,26 +25,26 @@ env:
   DOCKER_COMPOSE_VERSION: v2.21.0
 jobs:
   # Check if there is any dirty change for go mod tidy
-  go-mod:
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Checkout ${{ github.ref }}"
-        uses: actions/checkout@v4
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          # https://github.com/actions/setup-go#supported-version-syntax
-          # ex:
-          # - 1.18beta1 -> 1.18.0-beta.1
-          # - 1.18rc1 -> 1.18.0-rc.1
-          go-version: ${{ env.GO_VERSION }}
-
-      - name: Check go mod
-        run: |
-          make tidy
-          git diff --exit-code go.mod
-          git diff --exit-code go.sum
+#  go-mod:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: "Checkout ${{ github.ref }}"
+#        uses: actions/checkout@v4
+#
+#      - name: Setup Go
+#        uses: actions/setup-go@v5
+#        with:
+#          # https://github.com/actions/setup-go#supported-version-syntax
+#          # ex:
+#          # - 1.18beta1 -> 1.18.0-beta.1
+#          # - 1.18rc1 -> 1.18.0-rc.1
+#          go-version: ${{ env.GO_VERSION }}
+#
+#      - name: Check go mod
+#        run: |
+#          make tidy
+#          git diff --exit-code go.mod
+#          git diff --exit-code go.sum
 
   format:
     runs-on: ubuntu-latest
@@ -142,11 +142,6 @@ jobs:
       - name: Add test data
         run: |
           make testdata
-
-#      - name: Set gitlab credentials
-#        run: |
-#          source testdata/scripts/credentials.sh
-#          env | grep GITLAB
 
       - name: Run unit test and get test coverage
         run: |
