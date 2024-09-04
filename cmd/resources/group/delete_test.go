@@ -16,15 +16,17 @@ package group
 
 import (
 	"fmt"
+	"strings"
+	"testing"
+
 	"github.com/AlekSi/pointer"
-	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
-	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/xanzy/go-gitlab"
-	"strings"
-	"testing"
+
+	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
+	"github.com/huhouhua/glctl/util/cli"
 )
 
 func TestDeleteGroup(t *testing.T) {

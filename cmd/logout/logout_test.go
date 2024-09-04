@@ -16,9 +16,10 @@ package logout
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 	"github.com/huhouhua/glctl/util/cli"

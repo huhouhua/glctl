@@ -16,15 +16,17 @@ package group
 
 import (
 	"fmt"
+	"strings"
+	"testing"
+
 	"github.com/AlekSi/pointer"
-	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
-	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 	"github.com/xanzy/go-gitlab"
-	"strings"
-	"testing"
+
+	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
+	"github.com/huhouhua/glctl/util/cli"
 )
 
 func TestCreateGroup(t *testing.T) {
@@ -65,7 +67,11 @@ func TestCreateGroup(t *testing.T) {
 			err := opt.Run(args)
 			var repoErr *gitlab.ErrorResponse
 			assert.ErrorAs(t, err, &repoErr)
-			if assert.Equal(t, repoErr.Message, "{message: Failed to save group {:path=>[\"has already been taken\"]}}") {
+			if assert.Equal(
+				t,
+				repoErr.Message,
+				"{message: Failed to save group {:path=>[\"has already been taken\"]}}",
+			) {
 				return nil
 			}
 			return err

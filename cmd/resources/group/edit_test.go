@@ -16,15 +16,17 @@ package group
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/AlekSi/pointer"
-	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
-	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/xanzy/go-gitlab"
-	"testing"
+
+	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
+	"github.com/huhouhua/glctl/util/cli"
 )
 
 func TestEditGroup(t *testing.T) {

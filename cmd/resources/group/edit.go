@@ -16,10 +16,11 @@ package group
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/AlekSi/pointer"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
-	"strconv"
 
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
