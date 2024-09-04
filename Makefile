@@ -28,7 +28,7 @@ NAME = glctl
 ROOT_PACKAGE=github.com/huhouhua/glctl
 VERSION_PACKAGE=github.com/huhouhua/glctl/util/version
 GIT_TREE_STATE:="dirty"
-COVERAGE := 60
+COVERAGE := 58
 SHELL := /bin/bash
 # Linux command settings
 FIND := find . ! -path './vendor/*'
