@@ -122,7 +122,7 @@ func TestEditGroup(t *testing.T) {
 	}
 }
 
-func TestComplete(t *testing.T) {
+func TestEditWithComplete(t *testing.T) {
 	tests := []struct {
 		name        string
 		args        []string
