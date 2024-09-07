@@ -56,7 +56,6 @@ func TestDeleteGroup(t *testing.T) {
 			if tc.optionsFunc != nil {
 				tc.optionsFunc(cmdOptions)
 			}
-			var err error
 			group, groupErr := createTestGroup(t, factory, tc.args[0], tc.wantError)
 			if groupErr != nil {
 				return
@@ -64,7 +63,7 @@ func TestDeleteGroup(t *testing.T) {
 			defer func() {
 				_, _ = cmdOptions.gitlabClient.Groups.DeleteGroup(group.ID, &gitlab.DeleteGroupOptions{})
 			}()
-
+			var err error
 			err = cmdOptions.Complete(factory, cmd, tc.args)
 			cmdtesting.ErrorAssertionWithEqual(t, tc.wantError, err)
 			if err != nil {
