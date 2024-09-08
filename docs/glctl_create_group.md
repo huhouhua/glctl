@@ -3,13 +3,12 @@
  apiVersion: v1
  kind: Group
  metadata: 
-   description: my first Group
    name: Group1
-   parentName: Group  
+   parentName: Group
+   annotations:
+    description: " my first Group"  # 组的简短描述。
+    avatar: ""  # 项目头像的 URL。   
  spec:
-   avatar: 
-     fileName: group.png
-     path: /root/group.png
    visibility: public
    branch:
      defaultName: main
