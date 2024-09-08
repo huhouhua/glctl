@@ -17,6 +17,9 @@ package cmd
 import (
 	"flag"
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
+	"github.com/huhouhua/glctl/pkg/util/progress"
+	templates2 "github.com/huhouhua/glctl/pkg/util/templates"
 	"io"
 	"os"
 	"strings"
@@ -35,9 +38,6 @@ import (
 	"github.com/huhouhua/glctl/cmd/replace"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/cmd/version"
-	"github.com/huhouhua/glctl/util/cli"
-	"github.com/huhouhua/glctl/util/progress"
-	"github.com/huhouhua/glctl/util/templates"
 )
 
 var AuthDoc = `
@@ -114,8 +114,8 @@ func NeGlCtlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 	f := cmdutil.NewFactory(configFlags)
 	// From this point and forward we get warnings on flags that contain "_" separators
 	cmd.SetGlobalNormalizationFunc(cmdutil.WarnWordSepNormalizeFunc)
-	ioStreams := cli.IOStreams{In: in, Out: out, ErrOut: err}
-	groups := templates.CommandGroups{
+	ioStreams := genericiooptions.IOStreams{In: in, Out: out, ErrOut: err}
+	groups := templates2.CommandGroups{
 		{
 			Message: "Basic Commands:",
 			Commands: []*cobra.Command{
@@ -148,7 +148,7 @@ func NeGlCtlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 	groups.Add(cmd)
 
 	filters := []string{"options"}
-	templates.ActsAsRootCommand(cmd, filters, groups...)
+	templates2.ActsAsRootCommand(cmd, filters, groups...)
 	cmd.AddCommand(version.NewCmdVersion(f, ioStreams))
 	return cmd
 }

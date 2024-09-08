@@ -17,6 +17,9 @@ package file
 import (
 	"errors"
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
+	"github.com/huhouhua/glctl/pkg/util/progress"
+	"github.com/huhouhua/glctl/pkg/util/templates"
 	"net/http"
 	"strings"
 	"sync"
@@ -28,9 +31,6 @@ import (
 
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
-	"github.com/huhouhua/glctl/util/progress"
-	"github.com/huhouhua/glctl/util/templates"
 )
 
 type ReplaceOptions struct {
@@ -43,10 +43,10 @@ type ReplaceOptions struct {
 	RefMatch     string
 	FileName     string
 	Force        bool
-	ioStreams    cli.IOStreams
+	ioStreams    genericiooptions.IOStreams
 }
 
-func NewReplaceOptions(ioStreams cli.IOStreams) *ReplaceOptions {
+func NewReplaceOptions(ioStreams genericiooptions.IOStreams) *ReplaceOptions {
 	return &ReplaceOptions{
 		ioStreams: ioStreams,
 		branchList: &gitlab.ListBranchesOptions{
@@ -64,7 +64,7 @@ var (
 glctl replace files app/my.yml -p myproject --ref=main -f ./my.yml`)
 )
 
-func NewReplaceFileCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
+func NewReplaceFileCmd(f cmdutil.Factory, ioStreams genericiooptions.IOStreams) *cobra.Command {
 	o := NewReplaceOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "file",

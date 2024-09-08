@@ -16,13 +16,13 @@ package completion
 
 import (
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
+	"github.com/huhouhua/glctl/pkg/util/templates"
 	"io"
 
 	"github.com/spf13/cobra"
 
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	cli "github.com/huhouhua/glctl/util/cli"
-	"github.com/huhouhua/glctl/util/templates"
 )
 
 const defaultBoilerPlate = `
@@ -111,7 +111,7 @@ var (
 )
 
 // NewCmdCompletion creates the `completion` command
-func NewCmdCompletion(ioStreams cli.IOStreams, boilerPlate string) *cobra.Command {
+func NewCmdCompletion(ioStreams genericiooptions.IOStreams, boilerPlate string) *cobra.Command {
 	shells := []string{}
 	for s := range completionShells {
 		shells = append(shells, s)

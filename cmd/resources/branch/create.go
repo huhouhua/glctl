@@ -16,6 +16,8 @@ package branch
 
 import (
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
+	"github.com/huhouhua/glctl/pkg/util/templates"
 	"strings"
 
 	"github.com/AlekSi/pointer"
@@ -25,8 +27,6 @@ import (
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/cmd/validate"
-	"github.com/huhouhua/glctl/util/cli"
-	"github.com/huhouhua/glctl/util/templates"
 )
 
 type CreateOptions struct {
@@ -34,7 +34,7 @@ type CreateOptions struct {
 	branch       *gitlab.CreateBranchOptions
 	project      string
 	Out          string
-	ioStreams    cli.IOStreams
+	ioStreams    genericiooptions.IOStreams
 }
 
 var (
@@ -43,7 +43,7 @@ var (
 glctl create branch develop --project=group/myapp --ref=master`)
 )
 
-func NewCreateOptions(ioStreams cli.IOStreams) *CreateOptions {
+func NewCreateOptions(ioStreams genericiooptions.IOStreams) *CreateOptions {
 	return &CreateOptions{
 		ioStreams: ioStreams,
 		branch: &gitlab.CreateBranchOptions{
@@ -54,7 +54,7 @@ func NewCreateOptions(ioStreams cli.IOStreams) *CreateOptions {
 	}
 }
 
-func NewCreateBranchCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
+func NewCreateBranchCmd(f cmdutil.Factory, ioStreams genericiooptions.IOStreams) *cobra.Command {
 	o := NewCreateOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "branch",

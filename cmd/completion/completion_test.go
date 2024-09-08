@@ -15,12 +15,11 @@
 package completion
 
 import (
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"strings"
 	"testing"
 
 	"github.com/spf13/cobra"
-
-	"github.com/huhouhua/glctl/util/cli"
 )
 
 func TestBashCompletions(t *testing.T) {
@@ -67,7 +66,7 @@ See 'glctl completion -h' for help and examples`,
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(tt *testing.T) {
-			streams, _, out, _ := cli.NewTestIOStreams()
+			streams, _, out, _ := genericiooptions.NewTestIOStreams()
 			parentCmd := &cobra.Command{
 				Use: "glctl",
 			}

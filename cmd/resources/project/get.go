@@ -16,6 +16,8 @@ package project
 
 import (
 	"encoding/json"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
+	"github.com/huhouhua/glctl/pkg/util/templates"
 	"strings"
 
 	"github.com/AlekSi/pointer"
@@ -24,13 +26,11 @@ import (
 
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/cmd/validate"
-	"github.com/huhouhua/glctl/util/cli"
-	"github.com/huhouhua/glctl/util/templates"
 )
 
 type ListOptions struct {
 	gitlabClient *gitlab.Client
-	ioStreams    cli.IOStreams
+	ioStreams    genericiooptions.IOStreams
 	Visibility   string
 	FromGroup    string
 	Out          string
@@ -49,7 +49,7 @@ glctl get projects
 glctl get projects --all-groups=Group1`)
 )
 
-func NewListOptions(ioStreams cli.IOStreams) *ListOptions {
+func NewListOptions(ioStreams genericiooptions.IOStreams) *ListOptions {
 	return &ListOptions{
 		ioStreams:  ioStreams,
 		Visibility: string(gitlab.PrivateVisibility),
@@ -75,7 +75,7 @@ func NewListOptions(ioStreams cli.IOStreams) *ListOptions {
 		Out:       "simple",
 	}
 }
-func NewGetProjectsCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
+func NewGetProjectsCmd(f cmdutil.Factory, ioStreams genericiooptions.IOStreams) *cobra.Command {
 	o := NewListOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "projects",

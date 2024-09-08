@@ -15,6 +15,7 @@
 package file
 
 import (
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"testing"
 
 	"github.com/AlekSi/pointer"
@@ -22,7 +23,6 @@ import (
 
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
 )
 
 func TestRunEdit(t *testing.T) {
@@ -53,7 +53,7 @@ func TestRunEdit(t *testing.T) {
 		},
 		wantError: nil,
 	}}
-	streams := cli.NewTestIOStreamsDiscard()
+	streams := genericiooptions.NewTestIOStreamsDiscard()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {

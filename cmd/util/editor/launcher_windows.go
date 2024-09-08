@@ -17,13 +17,12 @@ package editor
 import (
 	"errors"
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/util/term"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 	"syscall"
-
-	"github.com/huhouhua/glctl/util/term"
 )
 
 // Enclose argument in double-quotes. Double each double-quote character as

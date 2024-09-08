@@ -16,6 +16,8 @@ package file
 
 import (
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
+	"github.com/huhouhua/glctl/pkg/util/templates"
 	"strings"
 
 	"github.com/AlekSi/pointer"
@@ -23,8 +25,6 @@ import (
 	"github.com/xanzy/go-gitlab"
 
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
-	"github.com/huhouhua/glctl/util/templates"
 )
 
 type DeleteOptions struct {
@@ -32,10 +32,10 @@ type DeleteOptions struct {
 	file         *gitlab.DeleteFileOptions
 	Project      string
 	FileName     string
-	ioStreams    cli.IOStreams
+	ioStreams    genericiooptions.IOStreams
 }
 
-func NewDeleteOptions(ioStreams cli.IOStreams) *DeleteOptions {
+func NewDeleteOptions(ioStreams genericiooptions.IOStreams) *DeleteOptions {
 	return &DeleteOptions{
 		ioStreams: ioStreams,
 		file: &gitlab.DeleteFileOptions{
@@ -54,7 +54,7 @@ var (
 glctl delete files myfile -p=myProject`)
 )
 
-func NewDeleteFilesCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
+func NewDeleteFilesCmd(f cmdutil.Factory, ioStreams genericiooptions.IOStreams) *cobra.Command {
 	o := NewDeleteOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "files",

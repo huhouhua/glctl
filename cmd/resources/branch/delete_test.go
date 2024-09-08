@@ -17,6 +17,7 @@ package branch
 import (
 	"errors"
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"testing"
 
 	"github.com/AlekSi/pointer"
@@ -28,7 +29,6 @@ import (
 	"github.com/xanzy/go-gitlab"
 
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
-	"github.com/huhouhua/glctl/util/cli"
 )
 
 func TestDeleteBranch(t *testing.T) {
@@ -109,7 +109,7 @@ func TestDeleteBranch(t *testing.T) {
 		wantError: errors.New("please enter branch"),
 	}}
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
-	streams := cli.NewTestIOStreamsForPipe()
+	streams := genericiooptions.NewTestIOStreamsForPipe()
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			cmd := NewDeleteBranchCmd(factory, streams)

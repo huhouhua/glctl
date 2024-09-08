@@ -16,6 +16,8 @@ package group
 
 import (
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
+	"github.com/huhouhua/glctl/pkg/util/templates"
 	"strconv"
 	"strings"
 
@@ -26,15 +28,13 @@ import (
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/cmd/validate"
-	"github.com/huhouhua/glctl/util/cli"
-	"github.com/huhouhua/glctl/util/templates"
 )
 
 type CreateOptions struct {
 	gitlabClient *gitlab.Client
 	Group        *gitlab.CreateGroupOptions
 	Namespace    string
-	ioStreams    cli.IOStreams
+	ioStreams    genericiooptions.IOStreams
 	Out          string
 }
 
@@ -47,7 +47,7 @@ glctl create group myGroup
 glctl create group myGroup --namespace=ParentGroupX`)
 )
 
-func NewCreateOptions(ioStreams cli.IOStreams) *CreateOptions {
+func NewCreateOptions(ioStreams genericiooptions.IOStreams) *CreateOptions {
 	return &CreateOptions{
 		ioStreams: ioStreams,
 		Group: &gitlab.CreateGroupOptions{
@@ -60,7 +60,7 @@ func NewCreateOptions(ioStreams cli.IOStreams) *CreateOptions {
 	}
 }
 
-func NewCreateGroupCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
+func NewCreateGroupCmd(f cmdutil.Factory, ioStreams genericiooptions.IOStreams) *cobra.Command {
 	o := NewCreateOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "group",

@@ -16,6 +16,7 @@ package group
 
 import (
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"strings"
 	"testing"
 
@@ -26,7 +27,6 @@ import (
 
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
 )
 
 func TestDeleteGroup(t *testing.T) {
@@ -49,7 +49,7 @@ func TestDeleteGroup(t *testing.T) {
 	}
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
-		streams := cli.NewTestIOStreamsForPipe()
+		streams := genericiooptions.NewTestIOStreamsForPipe()
 		t.Run(tc.name, func(t *testing.T) {
 			cmd := NewDeleteGroupCmd(factory, streams)
 			var cmdOptions = NewDeleteOptions(streams)
@@ -114,7 +114,7 @@ func TestDeleteWithComplete(t *testing.T) {
 		}}
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
-		streams := cli.NewTestIOStreamsForPipe()
+		streams := genericiooptions.NewTestIOStreamsForPipe()
 		t.Run(tc.name, func(t *testing.T) {
 			cmd := NewDeleteGroupCmd(factory, streams)
 			var cmdOptions = NewDeleteOptions(streams)

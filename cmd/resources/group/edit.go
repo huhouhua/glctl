@@ -16,6 +16,8 @@ package group
 
 import (
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
+	"github.com/huhouhua/glctl/pkg/util/templates"
 	"strconv"
 
 	"github.com/AlekSi/pointer"
@@ -25,15 +27,13 @@ import (
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/cmd/validate"
-	"github.com/huhouhua/glctl/util/cli"
-	"github.com/huhouhua/glctl/util/templates"
 )
 
 type EditOptions struct {
 	gitlabClient *gitlab.Client
 	groupId      int
 	Group        *gitlab.UpdateGroupOptions
-	ioStreams    cli.IOStreams
+	ioStreams    genericiooptions.IOStreams
 	Out          string
 }
 
@@ -49,7 +49,7 @@ gctl edit group myGroupX/myGroupZ --desc="Updated group"
 gctl edit group 23 --visibility="public`)
 )
 
-func NewEditOptions(ioStreams cli.IOStreams) *EditOptions {
+func NewEditOptions(ioStreams genericiooptions.IOStreams) *EditOptions {
 	return &EditOptions{
 		ioStreams: ioStreams,
 		Group:     &gitlab.UpdateGroupOptions{},
@@ -57,7 +57,7 @@ func NewEditOptions(ioStreams cli.IOStreams) *EditOptions {
 	}
 }
 
-func NewEditGroupCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
+func NewEditGroupCmd(f cmdutil.Factory, ioStreams genericiooptions.IOStreams) *cobra.Command {
 	o := NewEditOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "group",

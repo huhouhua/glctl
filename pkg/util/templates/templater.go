@@ -17,14 +17,13 @@ package templates
 import (
 	"bytes"
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/util/term"
 	"strings"
 	"text/template"
 	"unicode"
 
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
-
-	"github.com/huhouhua/glctl/util/term"
 )
 
 type FlagExposer interface {

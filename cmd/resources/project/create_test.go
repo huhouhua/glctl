@@ -16,6 +16,7 @@ package project
 
 import (
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -26,7 +27,6 @@ import (
 
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
 )
 
 func TestCreateProject(t *testing.T) {
@@ -85,7 +85,7 @@ func TestCreateProject(t *testing.T) {
 		wantError: nil,
 	}}
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
-	streams := cli.NewTestIOStreamsForPipe()
+	streams := genericiooptions.NewTestIOStreamsForPipe()
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			cmd := NewCreateProjectCmd(factory, streams)

@@ -16,20 +16,20 @@ package logout
 
 import (
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
-	"github.com/huhouhua/glctl/util/cli"
 )
 
 func TestLogout(t *testing.T) {
 	tests := []struct {
 		name           string
 		optionsFunc    func(opt *Options) error
-		completeFunc   func(streams cli.IOStreams) error
+		completeFunc   func(streams genericiooptions.IOStreams) error
 		expectedOutput string
 	}{
 		{
@@ -42,7 +42,7 @@ func TestLogout(t *testing.T) {
 				opt.path = temp.Name()
 				return nil
 			},
-			completeFunc: func(streams cli.IOStreams) error {
+			completeFunc: func(streams genericiooptions.IOStreams) error {
 				return nil
 			},
 			expectedOutput: "logout Succeeded",
@@ -57,7 +57,7 @@ func TestLogout(t *testing.T) {
 		},
 	}
 	for _, tc := range tests {
-		streams := cli.NewTestIOStreamsForPipe()
+		streams := genericiooptions.NewTestIOStreamsForPipe()
 		t.Run(tc.name, func(t *testing.T) {
 			cmd := NewLogoutCmd(streams)
 			var cmdOptions = NewOptions(streams)

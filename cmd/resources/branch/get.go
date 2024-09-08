@@ -16,6 +16,8 @@ package branch
 
 import (
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
+	"github.com/huhouhua/glctl/pkg/util/templates"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -23,8 +25,6 @@ import (
 
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
-	"github.com/huhouhua/glctl/util/templates"
 )
 
 type ListOptions struct {
@@ -32,7 +32,7 @@ type ListOptions struct {
 	Out          string
 	branch       *gitlab.ListBranchesOptions
 	All          bool
-	ioStreams    cli.IOStreams
+	ioStreams    genericiooptions.IOStreams
 }
 
 var (
@@ -50,7 +50,7 @@ glctl get branchs 100 -A
 `)
 )
 
-func NewListOptions(ioStreams cli.IOStreams) *ListOptions {
+func NewListOptions(ioStreams genericiooptions.IOStreams) *ListOptions {
 	return &ListOptions{
 		ioStreams: ioStreams,
 		branch: &gitlab.ListBranchesOptions{
@@ -63,7 +63,7 @@ func NewListOptions(ioStreams cli.IOStreams) *ListOptions {
 		Out: "simple",
 	}
 }
-func NewGetBranchesCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
+func NewGetBranchesCmd(f cmdutil.Factory, ioStreams genericiooptions.IOStreams) *cobra.Command {
 	o := NewListOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "branch [Project]",

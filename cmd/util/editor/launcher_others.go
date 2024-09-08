@@ -17,12 +17,11 @@ package editor
 import (
 	"errors"
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/util/term"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
-
-	"github.com/huhouhua/glctl/util/term"
 )
 
 func (e Editor) args(path string) []string {

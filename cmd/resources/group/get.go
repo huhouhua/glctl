@@ -16,6 +16,8 @@ package group
 
 import (
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
+	"github.com/huhouhua/glctl/pkg/util/templates"
 	"strconv"
 	"strings"
 
@@ -25,8 +27,6 @@ import (
 
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/cmd/validate"
-	"github.com/huhouhua/glctl/util/cli"
-	"github.com/huhouhua/glctl/util/templates"
 )
 
 type ListOptions struct {
@@ -37,7 +37,7 @@ type ListOptions struct {
 	FromGroup    string
 	Out          string
 	AllGroups    bool
-	ioStreams    cli.IOStreams
+	ioStreams    genericiooptions.IOStreams
 }
 
 var (
@@ -49,7 +49,7 @@ glctl get groups
 glctl get groups --all-groups=GroupX`)
 )
 
-func NewListOptions(ioStreams cli.IOStreams) *ListOptions {
+func NewListOptions(ioStreams genericiooptions.IOStreams) *ListOptions {
 	return &ListOptions{
 		ioStreams: ioStreams,
 		group: &gitlab.ListGroupsOptions{
@@ -70,7 +70,7 @@ func NewListOptions(ioStreams cli.IOStreams) *ListOptions {
 	}
 }
 
-func NewGetGroupsCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
+func NewGetGroupsCmd(f cmdutil.Factory, ioStreams genericiooptions.IOStreams) *cobra.Command {
 	o := NewListOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "groups",

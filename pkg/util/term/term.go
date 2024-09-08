@@ -17,12 +17,11 @@
 package term
 
 import (
+	"github.com/huhouhua/glctl/pkg/util/interrupt"
 	"io"
 	"os"
 
 	"github.com/moby/term"
-
-	"github.com/huhouhua/glctl/util/interrupt"
 )
 
 // SafeFunc is a function to be invoked by TTY.

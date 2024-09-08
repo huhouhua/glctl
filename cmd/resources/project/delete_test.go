@@ -17,6 +17,7 @@ package project
 import (
 	"errors"
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"strconv"
 	"testing"
 	"time"
@@ -26,8 +27,6 @@ import (
 	"golang.org/x/exp/rand"
 
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
-
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 
@@ -125,7 +124,7 @@ func TestDeleteProject(t *testing.T) {
 		wantError: errors.New("please enter project name or id"),
 	}}
 	for _, tc := range tests {
-		streams := cli.NewTestIOStreamsForPipe()
+		streams := genericiooptions.NewTestIOStreamsForPipe()
 		t.Run(tc.name, func(t *testing.T) {
 			cmd := NewDeleteProjectCmd(factory, streams)
 			cmdOptions := NewDeleteOptions(streams)

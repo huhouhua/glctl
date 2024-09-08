@@ -15,13 +15,13 @@
 package file
 
 import (
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"testing"
 
 	"github.com/spf13/cobra"
 
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
 )
 
 func TestRunReplace(t *testing.T) {
@@ -66,7 +66,7 @@ func TestRunReplace(t *testing.T) {
 		},
 		wantError: nil,
 	}}
-	streams := cli.NewTestIOStreamsDiscard()
+	streams := genericiooptions.NewTestIOStreamsDiscard()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {

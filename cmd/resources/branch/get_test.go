@@ -17,6 +17,7 @@ package branch
 import (
 	"errors"
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"strings"
 	"testing"
 
@@ -24,7 +25,6 @@ import (
 
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
 )
 
 func TestGetBranch(t *testing.T) {
@@ -40,7 +40,7 @@ func TestGetBranch(t *testing.T) {
 		args:      []string{""},
 		wantError: errors.New("error from server (NotFound): project  not found"),
 	}}
-	streams := cli.NewTestIOStreamsForPipe()
+	streams := genericiooptions.NewTestIOStreamsForPipe()
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
@@ -98,7 +98,7 @@ func TestRunGetBranch(t *testing.T) {
 	}}
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
-		streams := cli.NewTestIOStreamsForPipe()
+		streams := genericiooptions.NewTestIOStreamsForPipe()
 		t.Run(tc.name, func(t *testing.T) {
 			for i, arg := range tc.args {
 				cmdtesting.TInfo(fmt.Sprintf("(%d) %s", i, arg))

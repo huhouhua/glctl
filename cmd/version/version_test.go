@@ -16,13 +16,13 @@ package version
 
 import (
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
 )
 
 func TestRunVersion(t *testing.T) {
@@ -45,7 +45,7 @@ func TestRunVersion(t *testing.T) {
 	}}
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
-		streams := cli.NewTestIOStreamsForPipe()
+		streams := genericiooptions.NewTestIOStreamsForPipe()
 		t.Run(tc.name, func(t *testing.T) {
 			cmd := NewCmdVersion(factory, streams)
 			cmdOptions := NewOptions(streams)

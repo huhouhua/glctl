@@ -17,6 +17,8 @@ package file
 import (
 	"bytes"
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
+	"github.com/huhouhua/glctl/pkg/util/templates"
 	"os"
 	"path/filepath"
 	"strings"
@@ -28,8 +30,6 @@ import (
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/cmd/util/editor"
-	"github.com/huhouhua/glctl/util/cli"
-	"github.com/huhouhua/glctl/util/templates"
 )
 
 type EditOptions struct {
@@ -37,10 +37,10 @@ type EditOptions struct {
 	path         string
 	Project      string
 	file         *gitlab.GetRawFileOptions
-	ioStreams    cli.IOStreams
+	ioStreams    genericiooptions.IOStreams
 }
 
-func NewEditOptions(ioStreams cli.IOStreams) *EditOptions {
+func NewEditOptions(ioStreams genericiooptions.IOStreams) *EditOptions {
 	return &EditOptions{
 		ioStreams: ioStreams,
 		file: &gitlab.GetRawFileOptions{
@@ -55,7 +55,7 @@ var (
 glctl edit files myfile -p project`)
 )
 
-func NewEditFileCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
+func NewEditFileCmd(f cmdutil.Factory, ioStreams genericiooptions.IOStreams) *cobra.Command {
 	o := NewEditOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "file",

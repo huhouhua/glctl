@@ -15,18 +15,18 @@
 package edit
 
 import (
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"github.com/spf13/cobra"
 
 	"github.com/huhouhua/glctl/cmd/resources/branch"
 	"github.com/huhouhua/glctl/cmd/resources/file"
 	"github.com/huhouhua/glctl/cmd/resources/group"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
 )
 
 var editDesc = "Edit a Gitlab resource"
 
-func NewEditCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
+func NewEditCmd(f cmdutil.Factory, ioStreams genericiooptions.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "edit",
 		Aliases:               []string{"e"},

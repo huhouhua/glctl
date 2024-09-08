@@ -16,11 +16,11 @@ package login
 
 import (
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"strings"
 	"testing"
 
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
-	"github.com/huhouhua/glctl/util/cli"
 )
 
 func TestLogin(t *testing.T) {
@@ -57,7 +57,7 @@ func TestLogin(t *testing.T) {
 			expectedOutput: "\nLogin Succeeded",
 		}}
 	for _, tc := range tests {
-		streams := cli.NewTestIOStreamsForPipe()
+		streams := genericiooptions.NewTestIOStreamsForPipe()
 		t.Run(tc.name, func(t *testing.T) {
 			cmd := NewLoginCmd(streams)
 			var cmdOptions = NewOptions(streams)
@@ -122,7 +122,7 @@ func TestValidate(t *testing.T) {
 			},
 			expectedOutput: "please enter the password",
 		}}
-	streams := cli.NewTestIOStreamsDiscard()
+	streams := genericiooptions.NewTestIOStreamsDiscard()
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			cmd := NewLoginCmd(streams)
@@ -167,7 +167,7 @@ func TestRunLogin(t *testing.T) {
 		},
 	}
 	for _, tc := range tests {
-		streams := cli.NewTestIOStreamsForPipe()
+		streams := genericiooptions.NewTestIOStreamsForPipe()
 		t.Run(tc.name, func(t *testing.T) {
 			for i, arg := range tc.args {
 				cmdtesting.TInfo(fmt.Sprintf("(%d) %s", i, arg))

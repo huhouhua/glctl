@@ -15,12 +15,12 @@
 package replace
 
 import (
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
+	"github.com/huhouhua/glctl/pkg/util/templates"
 	"github.com/spf13/cobra"
 
 	"github.com/huhouhua/glctl/cmd/resources/file"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
-	"github.com/huhouhua/glctl/util/templates"
 )
 
 var (
@@ -40,7 +40,7 @@ var (
 	    glctl replace file app/my.yml -f ./my.yml --ref-match=* --project=myproject`)
 )
 
-func NewReplaceCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
+func NewReplaceCmd(f cmdutil.Factory, ioStreams genericiooptions.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "replace",
 		Aliases:               []string{"r"},

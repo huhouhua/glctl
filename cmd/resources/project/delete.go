@@ -16,6 +16,8 @@ package project
 
 import (
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
+	"github.com/huhouhua/glctl/pkg/util/templates"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -23,14 +25,12 @@ import (
 
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
-	"github.com/huhouhua/glctl/util/templates"
 )
 
 type DeleteOptions struct {
 	gitlabClient *gitlab.Client
 	project      string
-	ioStreams    cli.IOStreams
+	ioStreams    genericiooptions.IOStreams
 }
 
 var (
@@ -42,13 +42,13 @@ glctl delete project ProjectX
 glctl delete project group/project`)
 )
 
-func NewDeleteOptions(ioStreams cli.IOStreams) *DeleteOptions {
+func NewDeleteOptions(ioStreams genericiooptions.IOStreams) *DeleteOptions {
 	return &DeleteOptions{
 		ioStreams: ioStreams,
 	}
 }
 
-func NewDeleteProjectCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
+func NewDeleteProjectCmd(f cmdutil.Factory, ioStreams genericiooptions.IOStreams) *cobra.Command {
 	o := NewDeleteOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "project",

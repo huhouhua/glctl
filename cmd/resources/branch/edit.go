@@ -16,6 +16,8 @@ package branch
 
 import (
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
+	"github.com/huhouhua/glctl/pkg/util/templates"
 
 	"github.com/AlekSi/pointer"
 	"github.com/spf13/cobra"
@@ -24,8 +26,6 @@ import (
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/cmd/validate"
-	"github.com/huhouhua/glctl/util/cli"
-	"github.com/huhouhua/glctl/util/templates"
 )
 
 type EditOptions struct {
@@ -36,7 +36,7 @@ type EditOptions struct {
 	protect           bool
 	Unprotect         bool
 	Out               string
-	ioStreams         cli.IOStreams
+	ioStreams         genericiooptions.IOStreams
 }
 
 var (
@@ -47,7 +47,7 @@ glctl edit branch master -p test/glctl --protect
 glctl edit branch master -p test/glctl --unprotect`)
 )
 
-func NewEditOptions(ioStreams cli.IOStreams) *EditOptions {
+func NewEditOptions(ioStreams genericiooptions.IOStreams) *EditOptions {
 	return &EditOptions{
 		ioStreams: ioStreams,
 		protectBranch: &gitlab.ProtectBranchOptions{
@@ -59,7 +59,7 @@ func NewEditOptions(ioStreams cli.IOStreams) *EditOptions {
 	}
 }
 
-func NewEditBranchCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
+func NewEditBranchCmd(f cmdutil.Factory, ioStreams genericiooptions.IOStreams) *cobra.Command {
 	o := NewEditOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "branch",

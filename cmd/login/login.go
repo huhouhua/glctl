@@ -18,6 +18,8 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
+	"github.com/huhouhua/glctl/pkg/util/templates"
 	"io"
 	"net/http"
 	"os"
@@ -33,8 +35,6 @@ import (
 	"github.com/huhouhua/glctl/cmd/require"
 	"github.com/huhouhua/glctl/cmd/types"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
-	"github.com/huhouhua/glctl/util/templates"
 )
 
 var loginLong = templates.LongDesc(`
@@ -46,17 +46,17 @@ type Options struct {
 	ServerAddress      string
 	User               string
 	Password           string
-	ioStreams          cli.IOStreams
+	ioStreams          genericiooptions.IOStreams
 	maxInputRetryTimes int
 }
 
-func NewOptions(ioStreams cli.IOStreams) *Options {
+func NewOptions(ioStreams genericiooptions.IOStreams) *Options {
 	return &Options{
 		ioStreams:          ioStreams,
 		maxInputRetryTimes: 3,
 	}
 }
-func NewLoginCmd(ioStreams cli.IOStreams) *cobra.Command {
+func NewLoginCmd(ioStreams genericiooptions.IOStreams) *cobra.Command {
 	o := NewOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "login [host]",

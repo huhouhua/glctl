@@ -16,14 +16,14 @@ package logout
 
 import (
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
+	"github.com/huhouhua/glctl/pkg/util/templates"
 	"os"
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
-	"github.com/huhouhua/glctl/util/templates"
 )
 
 var logoutLong = templates.LongDesc(`
@@ -32,17 +32,17 @@ login command.
 Log out from gitlab "delete the $HOME/.glctl.yaml.`)
 
 type Options struct {
-	ioStreams cli.IOStreams
+	ioStreams genericiooptions.IOStreams
 	path      string
 	file      os.FileInfo
 }
 
-func NewOptions(ioStreams cli.IOStreams) *Options {
+func NewOptions(ioStreams genericiooptions.IOStreams) *Options {
 	return &Options{
 		ioStreams: ioStreams,
 	}
 }
-func NewLogoutCmd(ioStreams cli.IOStreams) *cobra.Command {
+func NewLogoutCmd(ioStreams genericiooptions.IOStreams) *cobra.Command {
 	o := NewOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "logout",

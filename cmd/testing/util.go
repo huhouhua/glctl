@@ -17,6 +17,7 @@ package testing
 import (
 	"bytes"
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"io"
 	"os"
 	"testing"
@@ -25,8 +26,6 @@ import (
 
 	"github.com/mattn/go-shellwords"
 	"github.com/spf13/cobra"
-
-	"github.com/huhouhua/glctl/util/cli"
 )
 
 // cmdTestCase describes a test case that works with releases.
@@ -111,7 +110,7 @@ func Run(exec func()) (stdout string) {
 	return stdout
 }
 
-func RunForStdout(streams cli.IOStreams, exec func()) (stdout string) {
+func RunForStdout(streams genericiooptions.IOStreams, exec func()) (stdout string) {
 	// see https://stackoverflow.com/questions/10473800/in-go-how-do-i-capture-stdout-of-a-function-into-a-string
 	old := streams.Out // keep backup of the real stdout
 	exec()

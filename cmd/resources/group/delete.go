@@ -16,6 +16,8 @@ package group
 
 import (
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
+	"github.com/huhouhua/glctl/pkg/util/templates"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -23,14 +25,12 @@ import (
 
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
-	"github.com/huhouhua/glctl/util/templates"
 )
 
 type DeleteOptions struct {
 	gitlabClient *gitlab.Client
 	groupId      int
-	ioStreams    cli.IOStreams
+	ioStreams    genericiooptions.IOStreams
 	Out          string
 }
 
@@ -46,14 +46,14 @@ glctl delete group GroupX/GroupY
 glctl delete group 3`)
 )
 
-func NewDeleteOptions(ioStreams cli.IOStreams) *DeleteOptions {
+func NewDeleteOptions(ioStreams genericiooptions.IOStreams) *DeleteOptions {
 	return &DeleteOptions{
 		ioStreams: ioStreams,
 		Out:       "simple",
 	}
 }
 
-func NewDeleteGroupCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
+func NewDeleteGroupCmd(f cmdutil.Factory, ioStreams genericiooptions.IOStreams) *cobra.Command {
 	o := NewDeleteOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "group",

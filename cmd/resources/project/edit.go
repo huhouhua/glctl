@@ -16,21 +16,21 @@ package project
 
 import (
 	"github.com/AlekSi/pointer"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
+	"github.com/huhouhua/glctl/pkg/util/templates"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/cmd/validate"
-	"github.com/huhouhua/glctl/util/cli"
-	"github.com/huhouhua/glctl/util/templates"
 )
 
 type EditOptions struct {
 	gitlabClient *gitlab.Client
 	project      *gitlab.EditProjectOptions
 	Out          string
-	ioStreams    cli.IOStreams
+	ioStreams    genericiooptions.IOStreams
 }
 
 var (
@@ -44,7 +44,7 @@ glctl edit project GroupX/ProjectX --merge-method=rebase_merge
 glctl edit project 3 --desc="A go project"`)
 )
 
-func NewEditOptions(ioStreams cli.IOStreams) *EditOptions {
+func NewEditOptions(ioStreams genericiooptions.IOStreams) *EditOptions {
 	return &EditOptions{
 		ioStreams: ioStreams,
 		project: &gitlab.EditProjectOptions{
@@ -60,7 +60,7 @@ func NewEditOptions(ioStreams cli.IOStreams) *EditOptions {
 	}
 }
 
-func NewEditProjectCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
+func NewEditProjectCmd(f cmdutil.Factory, ioStreams genericiooptions.IOStreams) *cobra.Command {
 	o := NewCreateOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "project",

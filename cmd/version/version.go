@@ -19,15 +19,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
+	"github.com/huhouhua/glctl/pkg/util/templates"
+	"github.com/huhouhua/glctl/pkg/util/version"
 
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 	"gopkg.in/yaml.v3"
 
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
-	"github.com/huhouhua/glctl/util/templates"
-	"github.com/huhouhua/glctl/util/version"
 )
 
 // Version is a struct for version information.
@@ -46,18 +46,18 @@ type Options struct {
 	Short      bool
 	Output     string
 	client     *gitlab.Client
-	IOStreams  cli.IOStreams
+	IOStreams  genericiooptions.IOStreams
 }
 
 // NewOptions returns initialized Options.
-func NewOptions(ioStreams cli.IOStreams) *Options {
+func NewOptions(ioStreams genericiooptions.IOStreams) *Options {
 	return &Options{
 		IOStreams: ioStreams,
 	}
 }
 
 // NewCmdVersion returns a cobra command for fetching versions.
-func NewCmdVersion(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
+func NewCmdVersion(f cmdutil.Factory, ioStreams genericiooptions.IOStreams) *cobra.Command {
 	o := NewOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:     "version",

@@ -15,6 +15,7 @@
 package get
 
 import (
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"github.com/spf13/cobra"
 
 	"github.com/huhouhua/glctl/cmd/resources/branch"
@@ -22,12 +23,11 @@ import (
 	"github.com/huhouhua/glctl/cmd/resources/group"
 	"github.com/huhouhua/glctl/cmd/resources/project"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
 )
 
 var getDesc = "Get Gitlab resources"
 
-func NewGetCmd(f cmdutil.Factory, ioStreams cli.IOStreams) *cobra.Command {
+func NewGetCmd(f cmdutil.Factory, ioStreams genericiooptions.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "get",
 		Aliases:               []string{"g"},

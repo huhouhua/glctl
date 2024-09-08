@@ -15,6 +15,7 @@
 package branch
 
 import (
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -25,7 +26,6 @@ import (
 
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
-	"github.com/huhouhua/glctl/util/cli"
 )
 
 func TestCreateBranch(t *testing.T) {
@@ -79,7 +79,7 @@ func TestCreateBranch(t *testing.T) {
 		},
 	}}
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
-	streams := cli.NewTestIOStreamsForPipe()
+	streams := genericiooptions.NewTestIOStreamsForPipe()
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			cmd := NewCreateBranchCmd(factory, streams)

@@ -16,12 +16,11 @@ package branch
 
 import (
 	"fmt"
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/xanzy/go-gitlab"
-
-	"github.com/huhouhua/glctl/util/cli"
 
 	"github.com/AlekSi/pointer"
 	"github.com/spf13/cobra"
@@ -106,7 +105,7 @@ func TestEditBranch(t *testing.T) {
 	}}
 	factory := cmdutil.NewFactory(cmdtesting.NewFakeRESTClientGetter())
 	for _, tc := range tests {
-		streams := cli.NewTestIOStreamsForPipe()
+		streams := genericiooptions.NewTestIOStreamsForPipe()
 		t.Run(tc.name, func(t *testing.T) {
 			cmd := NewEditBranchCmd(factory, streams)
 			var cmdOptions = NewEditOptions(streams)
