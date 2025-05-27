@@ -16,9 +16,10 @@ package project
 
 import (
 	"encoding/json"
+	"strings"
+
 	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"github.com/huhouhua/glctl/pkg/util/templates"
-	"strings"
 
 	"github.com/AlekSi/pointer"
 	"github.com/spf13/cobra"

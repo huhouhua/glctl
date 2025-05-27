@@ -15,9 +15,10 @@
 package project
 
 import (
+	"strconv"
+
 	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"github.com/huhouhua/glctl/pkg/util/templates"
-	"strconv"
 
 	"github.com/AlekSi/pointer"
 	"github.com/spf13/cobra"

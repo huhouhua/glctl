@@ -16,10 +16,11 @@ package group
 
 import (
 	"fmt"
-	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
-	"github.com/huhouhua/glctl/pkg/util/templates"
 	"strconv"
 	"strings"
+
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
+	"github.com/huhouhua/glctl/pkg/util/templates"
 
 	"github.com/AlekSi/pointer"
 	"github.com/spf13/cobra"

@@ -17,9 +17,10 @@ package branch
 import (
 	"errors"
 	"fmt"
-	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"strings"
 	"testing"
+
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 
 	"github.com/spf13/cobra"
 

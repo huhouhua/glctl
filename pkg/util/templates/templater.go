@@ -17,10 +17,11 @@ package templates
 import (
 	"bytes"
 	"fmt"
-	"github.com/huhouhua/glctl/pkg/util/term"
 	"strings"
 	"text/template"
 	"unicode"
+
+	"github.com/huhouhua/glctl/pkg/util/term"
 
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"

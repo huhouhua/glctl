@@ -18,9 +18,11 @@ package resource
 // from the command line and converting them to a list of resources to iterate
 // over using the Visitor interface.
 type Builder struct {
-	errs  []error
+	errs []error
+	//nolint:unused
 	paths []Visitor
-	dir   bool
+	//nolint:unused
+	dir bool
 }
 
 type FilenameOptions struct {

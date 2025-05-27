@@ -16,9 +16,10 @@ package branch
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"github.com/huhouhua/glctl/pkg/util/templates"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"

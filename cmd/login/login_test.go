@@ -16,9 +16,10 @@ package login
 
 import (
 	"fmt"
-	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"strings"
 	"testing"
+
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 )

@@ -16,8 +16,9 @@ package version
 
 import (
 	"fmt"
-	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"testing"
+
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 
 	"github.com/stretchr/testify/assert"
 

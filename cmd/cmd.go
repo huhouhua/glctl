@@ -17,12 +17,13 @@ package cmd
 import (
 	"flag"
 	"fmt"
-	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
-	"github.com/huhouhua/glctl/pkg/util/progress"
-	templates2 "github.com/huhouhua/glctl/pkg/util/templates"
 	"io"
 	"os"
 	"strings"
+
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
+	"github.com/huhouhua/glctl/pkg/util/progress"
+	templates2 "github.com/huhouhua/glctl/pkg/util/templates"
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"

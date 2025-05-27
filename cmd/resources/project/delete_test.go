@@ -17,18 +17,20 @@ package project
 import (
 	"errors"
 	"fmt"
-	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"strconv"
 	"testing"
 	"time"
+
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 
 	"github.com/AlekSi/pointer"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/exp/rand"
 
-	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
+
+	cmdutil "github.com/huhouhua/glctl/cmd/util"
 
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 )

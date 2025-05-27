@@ -17,9 +17,10 @@
 package term
 
 import (
-	"github.com/huhouhua/glctl/pkg/util/interrupt"
 	"io"
 	"os"
+
+	"github.com/huhouhua/glctl/pkg/util/interrupt"
 
 	"github.com/moby/term"
 )

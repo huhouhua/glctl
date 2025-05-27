@@ -16,6 +16,7 @@ package branch
 
 import (
 	"fmt"
+
 	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"github.com/huhouhua/glctl/pkg/util/templates"
 

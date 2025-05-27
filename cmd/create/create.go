@@ -15,8 +15,9 @@
 package create
 
 import (
-	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"github.com/spf13/cobra"
+
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 
 	"github.com/huhouhua/glctl/cmd/resources/branch"
 	"github.com/huhouhua/glctl/cmd/resources/group"

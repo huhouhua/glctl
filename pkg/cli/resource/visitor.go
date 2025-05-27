@@ -15,8 +15,9 @@
 package resource
 
 import (
-	"github.com/huhouhua/glctl/pkg/runtime"
 	"github.com/xanzy/go-gitlab"
+
+	"github.com/huhouhua/glctl/pkg/runtime"
 )
 
 // Info contains temporary info to execute a REST call, or show the results

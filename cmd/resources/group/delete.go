@@ -16,9 +16,10 @@ package group
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"github.com/huhouhua/glctl/pkg/util/templates"
-	"strconv"
 
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"

@@ -16,9 +16,10 @@ package completion
 
 import (
 	"fmt"
+	"io"
+
 	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"github.com/huhouhua/glctl/pkg/util/templates"
-	"io"
 
 	"github.com/spf13/cobra"
 

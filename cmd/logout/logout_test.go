@@ -16,9 +16,10 @@ package logout
 
 import (
 	"fmt"
-	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"os"
 	"testing"
+
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 
 	"github.com/stretchr/testify/assert"
 

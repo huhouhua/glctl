@@ -17,8 +17,9 @@ package branch
 import (
 	"errors"
 	"fmt"
-	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"testing"
+
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 
 	"github.com/AlekSi/pointer"
 	"github.com/stretchr/testify/assert"

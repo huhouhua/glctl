@@ -15,9 +15,10 @@
 package replace
 
 import (
+	"github.com/spf13/cobra"
+
 	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"github.com/huhouhua/glctl/pkg/util/templates"
-	"github.com/spf13/cobra"
 
 	"github.com/huhouhua/glctl/cmd/resources/file"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"

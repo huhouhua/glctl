@@ -16,10 +16,11 @@ package project
 
 import (
 	"github.com/AlekSi/pointer"
-	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
-	"github.com/huhouhua/glctl/pkg/util/templates"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
+
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
+	"github.com/huhouhua/glctl/pkg/util/templates"
 
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"

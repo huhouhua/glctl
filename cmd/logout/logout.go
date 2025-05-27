@@ -16,9 +16,10 @@ package logout
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"github.com/huhouhua/glctl/pkg/util/templates"
-	"os"
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"

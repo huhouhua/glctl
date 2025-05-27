@@ -17,10 +17,11 @@ package testing
 import (
 	"bytes"
 	"fmt"
-	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"io"
 	"os"
 	"testing"
+
+	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 
 	"github.com/stretchr/testify/assert"
 
