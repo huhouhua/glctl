@@ -135,11 +135,12 @@ jobs:
           env | grep GITLAB
           make cover
 
-      - name: Collect Test Coverage File
-        uses: actions/upload-artifact@v1.0.0
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
         with:
-          name: main-output
-          path: _output/coverage.out
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: huhouhua/glctl
+          files: _output/coverage.out
   build:
     runs-on: ubuntu-latest
     needs: [test]
