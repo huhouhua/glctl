@@ -47,7 +47,7 @@ func NewLogoutCmd(ioStreams genericiooptions.IOStreams) *cobra.Command {
 	o := NewOptions(ioStreams)
 	cmd := &cobra.Command{
 		Use:                   "logout",
-		Short:                 "logout to gitlab",
+		Short:                 "logout current gitlab",
 		Long:                  logoutLong,
 		DisableFlagsInUseLine: true,
 		Example:               `glctl logout`,

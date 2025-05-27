@@ -15,6 +15,7 @@
 package create
 
 import (
+	"github.com/huhouhua/glctl/pkg/util/templates"
 	"github.com/spf13/cobra"
 
 	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
@@ -25,13 +26,31 @@ import (
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 )
 
-var createDesc = "Create a Gitlab resource"
+var (
+	createDesc = "Create a resource from a file or from stdin"
+	createLong = templates.LongDesc(`
+		Create a resource from a file or from stdin.
+
+		JSON and YAML formats are accepted.`)
+
+	createExample = templates.Examples(`
+		# Create a project using the data in project.json
+		glctl create -f ./project.json
+
+		# Create a project based on the JSON passed into stdin
+		cat project.json | glctl create -f -
+
+		# Edit the data in registry.yaml in JSON then create the resource using the edited data
+		glctl create -f registry.yaml --edit -o json`)
+)
 
 func NewCreateCmd(f cmdutil.Factory, ioStreams genericiooptions.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:                   "create",
+		Use:                   "create -f FILENAME",
 		Aliases:               []string{"c"},
 		Short:                 createDesc,
+		Long:                  createLong,
+		Example:               createExample,
 		DisableFlagsInUseLine: true,
 	}
 	cmd.AddCommand(group.NewCreateGroupCmd(f, ioStreams))

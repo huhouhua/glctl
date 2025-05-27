@@ -26,7 +26,7 @@ import (
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 )
 
-var deleteDesc = "Delete a Gitlab resource"
+var deleteDesc = "Delete resources by file names, stdin, resources and names, or by resources"
 
 func NewDeleteCmd(f cmdutil.Factory, ioStreams genericiooptions.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{

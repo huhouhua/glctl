@@ -9,11 +9,39 @@
 
 glctl is a powerful GitLab command line tool. It provides a declarative API to manage GitLab resources, making it easier for you to perform common GitLab operations from the terminal.
 
+```
+Basic Commands:
+  get         Display one or many resources
+  edit        Edit a resource on the server
+  delete      Delete resources by file names, stdin, resources and names, or by resources
+  create      Create a resource from a file or from stdin
+
+Authorization Commands:
+  login       Login to gitlab
+  logout      logout current gitlab
+
+Advanced Commands:
+  replace     Replace a repository file by file name or stdin.
+
+ all formats are accepted. If replacing an existing repository file, the
+complete repository file spec must be provided. This can be obtained by
+
+  $ glctl get files PROJECT --path=my.yml --ref=BRANCH --raw
+
+Settings Commands:
+  completion  Output shell completion code for the specified shell (bash, zsh,
+fish, or powershell)
+
+Other Commands:
+  version     Print the client and server version information
+
+```
+
 ## Features
 - Manage GitLab projects, issues, merge requests, and more
 - Authenticate and manage GitLab sessions
-- Create, read, update, and delete GitLab resources
-- Validate GitLab configurations
+- Create, get, edit, and delete GitLab resources
+- Operation project branch file
 - Shell completion support
 
 ### Usage
@@ -72,14 +100,25 @@ export GITLAB_USERNAME=myname
 export GITLAB_PASSWORD=mypassword
 ```
 
-### Create a new project:
+### Example
+- List your groups
 ```bash
-glctl create project my-new-project
+glctl get groups
 ```
 
-### List your projects:
+- List your projects:
 ```bash
 glctl get projects
+```
+
+- List the group1/project1 branch:
+```bash
+glctl get branchs group1/project1
+```
+
+- create a develop branch from master branch for project group1/project1
+```bash
+glctl create branch develop --project=group1/project1 --ref=master
 ```
 
 ## Available Commands
@@ -91,10 +130,8 @@ glctl get projects
 - `edit` - Edit existing GitLab resources
 - `delete` - Delete GitLab resources
 - `replace` - Replace existing GitLab resources
-- `validate` - Validate GitLab configurations
 - `version` - Display version information
 - `completion` - Generate shell completion scripts
-
 
 ## Logged in user authorization file
 Files are stored in `$HOME/.glctl.yaml` example:

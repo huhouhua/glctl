@@ -25,7 +25,7 @@ import (
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 )
 
-var editDesc = "Edit a Gitlab resource"
+var editDesc = "Edit a resource on the server"
 
 func NewEditCmd(f cmdutil.Factory, ioStreams genericiooptions.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{

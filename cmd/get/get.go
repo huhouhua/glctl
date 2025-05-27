@@ -26,7 +26,7 @@ import (
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 )
 
-var getDesc = "Get Gitlab resources"
+var getDesc = "Display one or many resources"
 
 func NewGetCmd(f cmdutil.Factory, ioStreams genericiooptions.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{

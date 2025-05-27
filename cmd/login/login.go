@@ -38,10 +38,22 @@ import (
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 )
 
-var loginLong = templates.LongDesc(`
+var (
+	loginLong = templates.LongDesc(`
 login command. 
 
 This command authenticates you to a Gitlab server, retrieves your OAuth Token and then save it to $HOME/.glctl.yaml file.`)
+
+	getExample = templates.Examples(`
+		# start interactive
+		glctl login https://gitlab.example.com
+
+		# start interactive Login by username
+		glctl login https://gitlab.example.com --username myname
+
+		# Login by specifying username and password
+		glctl login https://gitlab.example.com --username myname --password mypassword`)
+)
 
 type Options struct {
 	ServerAddress      string
@@ -64,7 +76,7 @@ func NewLoginCmd(ioStreams genericiooptions.IOStreams) *cobra.Command {
 		Short:                 "Login to gitlab",
 		Long:                  loginLong,
 		DisableFlagsInUseLine: true,
-		Example:               `glctl login http://localhost:8080`,
+		Example:               getExample,
 		Args:                  require.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			cmdutil.CheckErr(o.Complete(cmd, args))

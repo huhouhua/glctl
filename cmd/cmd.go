@@ -44,13 +44,13 @@ import (
 var AuthDoc = `
 There are two options to authenticate the command-line client to Gitlab interface:
 
-1.) Using the 'login' command by passing the host url, username and password.
+1. Using the 'login' command by passing the host url, username and password.
 
 $ glctl login
 
 The login token will be saved in $HOME/.glctl.yaml file.
 
-2.) Using Environment variables.
+2. Using Environment variables.
 
 * Basic Authentication (if using a username and password)
     - GITLAB_USERNAME
