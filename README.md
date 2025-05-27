@@ -16,6 +16,11 @@ glctl is a powerful GitLab command line tool. It provides a declarative API to m
 - Validate GitLab configurations
 - Shell completion support
 
+### Usage
+  ```bash
+  glctl <command> <subcommand> [flags]
+  ```
+
 ## Installation
 
 ### From Binary
@@ -32,17 +37,47 @@ make build
 
 ## Quick Start
 
-1. Login to your GitLab instance:
+### Authentication
+
+- start interactive login
+```bash
+glctl login https://gitlab.example.com
+```
+- start interactive Login by username
 ```bash
 glctl login https://gitlab.example.com --username myname
 ```
 
-2. Create a new project:
+- Login by specifying username and password
+```bash
+glctl login https://gitlab.example.com --username myname --password mypassword
+```
+
+- authenticate with private token and hostname
+```bash
+export GITLAB_URL=https://gitlab.example.com
+export GITLAB_PRIVATE_TOKEN=305e146a4aa23fb4021a4f162102251e85f651a058a34fb2c27d633617cf8877
+```
+
+- authenticate with oauth token and hostname
+```bash
+export GITLAB_URL=https://gitlab.example.com
+export GITLAB_OAUTH_TOKEN=aefb8b4e0895799aa60cf50eb8bcd9ae1fecf08fb6cc8249238219067e5aa926
+```
+
+- Loggin in using environment variables (Not recommended for shared environments)
+```bash
+export GITLAB_URL=https://gitlab.example.com
+export GITLAB_USERNAME=myname
+export GITLAB_PASSWORD=mypassword
+```
+
+### Create a new project:
 ```bash
 glctl create project my-new-project
 ```
 
-3. List your projects:
+### List your projects:
 ```bash
 glctl get projects
 ```
@@ -59,6 +94,7 @@ glctl get projects
 - `validate` - Validate GitLab configurations
 - `version` - Display version information
 - `completion` - Generate shell completion scripts
+
 
 ## Logged in user authorization file
 Files are stored in `$HOME/.glctl.yaml` example:
