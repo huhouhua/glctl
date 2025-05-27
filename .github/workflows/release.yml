@@ -1,0 +1,24 @@
+name: release
+
+on:
+  release:
+    types: [created]
+env:
+  GO_VERSION: '1.22.4'
+jobs:
+  releases-linux-binaries:
+    name: Release Go Binaries
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux, darwin]
+        goarch: [amd64, arm64]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: wangyoucao577/go-release-action@v1.38
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          goos: ${{ matrix.goos }}
+          goarch: ${{ matrix.goarch }}
+          goversion: ${{ env.GO_VERSION }}
+          extra_files: LICENSE README.md
