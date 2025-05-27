@@ -127,7 +127,6 @@ func (o *EditOptions) AddFlags(cmd *cobra.Command) {
 		"Show link to create/view merge request "+
 			"when pushing from the command line")
 	f.String("ci-config-path", "", "The path to CI config file")
-
 }
 
 // Complete completes all the required options.

@@ -1,4 +1,4 @@
-# Copyright 2024 The huhouhua Authors
+# Copyright 2024 The Kevin Berger <huhouhuam@outlook.com> Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -62,12 +62,12 @@ include Makefile.tools.mk
 .PHONY: verify-copyright
 verify-copyright: tools.verify.licctl
 	@echo "===========> Verifying the boilerplate headers for all files"
-	@licctl --check -f $(ROOT_DIR)/boilerplate.txt $(ROOT_DIR) --skip-dirs=.idea
+	@licctl --check -f $(ROOT_DIR)/boilerplate.txt $(ROOT_DIR) --skip-dirs=.idea,_output,.github
 
 .PHONY: add-copyright
 add-copyright: tools.verify.licctl
 	@echo $(ROOT_DIR)
-	@licctl -v -f $(ROOT_DIR)/boilerplate.txt $(ROOT_DIR) --skip-dirs=.idea
+	@licctl -v -f $(ROOT_DIR)/boilerplate.txt $(ROOT_DIR) --skip-dirs=.idea,_output,.github
 
 ## format: Gofmt (reformat) package sources (exclude vendor dir if existed).
 .PHONY: format
