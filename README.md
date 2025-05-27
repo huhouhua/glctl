@@ -72,40 +72,18 @@ token_type: Bearer
 user_name: root
 ```
 
-## Development
+## Issues
 
-### Prerequisites
-- Go 1.16 or later
-- Make
-- GitLab instance for testing
+If you have an issue: report it on the [issue tracker](https://github.com/huhouhua/glctl/issues)
 
-### Building from Source
-```bash
-make build
-```
+## Author
 
-### Running Tests
-```bash
-make test
-```
-
-### Code Style
-```bash
-make lint
-```
+Kevin Berger (<huhouhuam@outlook.com>)
 
 ## Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Contributions are always welcome. For more information, check out the [contributing guide](CONTRIBUTING.md)
 
 ## License
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-For support, please open an issue in the [GitHub repository](https://github.com/huhouhua/glctl/issues).
+Licensed under the Apache License 2.0. See [LICENSE](LICENSE) for details.
