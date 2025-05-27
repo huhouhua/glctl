@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2024 The huhouhua Authors
+# Copyright 2024 The Kevin Berger <huhouhuam@outlook.com> Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -82,7 +82,7 @@ if [ "$INSTALL" == "true" ]; then
 h2 "[Step $item]: install..."
 let item+=1
 
-  ${DOCKER_COMPOSE} --project-name gitlab -f ${DOCKER_COMPOSE_TEST_FILE} up -d
+  ${DOCKER_COMPOSE} --project-name gitlab-test -f ${DOCKER_COMPOSE_TEST_FILE} up -d
   wait::gitlab
   exit 0
 fi

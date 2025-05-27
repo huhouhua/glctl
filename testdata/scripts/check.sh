@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2024 The huhouhua Authors
+# Copyright 2024 The Kevin Berger <huhouhuam@outlook.com> Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -83,7 +83,7 @@ function check::docker::compose()
 function wait::gitlab()
 {
    info "Waiting for GitLab to become healthy..."
-   until [ "$(${DOCKER} inspect --format='{{.State.Health.Status}}' gitlab)"  == "healthy" ]; do
+   until [ "$(${DOCKER} inspect --format='{{.State.Health.Status}}' gitlab-test)"  == "healthy" ]; do
      sleep 5
    done
    success "GitLab is up and running!"

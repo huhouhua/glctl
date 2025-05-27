@@ -1,4 +1,4 @@
-# Copyright 2024 The huhouhua Authors
+# Copyright 2024 The Kevin Berger <huhouhuam@outlook.com> Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,9 +13,9 @@
 # limitations under the License.
 
 services:
-  gitlab:
+  gitlab-test:
     image: gitlab/gitlab-ee:14.7.2-ee.0
-    container_name: gitlab
+    container_name: gitlab-test
     restart: on-failure
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost/-/readiness"]
