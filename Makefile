@@ -88,7 +88,7 @@ lint: tools.verify.golangci-lint
 .PHONY: test
 test: tools.verify.go-junit-report run-gitlab
 	@echo "===========> Run unit test"
-	@set -o pipefail;$(GO) test ./cmd/... ./util/...  -cover -coverprofile=$(OUTPUT_DIR)/coverage.out \
+	@set -o pipefail;$(GO) test ./cmd/... ./pkg/...  -cover -coverprofile=$(OUTPUT_DIR)/coverage.out \
 		-timeout=10m -shuffle=on -short \
 
 	@sed -i '/mock_.*.go/d' $(OUTPUT_DIR)/coverage.out # remove mock_.*.go files from test coverage

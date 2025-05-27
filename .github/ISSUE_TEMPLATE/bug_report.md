@@ -1,5 +1,5 @@
 ---
-name: Bug report
+name: 🐛 Bug report
 about: Bug report template
 title: ''
 labels: kind/bug, kind/support
