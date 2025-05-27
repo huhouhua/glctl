@@ -145,6 +145,11 @@ token_type: Bearer
 user_name: root
 ```
 
+🧠 TODO
+
+- This cli tool is still in the development stage, and most of the resources are not completed. Your help is very much needed. 🙋‍♂️
+- Declarative resources are still in the design stage
+
 ## Issues
 
 If you have an issue: report it on the [issue tracker](https://github.com/huhouhua/glctl/issues)
