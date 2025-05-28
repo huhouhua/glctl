@@ -49,7 +49,7 @@ Other Commands:
 
 ```
 
-## 🤘&nbsp;Features
+## 🤘&nbsp; Features
 - Manage GitLab projects, issues, merge requests, and more
 - Authenticate and manage GitLab sessions
 - Create, get, edit, and delete GitLab resources
