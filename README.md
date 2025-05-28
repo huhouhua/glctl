@@ -1,4 +1,17 @@
-# glctl
+
+<div align="center">
+	<h1>Gitlab CLI</h1>
+	<p>glctl is a powerful GitLab command line tool. It provides a declarative API to manage GitLab resources, making it easier for you to perform common GitLab operations from the terminal.!</p>
+</div>
+
+<p align="center">
+	<a href="#-installation">Installation</a> ❘
+	<a href="#-features">Features</a> ❘
+	<a href="#-quick-start">Quick-Start</a> ❘
+	<a href="#-examples">Examples</a> ❘
+	<a href="#-license">License</a>
+</p>
+
 
 ![Workflow ci](https://github.com/huhouhua/glctl/actions/workflows/glctl.yml/badge.svg)
 [![Go Report Card](https://goreportcard.com/badge/github.com/huhouhua/glctl)](https://goreportcard.com/report/github.com/huhouhua/glctl)
@@ -7,8 +20,6 @@
 [![GoDoc](https://godoc.org/github.com/huhouhua/glctl?status.svg)](https://godoc.org/github.com/huhouhua/glctl)
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/huhouhua/glctl?logo=go)
 [![Test Coverage](https://codecov.io/gh/huhouhua/glctl/branch/main/graph/badge.svg)](https://codecov.io/gh/huhouhua/glctl)
-
-glctl is a powerful GitLab command line tool. It provides a declarative API to manage GitLab resources, making it easier for you to perform common GitLab operations from the terminal.
 
 ```
 Basic Commands:
@@ -38,25 +49,21 @@ Other Commands:
 
 ```
 
-## Features
+## 🤘&nbsp;Features
 - Manage GitLab projects, issues, merge requests, and more
 - Authenticate and manage GitLab sessions
 - Create, get, edit, and delete GitLab resources
 - Operation project branch file
 - Shell completion support
 
-### Usage
-  ```bash
-  glctl <command> <subcommand> [flags]
-  ```
 
-## Installation
+## 📦&nbsp;Installation
 
-### From Binary
+### 📁 From Binary
 
 Download the appropriate version for your platform from the [releases page](https://github.com/huhouhua/glctl/releases).
 
-### From Source
+### 🛠️ From Source
  - compile glctl and place it in _output/
 ```bash
 git clone https://github.com/huhouhua/glctl.git
@@ -64,9 +71,14 @@ cd glctl
 make build
 ```
 
-## Quick Start
+## 🚀&nbsp;Quick Start
 
-### Authentication
+### 📄&nbsp;Usage
+  ```bash
+  glctl <command> <subcommand> [flags]
+  ```
+
+### 🔐 Authentication
 
 - start interactive login
 ```bash
@@ -101,7 +113,7 @@ export GITLAB_USERNAME=myname
 export GITLAB_PASSWORD=mypassword
 ```
 
-### Example
+## 🥙&nbsp;Example
 - List your groups
 ```bash
 glctl get groups
@@ -122,7 +134,7 @@ glctl get branchs group1/project1
 glctl create branch develop --project=group1/project1 --ref=master
 ```
 
-## Available Commands
+### 🥪 Available Commands
 
 - `login` - Authenticate with GitLab
 - `logout` - Log out from GitLab
@@ -134,7 +146,7 @@ glctl create branch develop --project=group1/project1 --ref=master
 - `version` - Display version information
 - `completion` - Generate shell completion scripts
 
-## Logged in user authorization file
+### 🗒️&nbsp;Logged in user authorization file
 Files are stored in `$HOME/.glctl.yaml` example:
 ```yaml
 access_token: 305e146a4aa23fb4021a4f162102251e85f651a058a34fb2c27d633617cf8877
@@ -146,23 +158,23 @@ token_type: Bearer
 user_name: root
 ```
 
-## 🧠 TODO
+## 🧠&nbsp;TODOs
 
 - This cli tool is still in the development stage, and most of the resources are not completed. Your help is very much needed. 🙋‍♂️
 - Declarative resources are still in the design stage
 
-## Issues
+## 🤝&nbsp;Issues
 
 If you have an issue: report it on the [issue tracker](https://github.com/huhouhua/glctl/issues)
 
-## Author
+## 👤&nbsp;Author
 
 Kevin Berger (<huhouhuam@outlook.com>)
 
-## Contributing
+## 🧑‍💻&nbsp;Contributing
 
 Contributions are always welcome. For more information, check out the [contributing guide](CONTRIBUTING.md)
 
-## License
+## 📘&nbsp;License
 
 Licensed under the Apache License 2.0. See [LICENSE](LICENSE) for details.
