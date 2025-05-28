@@ -71,7 +71,7 @@ cd glctl
 make build
 ```
 
-## 🚀&nbsp;Quick Start
+## 🚀&nbsp; Quick Start
 
 ### 📄&nbsp;Usage
   ```bash
@@ -113,7 +113,7 @@ export GITLAB_USERNAME=myname
 export GITLAB_PASSWORD=mypassword
 ```
 
-## 🥙&nbsp;Example
+## 🥙&nbsp; Example
 - List your groups
 ```bash
 glctl get groups
@@ -175,6 +175,6 @@ Kevin Berger (<huhouhuam@outlook.com>)
 
 Contributions are always welcome. For more information, check out the [contributing guide](CONTRIBUTING.md)
 
-## 📘&nbsp;License
+## 📘&nbsp; License
 
 Licensed under the Apache License 2.0. See [LICENSE](LICENSE) for details.
