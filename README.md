@@ -113,7 +113,7 @@ export GITLAB_USERNAME=myname
 export GITLAB_PASSWORD=mypassword
 ```
 
-## 🥙&nbsp; Example
+## 🥙&nbsp; Examples
 - List your groups
 ```bash
 glctl get groups
