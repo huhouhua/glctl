@@ -1,6 +1,6 @@
 module github.com/huhouhua/glctl
 
-go 1.22.4
+go 1.23.0
 
 require (
 	github.com/AlekSi/pointer v1.2.0
@@ -24,7 +24,7 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/xanzy/go-gitlab v0.105.0
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9
-	golang.org/x/sys v0.29.0
+	golang.org/x/sys v0.33.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
