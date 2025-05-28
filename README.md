@@ -1,6 +1,6 @@
 
 <div align="center">
-	<h1>Gitlab CLI</h1>
+	<h1>GitLab CLI</h1>
 	<p>glctl is a powerful GitLab command line tool. It provides a declarative API to manage GitLab resources, making it easier for you to perform common GitLab operations from the terminal.!</p>
 </div>
 
