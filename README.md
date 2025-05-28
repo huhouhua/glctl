@@ -57,7 +57,7 @@ Other Commands:
 - Shell completion support
 
 
-## 📦&nbsp;Installation
+## 📦&nbsp; Installation
 
 ### 📁 From Binary
 
