@@ -159,6 +159,7 @@ jobs:
 
       - name: Build docker images for host arch
         run: |
+          env | grep VERSION
           make image.build.$(go env GOOS)_$(go env GOARCH)
 
       - name: Log in to ${{ env.REGISTRY_PREFIX }} registry
