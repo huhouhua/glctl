@@ -161,13 +161,9 @@ jobs:
       - name: Set version variables to shared
         run: echo "VERSION=DEVELOP_$(git describe --tags --always)" >> $GITHUB_ENV
 
-      - name: Build docker images for host arch
-        run: |
-          make image.build.$(go env GOOS)_$(go env GOARCH)
-
       - name: Log in to ${{ env.REGISTRY_PREFIX }} registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY_PREFIX }} -u $ --password-stdin
 
-      - name: Push images to ${{ env.REGISTRY_PREFIX }} registry
+      - name: Build docker images for host arch and push images to registry
         run: |
-          make image.push
+          make image.build.$(go env GOOS)_$(go env GOARCH)
