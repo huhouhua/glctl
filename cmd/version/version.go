@@ -89,8 +89,8 @@ func (o *Options) Complete(f cmdutil.Factory, cmd *cobra.Command) error {
 		return nil
 	}
 	o.client, err = f.GitlabClient()
-	if err != nil {
-		return err
+	if msg, ok := cmdutil.StandardErrorMessage(err); ok {
+		_, _ = fmt.Fprintf(o.IOStreams.Out, "Server Version: %s\n", msg)
 	}
 	return nil
 }

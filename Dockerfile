@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Copyright 2024 The Kevin Berger <huhouhuam@outlook.com> Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,9 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+FROM golang:1.22-alpine AS build
 
-DIR="$(cd "$(dirname "$0")" && pwd)"
+LABEL maintainer="huhouhuam@outlook.com"
 
-readonly DOCKER_COMPOSE_TEST_FILE=$DIR/../docker-compose-test.yaml
-readonly DOCKER_COMPOSE=docker-compose
-readonly DOCKER=docker
+ENV GOPATH=/go
+ENV CGO_ENABLED=0
+
+
+RUN apk add -U --no-cache ca-certificates
+RUN apk add -U curl
+RUN curl -s -q https://raw.githubusercontent.com/huhouhua/glctl/main/LICENSE -o /go/LICENSE
+RUN go install -v -ldflags "$(go run scripts/gen-ldflags.go)" "github.com/huhouhua/glctl@latest"
+
+FROM alpine:3.18
+
+COPY --from=build /go/bin/glctl  /usr/bin/glctl
+COPY --from=build /go/LICENSE /licenses/LICENSE
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
+ENTRYPOINT ["glctl"]

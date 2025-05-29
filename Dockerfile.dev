@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Copyright 2024 The Kevin Berger <huhouhuam@outlook.com> Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,9 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+FROM registry.access.redhat.com/ubi8/ubi-minimal:8.8
 
-DIR="$(cd "$(dirname "$0")" && pwd)"
+LABEL maintainer="huhouhuam@outlook.com"
 
-readonly DOCKER_COMPOSE_TEST_FILE=$DIR/../docker-compose-test.yaml
-readonly DOCKER_COMPOSE=docker-compose
-readonly DOCKER=docker
+COPY _/output/glctl-linux-amd64 /usr/bin/glctl
+COPY LICENSE /licenses/LICENSE
+
+RUN  \
+     microdnf update --nodocs --assumeyes && \
+     microdnf install ca-certificates --nodocs --assumeyes && \
+     microdnf clean all
+
+ENTRYPOINT ["glctl"]
