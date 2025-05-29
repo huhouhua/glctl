@@ -127,7 +127,8 @@ image.build.%: build
 .PHONY: image.push
 image.push:
 	@echo "===========> Pushing image $(TAG)"
-	@${DOCKER} push $(TAG)
+	@${DOCKER} images
+	@${DOCKER} push "$(TAG)"
 
 .PHONY: clean
 clean: ## Remove building artifacts
