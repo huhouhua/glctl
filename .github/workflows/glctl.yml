@@ -73,7 +73,10 @@ jobs:
     needs: [lint,check]
     environment:
       name: e2e-test
+      url: https://example.com/e2-preview
     steps:
+      - name: Fake deploy
+        run: echo "Pretending to deploy..."
       - name: "Checkout ${{ github.ref }}"
         uses: actions/checkout@v4
 
