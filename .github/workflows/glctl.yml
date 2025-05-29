@@ -162,7 +162,7 @@ jobs:
         run: echo "VERSION=DEVELOP_$(git describe --tags --always)" >> $GITHUB_ENV
 
       - name: Log in to ${{ env.REGISTRY_PREFIX }} registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY_PREFIX }} -u $ --password-stdin
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY_PREFIX }} -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
       - name: Build docker images for host arch and push images to registry
         run: |
