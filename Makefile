@@ -121,8 +121,8 @@ image.build.%: build
 	$(eval PLATFORM := $(word 1,$(subst ., ,$*)))
 	$(eval OS := $(word 1,$(subst _, ,$(PLATFORM))))
 	$(eval ARCH := $(word 2,$(subst _, ,$(PLATFORM))))
-	@echo "===========> Building $(TAG) for $(OS) $(ARCH) $(ROOT_DIR)/$(DOCKER_FILE)"
-	@${DOCKER} buildx build --load -t $(TAG) --build-arg TARGETARCH=${OS}-${ARCH} --build-arg RELEASE=${DOCKER_BUILD_ARG_RELEASE} --platform $(DOCKER_MULTI_ARCH) -f $(ROOT_DIR)/$(DOCKER_FILE)  $(ROOT_DIR)
+	@echo "===========> Building and Pushing $(TAG) for $(OS) $(ARCH) $(ROOT_DIR)/$(DOCKER_FILE)"
+	@${DOCKER} buildx build --push -t $(TAG) --build-arg TARGETARCH=${OS}-${ARCH} --build-arg RELEASE=${DOCKER_BUILD_ARG_RELEASE} --platform $(DOCKER_MULTI_ARCH) -f $(ROOT_DIR)/$(DOCKER_FILE)  $(ROOT_DIR)
 
 .PHONY: image.push
 image.push:
