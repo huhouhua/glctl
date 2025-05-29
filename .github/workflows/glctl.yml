@@ -71,9 +71,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     needs: [lint,check]
-    environment:
-      name: e2e-test
-      url: https://example.com/e2-preview
     steps:
       - name: Fake deploy
         run: echo "Pretending to deploy..."
@@ -162,6 +159,7 @@ jobs:
 
       - name: Build docker images for host arch
         run: |
+          export VERSION=$(git describe --tags --always)
           env | grep VERSION
           make image.build.$(go env GOOS)_$(go env GOARCH)
 
