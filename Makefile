@@ -26,23 +26,11 @@ OS = linux darwin
 architecture = amd64 arm64
 NAME = glctl
 ROOT_PACKAGE=github.com/huhouhua/glctl
-VERSION_PACKAGE=github.com/huhouhua/glctl/util/version
-GIT_TREE_STATE:="dirty"
 COVERAGE := 58
 SHELL := /bin/bash
 # Linux command settings
 FIND := find . ! -path './vendor/*'
 XARGS := xargs -r
-
-ifeq (, $(shell git status --porcelain 2>/dev/null))
-	GIT_TREE_STATE="clean"
-endif
-GO_LDFLAGS += -X $(VERSION_PACKAGE).GitVersion=$(shell git describe --tags --always --match='v*') \
-	-X $(VERSION_PACKAGE).GitCommit=$(shell git rev-parse HEAD) \
-	-X $(VERSION_PACKAGE).GitTreeState=$(GIT_TREE_STATE) \
-	-X $(VERSION_PACKAGE).BuildDate=$(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
-
-GO_BUILD_FLAGS += -ldflags "$(GO_LDFLAGS)"
 COMMON_SELF_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 
 ifeq ($(origin ROOT_DIR),undefined)
@@ -54,7 +42,13 @@ OUTPUT_DIR := $(ROOT_DIR)/_output
 $(shell mkdir -p $(OUTPUT_DIR))
 endif
 
-include Makefile.tools.mk
+GO_LDFLAGS := $(shell $(GO) run $(ROOT_DIR)/scripts/gen-ldflags.go)
+GO_BUILD_FLAGS = --ldflags "$(GO_LDFLAGS)"
+
+# ==============================================================================
+# Includes
+
+include scripts/Makefile.tools.mk
 
 # ==============================================================================
 # Targets
@@ -62,12 +56,12 @@ include Makefile.tools.mk
 .PHONY: verify-copyright
 verify-copyright: tools.verify.licctl
 	@echo "===========> Verifying the boilerplate headers for all files"
-	@licctl --check -f $(ROOT_DIR)/boilerplate.txt $(ROOT_DIR) --skip-dirs=.idea,_output,.github
+	@licctl --check -f $(ROOT_DIR)/scripts/boilerplate.txt $(ROOT_DIR) --skip-dirs=.idea,_output,.github
 
 .PHONY: add-copyright
 add-copyright: tools.verify.licctl
 	@echo $(ROOT_DIR)
-	@licctl -v -f $(ROOT_DIR)/boilerplate.txt $(ROOT_DIR) --skip-dirs=.idea,_output,.github
+	@licctl -v -f $(ROOT_DIR)/scripts/boilerplate.txt $(ROOT_DIR) --skip-dirs=.idea,_output,.github
 
 ## format: Gofmt (reformat) package sources (exclude vendor dir if existed).
 .PHONY: format
@@ -97,7 +91,7 @@ test: tools.verify.go-junit-report run-gitlab
 .PHONY: cover
 cover: test
 	@$(GO) tool cover -func=$(OUTPUT_DIR)/coverage.out | \
-		awk -v target=$(COVERAGE) -f $(ROOT_DIR)/coverage.awk
+		awk -v target=$(COVERAGE) -f $(ROOT_DIR)/scripts/coverage.awk
 
 .PHONY: build
 build: clean tidy ## Generate releases for unix systems

@@ -19,7 +19,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-
 	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"github.com/huhouhua/glctl/pkg/util/templates"
 	"github.com/huhouhua/glctl/pkg/util/version"
@@ -80,7 +79,6 @@ func NewCmdVersion(f cmdutil.Factory, ioStreams genericiooptions.IOStreams) *cob
 	)
 	cmd.Flags().BoolVar(&o.Short, "short", o.Short, "If true, print just the version number.")
 	cmd.Flags().StringVarP(&o.Output, "output", "o", o.Output, "One of 'yaml' or 'json'.")
-
 	return cmd
 }
 
@@ -116,15 +114,15 @@ func (o *Options) Run() error {
 
 	clientVersion := version.Get()
 	versionInfo.ClientVersion = &clientVersion
-
 	if !o.ClientOnly && o.client != nil {
 		// Always request fresh data from the server
 		ver, _, err := o.client.Version.GetVersion()
-		if err != nil {
-			return err
+		if msg, ok := cmdutil.StandardErrorMessage(err); ok {
+			_, _ = fmt.Fprintf(o.IOStreams.Out, "Server Version: %s\n", msg)
+		} else {
+			serverVersion = ver
+			versionInfo.ServerVersion = serverVersion
 		}
-		serverVersion = ver
-		versionInfo.ServerVersion = serverVersion
 	}
 
 	switch o.Output {
