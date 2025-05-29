@@ -5,11 +5,17 @@ on:
     branches: [ main ]
   pull_request:
     branches: ["*"]
+
 env:
   GO_VERSION: '1.22'
   REGISTRY_PREFIX: ghcr.io
   DOCKER_COMPOSE_VERSION: v2.21.0
   DOCKER_FILE: Dockerfile.dev
+
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   check:
     runs-on: ubuntu-latest
@@ -156,13 +162,17 @@ jobs:
       - run: git stash # restore patch
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
+        uses: docker/setup-buildx-action@v1   
+   
       - name: Set version variables to shared
         run: echo "VERSION=DEVELOP_$(git describe --tags --always)" >> $GITHUB_ENV
 
-      - name: Log in to ${{ env.REGISTRY_PREFIX }} registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY_PREFIX }} -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY_PREFIX }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build docker images for host arch and push images to registry
         run: |
