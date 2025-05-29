@@ -15,8 +15,8 @@
 # limitations under the License.
 
 
-DIR="$(cd "$(dirname "$0")" && pwd)"
+GLCTL_ROOT=$(dirname "${BASH_SOURCE[0]}")/../..
 
-readonly DOCKER_COMPOSE_TEST_FILE=$DIR/../docker-compose-test.yaml
+readonly DOCKER_COMPOSE_TEST_FILE=${GLCTL_ROOT}/testdata/docker-compose-test.yaml
 readonly DOCKER_COMPOSE=docker-compose
 readonly DOCKER=docker

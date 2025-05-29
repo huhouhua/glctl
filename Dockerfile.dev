@@ -16,7 +16,9 @@ FROM registry.access.redhat.com/ubi8/ubi-minimal:8.8
 
 LABEL maintainer="huhouhuam@outlook.com"
 
-COPY _/output/glctl-linux-amd64 /usr/bin/glctl
+ARG TARGETARCH
+
+COPY _output/glctl-${TARGETARCH} /usr/bin/glctl
 COPY LICENSE /licenses/LICENSE
 
 RUN  \

@@ -20,10 +20,10 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-DIR="$(cd "$(dirname "$0")" && pwd)"
-source $DIR/loggin.sh
-source $DIR/environment.sh
-source $DIR/check.sh
+GLCTL_ROOT=$(dirname "${BASH_SOURCE[0]}")/..
+source ${GLCTL_ROOT}/scripts/lib/loggin.sh
+source ${GLCTL_ROOT}/scripts/lib/environment.sh
+source ${GLCTL_ROOT}/scripts/lib/check.sh
 
 INSTALL="false"
 UNINSTALL="false"
@@ -63,7 +63,6 @@ while [ $# -gt 0 ]; do
   shift || true
 done
 
-
 h2 "[Step $item]: checking if docker is installed ..."; let item+=1
 check::docker
 
@@ -100,7 +99,7 @@ if [ "$STOP" == "true" ]; then
 h2 "[Step $item]: stop..."
 let item+=1
 
-  ${DOCKER_COMPOSE} -f ${DOCKER_COMPOSE_TEST_FILE} stop
+  ${DOCKER} stop gitlab-test
   success $"---- stop successfully.----"
   exit 0
 fi
@@ -109,7 +108,7 @@ if [ "$START" == "true" ]; then
 h2 "[Step $item]: start..."
 let item+=1
 
-  ${DOCKER_COMPOSE} -f ${DOCKER_COMPOSE_TEST_FILE} start
+  ${DOCKER} start gitlab-test
   wait::gitlab
   exit 0
 fi

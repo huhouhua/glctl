@@ -19,7 +19,6 @@ LABEL maintainer="huhouhuam@outlook.com"
 ENV GOPATH=/go
 ENV CGO_ENABLED=0
 
-
 RUN apk add -U --no-cache ca-certificates
 RUN apk add -U curl
 RUN curl -s -q https://raw.githubusercontent.com/huhouhua/glctl/main/LICENSE -o /go/LICENSE

@@ -28,6 +28,15 @@ NAME = glctl
 ROOT_PACKAGE=github.com/huhouhua/glctl
 COVERAGE := 58
 SHELL := /bin/bash
+DOCKER := docker
+
+# docker command settings
+REGISTRY_PREFIX ?= "ghcr.io"
+IMAGE ?= "huhouhua/glctl"
+VERSION ?= $(shell git describe --tags)
+TAG := $(REGISTRY_PREFIX)/$(IMAGE):$(VERSION)
+DOCKER_FILE ?= "Dockerfile.dev"
+
 # Linux command settings
 FIND := find . ! -path './vendor/*'
 XARGS := xargs -r
@@ -93,8 +102,9 @@ cover: test
 	@$(GO) tool cover -func=$(OUTPUT_DIR)/coverage.out | \
 		awk -v target=$(COVERAGE) -f $(ROOT_DIR)/scripts/coverage.awk
 
+## Generate releases for unix systems
 .PHONY: build
-build: clean tidy ## Generate releases for unix systems
+build: clean tidy
 	@for arch in $(architecture);\
 	do \
 		for os in ${OS};\
@@ -103,6 +113,19 @@ build: clean tidy ## Generate releases for unix systems
 			CGO_ENABLED=0 GOOS=$$os GOARCH=$$arch $(GO) build  $(GO_BUILD_FLAGS) -o $(OUTPUT_DIR)/$(NAME)-$$os-$$arch; \
 		done \
 	done
+
+.PHONY: image.build.%
+image.build.%: build
+	$(eval PLATFORM := $(word 1,$(subst ., ,$*)))
+	$(eval OS := $(word 1,$(subst _, ,$(PLATFORM))))
+	$(eval ARCH := $(word 2,$(subst _, ,$(PLATFORM))))
+	@echo "===========> Building $(TAG) for $(OS) $(ARCH) $(ROOT_DIR)/$(DOCKER_FILE)"
+	@${DOCKER} build -t $(TAG) --build-arg TARGETARCH=${OS}-${ARCH} --build-arg RELEASE=${VERSION} -f $(ROOT_DIR)/$(DOCKER_FILE)  $(ROOT_DIR)
+
+.PHONY: image.push
+image.push:
+	@echo "===========> Pushing image $(TAG)"
+	@${DOCKER} push $(TAG)
 
 .PHONY: clean
 clean: ## Remove building artifacts
@@ -126,7 +149,7 @@ tidy:
 .PHONY: testdata
 testdata: run-gitlab
 	@echo -e "\n\033[36mAdding test data for gitlab conformance tests...\033[0m"
-	$(ROOT_DIR)/testdata/scripts/seeder.sh
+	$(ROOT_DIR)/testdata/seeder.sh
 
 ## run-gitlab-e2e: run gitlab service
 .PHONY: run-gitlab
@@ -142,7 +165,7 @@ kill-gitlab:
 
 ## start-gitlab: start run gitlab service
 .PHONY: start-gitlab
-start-gitlab: run-gitlab
+start-gitlab:
 	@echo -e "\n\033[36mStart gitlab conformance tests...\033[0m"
 	@$(MAKE) gitlab.start
 

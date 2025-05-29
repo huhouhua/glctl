@@ -14,12 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-DIR="$(cd "$(dirname "$0")" && pwd)"
-source $DIR/loggin.sh
-source $DIR/tools.sh
+GLCTL_ROOT=$(dirname "${BASH_SOURCE[0]}")/..
+
+source ${GLCTL_ROOT}/scripts/lib/loggin.sh
+source ${GLCTL_ROOT}/scripts/lib/tools.sh
 install::jq
 
-source $DIR/credentials.sh
+source ${GLCTL_ROOT}/testdata/credentials.sh
 
 info "GITLAB_USERNAME:${GITLAB_USERNAME}"
 info "GITLAB_PASSWORD:${GITLAB_PASSWORD}"

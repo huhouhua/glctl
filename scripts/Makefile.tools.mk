@@ -58,4 +58,4 @@ install.goimports:
 
 .PHONY: gitlab.%
 gitlab.%:
-	$(ROOT_DIR)/testdata/scripts/gitlab.sh --$*
+	$(ROOT_DIR)/scripts/gitlab.sh --$*
