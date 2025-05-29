@@ -122,13 +122,12 @@ image.build.%: build
 	$(eval OS := $(word 1,$(subst _, ,$(PLATFORM))))
 	$(eval ARCH := $(word 2,$(subst _, ,$(PLATFORM))))
 	@echo "===========> Building $(TAG) for $(OS) $(ARCH) $(ROOT_DIR)/$(DOCKER_FILE)"
-	@${DOCKER} buildx build -t $(TAG) --build-arg TARGETARCH=${OS}-${ARCH} --build-arg RELEASE=${DOCKER_BUILD_ARG_RELEASE} --platform $(DOCKER_MULTI_ARCH) -f $(ROOT_DIR)/$(DOCKER_FILE)  $(ROOT_DIR)
+	@${DOCKER} buildx build --load -t $(TAG) --build-arg TARGETARCH=${OS}-${ARCH} --build-arg RELEASE=${DOCKER_BUILD_ARG_RELEASE} --platform $(DOCKER_MULTI_ARCH) -f $(ROOT_DIR)/$(DOCKER_FILE)  $(ROOT_DIR)
 
 .PHONY: image.push
 image.push:
 	@echo "===========> Pushing image $(TAG)"
-	@${DOCKER} images
-	@${DOCKER} push "$(TAG)"
+	@${DOCKER} push $(TAG)
 
 .PHONY: clean
 clean: ## Remove building artifacts
