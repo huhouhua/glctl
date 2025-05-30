@@ -16,12 +16,25 @@
 ![Workflow ci](https://github.com/huhouhua/glctl/actions/workflows/glctl.yml/badge.svg)
 [![Go Report Card](https://goreportcard.com/badge/github.com/huhouhua/glctl)](https://goreportcard.com/report/github.com/huhouhua/glctl)
 [![release](https://img.shields.io/github/release-pre/huhouhua/glctl.svg)](https://github.com/huhouhua/glctl/releases)
+[![Docker Pulls](https://img.shields.io/docker/pulls/huhouhua/glctl.svg?maxAge=604800)](https://hub.docker.com/r/huhouhua/glctl/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![GoDoc](https://godoc.org/github.com/huhouhua/glctl?status.svg)](https://godoc.org/github.com/huhouhua/glctl)
-![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/huhouhua/glctl?logo=go)
 [![Test Coverage](https://codecov.io/gh/huhouhua/glctl/branch/main/graph/badge.svg)](https://codecov.io/gh/huhouhua/glctl)
 
 ```
+* Basic Authentication (if using a username and password)
+    - GITLAB_USERNAME
+    - GITLAB_PASSWORD
+    - GITLAB_URL
+
+* Private Token (if using a private token)
+    - GITLAB_PRIVATE_TOKEN
+    - GITLAB_URL
+
+* OAuth Token (if using an oauth token)
+    - GITLAB_OAUTH_TOKEN
+    - GITLAB_URL
+    
 Basic Commands:
   get         Display one or many resources
   edit        Edit a resource on the server
@@ -56,6 +69,37 @@ Other Commands:
 - Operation project branch file
 - Shell completion support
 
+## 🐳&nbsp; Docker Container
+### Release
+```
+docker pull huhouhua/glctl
+docker run \
+  -e GITLAB_URL=https://gitlab.example.com \
+  -e GITLAB_PRIVATE_TOKEN=305e146a4aa23fb4021a4f162102251e85f651a058a34fb2c27d633617cf8877 \
+  huhouhua/glctl get projects
+```
+
+🔔 **Note:** Above examples run `glctl` against  use private authentication [environment](#authentication) by default. To run `glctl` against other compatible servers, start the container this way:
+
+```
+docker run -it --entrypoint=/bin/sh huhouhua/glctl
+```
+
+### 🦊 GitLab CI
+When using the Docker container in GitLab CI, you must [set the entrypoint to an empty string](https://docs.gitlab.com/ee/ci/docker/using_docker_images.html#override-the-entrypoint-of-an-image).
+
+```
+deploy:
+  image:
+    name: huhouhua/glctl
+    entrypoint: ['']
+  stage: deploy
+  before_script:
+    - export GITLAB_URL=https://gitlab.example.com
+    - export GITLAB_PRIVATE_TOKEN=305e146a4aa23fb4021a4f162102251e85f651a058a34fb2c27d633617cf8877
+  script:
+    - glctl get projects
+```
 
 ## 📦&nbsp; Installation
 
@@ -64,7 +108,7 @@ Other Commands:
 Download the appropriate version for your platform from the [releases page](https://github.com/huhouhua/glctl/releases).
 
 ### 🛠️ From Source
- - compile glctl and place it in _output/
+- compile glctl and place it in _output/
 ```bash
 git clone https://github.com/huhouhua/glctl.git
 cd glctl
