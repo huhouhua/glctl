@@ -22,6 +22,8 @@
 [![Test Coverage](https://codecov.io/gh/huhouhua/glctl/branch/main/graph/badge.svg)](https://codecov.io/gh/huhouhua/glctl)
 
 ```
+Using environment variables for authorization
+
 * Basic Authentication (if using a username and password)
     - GITLAB_USERNAME
     - GITLAB_PASSWORD
