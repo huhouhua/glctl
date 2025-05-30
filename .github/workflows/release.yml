@@ -6,6 +6,7 @@ on:
 
 env:
   GO_VERSION: '1.22.4'
+  CGO_ENABLED: 0
   DOCKER_FILE: Dockerfile.release
 
 permissions:
@@ -26,6 +27,7 @@ jobs:
         with:
           github_token: ${{ secrets.REPO_TOKEN }}
           goos: ${{ matrix.goos }}
+          build_flags: "$(go run scripts/gen-ldflags.go)"
           goarch: ${{ matrix.goarch }}
           goversion: ${{ env.GO_VERSION }}
           extra_files: LICENSE README.md
