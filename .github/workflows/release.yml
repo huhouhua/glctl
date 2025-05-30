@@ -31,7 +31,7 @@ jobs:
           extra_files: LICENSE README.md
 
   image-gitHub:
-    name: Release docker image
+    name: Release image for GitHub Container Registry
     runs-on: ${{ matrix.os }}
     needs: [releases-linux-binaries]
     env:
@@ -69,7 +69,7 @@ jobs:
           make image.build.$(go env GOOS)_$(go env GOARCH)
 
   image-dockerHub:
-    name: Release docker image
+    name: Release image for DockerHub
     runs-on: ${{ matrix.os }}
     needs: [releases-linux-binaries]
     env:
