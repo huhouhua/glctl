@@ -39,7 +39,7 @@ jobs:
       REGISTRY_PREFIX: ghcr.io
     strategy:
       matrix:
-        go_version: ${{ env.GO_VERSION  }}
+        go_version: ['1.22']
         os: [ubuntu-latest]
     steps:
       - name: Set up Go ${{ matrix.go_version }}
@@ -78,7 +78,7 @@ jobs:
       IMAGE: glctl
     strategy:
       matrix:
-        go_version: ${{ env.GO_VERSION  }}
+        go_version: ['1.22']
         os: [ubuntu-latest]
     steps:
       - name: Set up Go ${{ matrix.go_version }}
