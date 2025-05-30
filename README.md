@@ -79,7 +79,7 @@ docker run \
   huhouhua/glctl get projects
 ```
 
-🔔 **Note:** Above examples run `glctl` against  use private authentication [environment](#authentication) by default. To run `glctl` against other compatible servers, start the container this way:
+🔔 **Note:** Above examples run `glctl` against  use private authentication [environment](#-authentication) by default. To run `glctl` against other compatible servers, start the container this way:
 
 ```
 docker run -it --entrypoint=/bin/sh huhouhua/glctl
