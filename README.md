@@ -66,7 +66,7 @@ Other Commands:
 - Manage GitLab projects, issues, merge requests, and more
 - Authenticate and manage GitLab sessions
 - Create, get, edit, and delete GitLab resources
-- Operation project branch file
+- Operate on project branch files
 - Shell completion support
 
 ## 🐳&nbsp; Docker Container
@@ -79,7 +79,7 @@ docker run \
   huhouhua/glctl get projects
 ```
 
-🔔 **Note:** Above examples run `glctl` against  use private authentication [environment](#-authentication) by default. To run `glctl` against other compatible servers, start the container this way:
+🔔 **Note:** Above examples use private token authentication by default. See [environment](#-authentication) for details. To run `glctl` against other compatible servers, start the container this way:
 
 ```
 docker run -it --entrypoint=/bin/sh huhouhua/glctl
@@ -150,7 +150,7 @@ export GITLAB_URL=https://gitlab.example.com
 export GITLAB_OAUTH_TOKEN=aefb8b4e0895799aa60cf50eb8bcd9ae1fecf08fb6cc8249238219067e5aa926
 ```
 
-- Loggin in using environment variables (Not recommended for shared environments)
+- Logging in using environment variables (Not recommended for shared environments)
 ```bash
 export GITLAB_URL=https://gitlab.example.com
 export GITLAB_USERNAME=myname
@@ -168,12 +168,12 @@ glctl get groups
 glctl get projects
 ```
 
-- List the group1/project1 branch:
+- List branches of group1/project1
 ```bash
 glctl get branchs group1/project1
 ```
 
-- create a develop branch from master branch for project group1/project1
+- Create a develop branch from the master branch in the group1/project1 project
 ```bash
 glctl create branch develop --project=group1/project1 --ref=master
 ```
@@ -204,7 +204,7 @@ user_name: root
 
 ## 🧠&nbsp;TODOs
 
-- This cli tool is still in the development stage, and most of the resources are not completed. Your help is very much needed. 🙋‍♂️
+- This cli tool is still in the development stage, and most of the resources are not completed. Everyone contribute is very much needed. 🙋‍♂️
 - Declarative resources are still in the design stage
 
 ## 🤝&nbsp;Issues
