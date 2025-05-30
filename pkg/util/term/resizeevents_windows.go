@@ -15,42 +15,43 @@
 package term
 
 import (
-	"os"
-	"os/signal"
-
-	"golang.org/x/sys/unix"
+	"time"
 )
 
-// nolint
-// monitorResizeEvents spawns a goroutine that waits for SIGWINCH signals (these indicate the
-// terminal has resized). After receiving a SIGWINCH, this gets the terminal size and tries to send
-// it to the resizeEvents channel. The goroutine stops when the stop channel is closed.
+// monitorResizeEvents spawns a goroutine that periodically gets the terminal size and tries to send
+// it to the resizeEvents channel if the size has changed. The goroutine stops when the stop channel
+// is closed.
 func monitorResizeEvents(fd uintptr, resizeEvents chan<- TerminalSize, stop chan struct{}) {
 	go func() {
 		defer HandleCrash()
 
-		winch := make(chan os.Signal, 1)
-		signal.Notify(winch, unix.SIGWINCH)
-		defer signal.Stop(winch)
+		size := GetSize(fd)
+		if size == nil {
+			return
+		}
+		lastSize := *size
 
 		for {
+			// see if we need to stop running
 			select {
-			case <-winch:
-				size := GetSize(fd)
-				if size == nil {
-					return
-				}
-
-				// try to send size
-				select {
-				case resizeEvents <- *size:
-					// success
-				default:
-					// not sent
-				}
 			case <-stop:
 				return
+			default:
 			}
+
+			size := GetSize(fd)
+			if size == nil {
+				return
+			}
+
+			if size.Height != lastSize.Height || size.Width != lastSize.Width {
+				lastSize.Height = size.Height
+				lastSize.Width = size.Width
+				resizeEvents <- *size
+			}
+
+			// sleep to avoid hot looping
+			time.Sleep(250 * time.Millisecond)
 		}
 	}()
 }
