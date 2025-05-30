@@ -23,11 +23,15 @@ jobs:
         goarch: [amd64, arm64]
     steps:
       - uses: actions/checkout@v4
+
+      - name: Set ldflags variables to shared
+        run: echo "LDFLAGS=$(go run scripts/gen-ldflags.go)" >> $GITHUB_ENV
+
       - uses: wangyoucao577/go-release-action@v1.53
         with:
           github_token: ${{ secrets.REPO_TOKEN }}
           goos: ${{ matrix.goos }}
-          ldflags: $(go run scripts/gen-ldflags.go)
+          ldflags: ${{ env.LDFLAGS }}
           goarch: ${{ matrix.goarch }}
           goversion: ${{ env.GO_VERSION }}
           extra_files: LICENSE README.md
