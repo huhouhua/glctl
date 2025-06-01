@@ -4,15 +4,6 @@
 	<p>glctl is a powerful GitLab command line tool. It provides a declarative API to manage GitLab resources, making it easier for you to perform common GitLab operations from the terminal</p>
 </div>
 
-<p align="center">
-	<a href="#-installation">Installation</a> ❘
-	<a href="#-features">Features</a> ❘
-	<a href="#-quick-start">Quick-Start</a> ❘
-	<a href="#-examples">Examples</a> ❘
-	<a href="#-license">License</a>
-</p>
-
-
 ![Workflow ci](https://github.com/huhouhua/glctl/actions/workflows/glctl.yml/badge.svg)
 [![Go Report Card](https://goreportcard.com/badge/github.com/huhouhua/glctl)](https://goreportcard.com/report/github.com/huhouhua/glctl)
 [![release](https://img.shields.io/github/release-pre/huhouhua/glctl.svg)](https://github.com/huhouhua/glctl/releases)
@@ -20,6 +11,14 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![GoDoc](https://godoc.org/github.com/huhouhua/glctl?status.svg)](https://godoc.org/github.com/huhouhua/glctl)
 [![Test Coverage](https://codecov.io/gh/huhouhua/glctl/branch/main/graph/badge.svg)](https://codecov.io/gh/huhouhua/glctl)
+
+<p align="center">
+	<a href="#-installation">Installation</a> ❘
+	<a href="#-features">Features</a> ❘
+	<a href="#-quick-start">Quick-Start</a> ❘
+	<a href="#-examples">Examples</a> ❘
+	<a href="#-license">License</a>
+</p>
 
 ```
 Using environment variables for authorization
