@@ -13,7 +13,7 @@ $ ./_output/glctl-linux-amd64 --help
 
 #### Requirements
 * [install](https://docs.docker.com/engine/install/) install docker cli
-* Go 1.20.4 or later
+* Go 1.23.0 or later
 * Make
 * GitLab instance for testing
     - run `make run-gitlab`
