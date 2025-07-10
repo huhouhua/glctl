@@ -24,7 +24,7 @@ import (
 
 	"github.com/AlekSi/pointer"
 	"github.com/spf13/cobra"
-	"github.com/xanzy/go-gitlab"
+	gitlab "gitlab.com/gitlab-org/api/client-go"
 
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
@@ -53,6 +53,7 @@ func TestCreateProject(t *testing.T) {
 			opt.project.ContainerRegistryAccessLevel = pointer.To(gitlab.EnabledAccessControl)
 			opt.project.SharedRunnersEnabled = pointer.ToBool(true)
 			opt.project.Visibility = pointer.To(gitlab.PrivateVisibility)
+			//nolint:staticcheck
 			opt.project.PublicBuilds = pointer.ToBool(true)
 			opt.project.OnlyAllowMergeIfPipelineSucceeds = pointer.ToBool(true)
 			opt.project.OnlyAllowMergeIfAllDiscussionsAreResolved = pointer.ToBool(true)
@@ -67,7 +68,7 @@ func TestCreateProject(t *testing.T) {
 			var err error
 			projectPath := fmt.Sprintf("%s/%s", opt.namespace, args[0])
 			defer func() {
-				_, _ = opt.gitlabClient.Projects.DeleteProject(projectPath)
+				_, _ = opt.gitlabClient.Projects.DeleteProject(projectPath, &gitlab.DeleteProjectOptions{})
 			}()
 			out := cmdtesting.RunForStdout(opt.ioStreams, func() {
 				err = opt.Run(args)

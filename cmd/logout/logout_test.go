@@ -54,6 +54,9 @@ func TestLogout(t *testing.T) {
 				opt.path = "/tmp/glctl/glctl_logout_fail"
 				return nil
 			},
+			completeFunc: func(streams genericiooptions.IOStreams) error {
+				return nil
+			},
 			expectedOutput: "not exist",
 		},
 	}
@@ -63,8 +66,7 @@ func TestLogout(t *testing.T) {
 			cmd := NewLogoutCmd(streams)
 			var cmdOptions = NewOptions(streams)
 			if tc.optionsFunc != nil {
-				err := tc.optionsFunc(cmdOptions)
-				if err != nil {
+				if err := tc.optionsFunc(cmdOptions); err != nil {
 					t.Errorf("%s: Invalid test case. Specify expected result.\n", tc.name)
 					return
 				}

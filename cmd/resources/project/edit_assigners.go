@@ -17,7 +17,7 @@ package project
 import (
 	"github.com/AlekSi/pointer"
 	"github.com/spf13/cobra"
-	"github.com/xanzy/go-gitlab"
+	gitlab "gitlab.com/gitlab-org/api/client-go"
 
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 )
@@ -68,6 +68,7 @@ func (o *EditOptions) assignOptions(cmd *cobra.Command) error {
 		o.project.SharedRunnersEnabled = pointer.ToBool(cmdutil.GetFlagBool(cmd, "shared-runners-enabled"))
 	}
 	if cmd.Flag("public_builds").Changed {
+		//nolint:staticcheck
 		o.project.PublicBuilds = pointer.ToBool(cmdutil.GetFlagBool(cmd, "public_builds"))
 	}
 	if cmd.Flag("only-allow-merge-if-pipeline-succeeds").Changed {

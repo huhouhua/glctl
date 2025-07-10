@@ -22,7 +22,7 @@ import (
 
 	"github.com/AlekSi/pointer"
 	"github.com/spf13/cobra"
-	"github.com/xanzy/go-gitlab"
+	gitlab "gitlab.com/gitlab-org/api/client-go"
 
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
@@ -50,25 +50,26 @@ func NewCreateOptions(ioStreams genericiooptions.IOStreams) *CreateOptions {
 	return &CreateOptions{
 		ioStreams: ioStreams,
 		project: &gitlab.CreateProjectOptions{
-			Description:                               pointer.ToString(""),
-			LFSEnabled:                                pointer.ToBool(false),
-			RequestAccessEnabled:                      pointer.ToBool(false),
-			ResolveOutdatedDiffDiscussions:            pointer.ToBool(false),
-			SharedRunnersEnabled:                      pointer.ToBool(false),
+			Description:                    pointer.ToString(""),
+			LFSEnabled:                     pointer.ToBool(false),
+			RequestAccessEnabled:           pointer.ToBool(false),
+			ResolveOutdatedDiffDiscussions: pointer.ToBool(false),
+			SharedRunnersEnabled:           pointer.ToBool(false),
+			// staticcheck:ignore SA1019
 			PublicBuilds:                              pointer.ToBool(false),
 			OnlyAllowMergeIfPipelineSucceeds:          pointer.ToBool(false),
 			OnlyAllowMergeIfAllDiscussionsAreResolved: pointer.ToBool(false),
-			Visibility:                                pointer.To(gitlab.PrivateVisibility),
-			IssuesAccessLevel:                         pointer.To(gitlab.EnabledAccessControl),
-			MergeRequestsAccessLevel:                  pointer.To(gitlab.EnabledAccessControl),
-			BuildsAccessLevel:                         pointer.To(gitlab.EnabledAccessControl),
-			WikiAccessLevel:                           pointer.To(gitlab.EnabledAccessControl),
-			SnippetsAccessLevel:                       pointer.To(gitlab.EnabledAccessControl),
-			ContainerRegistryAccessLevel:              pointer.To(gitlab.DisabledAccessControl),
-			MergeMethod:                               pointer.To(gitlab.NoFastForwardMerge),
-			Topics:                                    pointer.To([]string{}),
-			PrintingMergeRequestLinkEnabled:           pointer.ToBool(false),
-			CIConfigPath:                              pointer.ToString(""),
+			Visibility:                      pointer.To(gitlab.PrivateVisibility),
+			IssuesAccessLevel:               pointer.To(gitlab.EnabledAccessControl),
+			MergeRequestsAccessLevel:        pointer.To(gitlab.EnabledAccessControl),
+			BuildsAccessLevel:               pointer.To(gitlab.EnabledAccessControl),
+			WikiAccessLevel:                 pointer.To(gitlab.EnabledAccessControl),
+			SnippetsAccessLevel:             pointer.To(gitlab.EnabledAccessControl),
+			ContainerRegistryAccessLevel:    pointer.To(gitlab.DisabledAccessControl),
+			MergeMethod:                     pointer.To(gitlab.NoFastForwardMerge),
+			Topics:                          pointer.To([]string{}),
+			PrintingMergeRequestLinkEnabled: pointer.ToBool(false),
+			CIConfigPath:                    pointer.ToString(""),
 		},
 		Out: "simple",
 	}
@@ -154,7 +155,10 @@ func (o *CreateOptions) AddFlags(cmd *cobra.Command) {
 	)
 	f.BoolVar(o.project.SharedRunnersEnabled, "shared-runners-enabled", *o.project.SharedRunnersEnabled,
 		"Enable shared runners for this project")
-	f.BoolVar(o.project.PublicBuilds, "public_builds", *o.project.PublicBuilds,
+	//nolint:staticcheck
+	f.BoolVar(o.project.PublicBuilds,
+		"public_builds",
+		*o.project.PublicBuilds,
 		"enable public builds")
 	f.BoolVar(
 		o.project.OnlyAllowMergeIfPipelineSucceeds,

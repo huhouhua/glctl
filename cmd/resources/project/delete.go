@@ -18,11 +18,13 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/AlekSi/pointer"
+
 	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 	"github.com/huhouhua/glctl/pkg/util/templates"
 
 	"github.com/spf13/cobra"
-	"github.com/xanzy/go-gitlab"
+	gitlab "gitlab.com/gitlab-org/api/client-go"
 
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
@@ -96,7 +98,10 @@ func (o *DeleteOptions) Run(args []string) error {
 	if err != nil {
 		return err
 	}
-	_, err = o.gitlabClient.Projects.DeleteProject(projectInfo.ID)
+
+	_, err = o.gitlabClient.Projects.DeleteProject(projectInfo.ID, &gitlab.DeleteProjectOptions{
+		FullPath: pointer.ToString(projectInfo.Namespace.FullPath),
+	})
 	if err != nil {
 		return err
 	}

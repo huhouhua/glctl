@@ -22,7 +22,7 @@ import (
 	"strings"
 
 	"github.com/olekukonko/tablewriter"
-	gitlab "github.com/xanzy/go-gitlab"
+	gitlab "gitlab.com/gitlab-org/api/client-go"
 	"gopkg.in/yaml.v3"
 )
 
@@ -50,7 +50,7 @@ func PrintProjectsOut(format string, w io.Writer, projects ...*gitlab.Project) {
 				v.PathWithNamespace,
 				v.HTTPURLToRepo,
 				strconv.Itoa(v.OpenIssuesCount),
-				strings.Join(v.TagList, ","),
+				strings.Join(v.Topics, ","),
 			})
 		}
 		printTable(header, w, rows)

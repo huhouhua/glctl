@@ -18,7 +18,7 @@ import (
 	"github.com/AlekSi/pointer"
 	"github.com/golang/glog"
 	"github.com/spf13/cobra"
-	gitlab "github.com/xanzy/go-gitlab"
+	gitlab "gitlab.com/gitlab-org/api/client-go"
 )
 
 const (

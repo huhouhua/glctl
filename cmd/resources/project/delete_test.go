@@ -28,7 +28,7 @@ import (
 	"golang.org/x/exp/rand"
 
 	"github.com/spf13/cobra"
-	"github.com/xanzy/go-gitlab"
+	gitlab "gitlab.com/gitlab-org/api/client-go"
 
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 
@@ -60,7 +60,7 @@ func TestDeleteProject(t *testing.T) {
 				return err
 			}
 			defer func() {
-				_, _ = opt.gitlabClient.Projects.DeleteProject(args[0])
+				_, _ = opt.gitlabClient.Projects.DeleteProject(args[0], &gitlab.DeleteProjectOptions{})
 			}()
 			out := cmdtesting.RunForStdout(opt.ioStreams, func() {
 				err = opt.Run(args)
@@ -89,7 +89,7 @@ func TestDeleteProject(t *testing.T) {
 		},
 		run: func(opt *DeleteOptions, args []string) error {
 			defer func() {
-				_, _ = opt.gitlabClient.Projects.DeleteProject(args[0])
+				_, _ = opt.gitlabClient.Projects.DeleteProject(args[0], &gitlab.DeleteProjectOptions{})
 			}()
 			var err error
 			out := cmdtesting.RunForStdout(opt.ioStreams, func() {
@@ -114,9 +114,9 @@ func TestDeleteProject(t *testing.T) {
 		},
 		run: func(opt *DeleteOptions, args []string) error {
 			err := opt.Run(args)
-			var repoErr *gitlab.ErrorResponse
+			var repoErr error
 			assert.ErrorAs(t, err, &repoErr)
-			if assert.Equal(t, repoErr.Message, "{message: 404 Project Not Found}") {
+			if assert.Equal(t, repoErr.Error(), "404 Not Found") {
 				return nil
 			}
 			return err
