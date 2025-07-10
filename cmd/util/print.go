@@ -17,6 +17,8 @@ package util
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/olekukonko/tablewriter/renderer"
+	"github.com/olekukonko/tablewriter/tw"
 	"io"
 	"strconv"
 	"strings"
@@ -149,19 +151,64 @@ func printTable(header []string, w io.Writer, rows [][]string) {
 	if len(header) > 5 {
 		panic("maximum allowed length of a table header is only 5.")
 	}
-	table := tablewriter.NewWriter(w)
-	table.SetHeader(header)
-	table.SetAutoWrapText(false)
-	table.SetAutoFormatHeaders(true)
-	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
-	table.SetAlignment(tablewriter.ALIGN_LEFT)
-	table.SetCenterSeparator("")
-	table.SetColumnSeparator("")
-	table.SetRowSeparator("")
-	table.SetHeaderLine(false)
-	table.SetBorder(false)
-	table.SetNoWhiteSpace(true)
-	table.SetTablePadding("\t") // pad with tabs
-	table.AppendBulk(rows)
-	table.Render()
+
+	symbols := tw.NewSymbolCustom("Nature").
+		WithRow("").
+		WithColumn("").
+		WithCenter("")
+	table := tablewriter.NewTable(w, tablewriter.WithRenderer(renderer.NewBlueprint(tw.Rendition{Symbols: symbols})))
+	table.Header(header)
+
+	table.Options(tablewriter.WithRendition(tw.Rendition{
+		Borders: tw.BorderNone,
+	}))
+	//table.Options(tablewriter.WithRowAutoWrap())
+	//table.Options(tablewriter.WithHeaderAutoFormat(tw.Success))
+	//table.Options(tablewriter.WithHeaderAutoWrap(tw.WrapNormal))
+	//table.Options(tablewriter.WithHeaderAlignment(tw.AlignLeft))
+	//al := tw.Alignment{}
+	//al.Add(tw.AlignLeft)
+	//table.Options(tablewriter.WithAlignment(al))
+	//table.Options(tablewriter.WithTrimSpace(tw.Success))
+	table.Options(tablewriter.WithPadding(tw.PaddingNone))
+	_ = table.Bulk(rows)
+	//table.Render()
+
+	//table := tablewriter.NewTable(w,
+	//	tablewriter.WithRenderer(renderer.NewBlueprint(tw.Rendition{
+	//		Borders:  tw.BorderNone,
+	//		Settings: tw.Settings{Separators: tw.Separators{BetweenColumns: tw.On}},
+	//	})))
+	//
+	//symbols := tw.NewSymbolCustom("Nature").with
+	//table := tablewriter.NewWriter(w)
+	//table.Header(header)
+	//table.Options(tablewriter.WithRendition(tw.Rendition{
+	//	Borders: tw.BorderNone,
+	//}))
+	//table.Options(tablewriter.WithRowAutoWrap())
+	//table.Options(tablewriter.WithHeaderAutoFormat(tw.Success))
+	//table.Options(tablewriter.WithHeaderAutoWrap(tw.WrapNormal))
+	//table.Options(tablewriter.WithHeaderAlignment(tw.AlignLeft))
+	//al := tw.Alignment{}
+	//al.Add(tw.AlignLeft)
+	//table.Options(tablewriter.WithAlignment(al))
+	//table.Options(tablewriter.WithTrimSpace(tw.Success))
+	//table.Options(tablewriter.WithPadding(tw.PaddingNone))
+	//_ = table.Bulk(rows)
+
+	//table.SetHeader(header)
+	//table.SetAutoWrapText(false)
+	//table.SetAutoFormatHeaders(true)
+	//table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
+	//table.SetAlignment(tablewriter.ALIGN_LEFT)
+	//table.SetCenterSeparator("")
+	//table.SetColumnSeparator("")
+	//table.SetRowSeparator("")
+	//table.SetHeaderLine(false)
+	//table.SetBorder(false)
+	//table.SetNoWhiteSpace(true)
+	//table.SetTablePadding("\t") // pad with tabs
+	//table.AppendBulk(rows)
+	_ = table.Render()
 }
