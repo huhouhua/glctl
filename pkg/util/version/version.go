@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package version supplies version information collected at build time to
-// apimachinery components.
+// Package version supplies version information collected at build time
+
 package version
 
 import (
@@ -54,8 +54,6 @@ func (info Info) ToJSON() string {
 // Get returns the overall codebase version. It's for detecting
 // what code a binary was built from.
 func Get() Info {
-	// These variables typically come from -ldflags settings and in
-	// their absence fallback to the settings in pkg/version/base.go
 	return Info{
 		GitVersion:   GitVersion,
 		GitCommit:    GitCommit,

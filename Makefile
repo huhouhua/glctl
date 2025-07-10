@@ -64,11 +64,13 @@ include scripts/Makefile.tools.mk
 # ==============================================================================
 # Targets
 
+## verify-copyright: Verify the boilerplate headers for all files.
 .PHONY: verify-copyright
 verify-copyright: tools.verify.licctl
 	@echo "===========> Verifying the boilerplate headers for all files"
 	@licctl --check -f $(ROOT_DIR)/scripts/boilerplate.txt $(ROOT_DIR) --skip-dirs=.idea,_output,.github
 
+## add-copyright: Ensures source code files have copyright license headers.
 .PHONY: add-copyright
 add-copyright: tools.verify.licctl
 	@echo $(ROOT_DIR)
@@ -98,13 +100,14 @@ test: tools.verify.go-junit-report run-gitlab
 
 	@sed -i '/mock_.*.go/d' $(OUTPUT_DIR)/coverage.out # remove mock_.*.go files from test coverage
 	@$(GO) tool cover -html=$(OUTPUT_DIR)/coverage.out -o $(OUTPUT_DIR)/coverage.html
+
 ## cover: Run unit test and get test coverage.
 .PHONY: cover
 cover: test
 	@$(GO) tool cover -func=$(OUTPUT_DIR)/coverage.out | \
 		awk -v target=$(COVERAGE) -f $(ROOT_DIR)/scripts/coverage.awk
 
-## Generate releases for unix systems
+## build: Build the Go binary for all OS/architecture combinations
 .PHONY: build
 build: clean tidy
 	@for arch in $(architecture);\
@@ -116,6 +119,7 @@ build: clean tidy
 		done \
 	done
 
+## image.build.%: Build and push a multi-arch Docker image for the specified platform (e.g., image.build.linux_amd64)
 .PHONY: image.build.%
 image.build.%: build
 	$(eval PLATFORM := $(word 1,$(subst ., ,$*)))
@@ -125,54 +129,58 @@ image.build.%: build
 	@${DOCKER} buildx build --push -t $(TAG) --build-arg TARGETARCH=${OS}-${ARCH} --build-arg RELEASE=${DOCKER_BUILD_ARG_RELEASE} \
  		--platform $(DOCKER_MULTI_ARCH) -f $(ROOT_DIR)/$(DOCKER_FILE)  $(ROOT_DIR)
 
+## image.push: Push the Docker image to the registry
 .PHONY: image.push
 image.push:
 	@echo "===========> Pushing image $(TAG)"
 	@${DOCKER} push $(TAG)
 
+## clean: Remove building artifacts
 .PHONY: clean
-clean: ## Remove building artifacts
+clean:
 	@echo "===========> Cleaning all build output"
 	rm -rf $(OUTPUT_DIR)/*
 
-## tools: install dependent tools.
+## tools: Install dependent tools.
 .PHONY: tools
 tools:
 	@$(MAKE) tools.install
 
+## check-updates: Check for outdated direct Go module dependencies
 .PHONY: check-updates
 check-updates: tools.verify.go-mod-outdated
 	@$(GO) list -u -m -json all | go-mod-outdated -update -direct
 
+## tidy: Clean up go.mod and go.sum by removing unused dependencies and adding missing ones
 .PHONY: tidy
 tidy:
 	@$(GO) mod tidy
 
-## testdata: run gitlab service and test data for e2e test
+## testdata: Run gitlab service and test data for e2e test
 .PHONY: testdata
 testdata: run-gitlab
 	@echo -e "\n\033[36mAdding test data for gitlab conformance tests...\033[0m"
 	$(ROOT_DIR)/testdata/seeder.sh
 
-## run-gitlab-e2e: run gitlab service
+## run-gitlab-e2e: Run gitlab service
 .PHONY: run-gitlab
 run-gitlab:
 	@echo -e "\n\033[36mRunning gitlab conformance tests...\033[0m"
 	@$(MAKE) gitlab.install
 
-## kill-gitlab: kill gitlab service
+## kill-gitlab: Kill gitlab service
 .PHONY: kill-gitlab
 kill-gitlab:
 	@echo -e "\n\033[36mKill gitlab conformance tests...\033[0m"
 	@$(MAKE) gitlab.uninstall
 
-## start-gitlab: start run gitlab service
+## start-gitlab: Start gitlab service
 .PHONY: start-gitlab
 start-gitlab:
 	@echo -e "\n\033[36mStart gitlab conformance tests...\033[0m"
 	@$(MAKE) gitlab.start
 
-## stop-gitlab: stop gitlab service
+## stop-gitlab: Stop gitlab service
 .PHONY: stop-gitlab
 stop-gitlab:
 	@echo -e "\n\033[36mStop gitlab conformance tests...\033[0m"
