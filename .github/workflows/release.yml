@@ -83,6 +83,8 @@ jobs:
     name: Release image for DockerHub
     runs-on: ${{ matrix.os }}
     needs: [releases-linux-binaries]
+    environment:
+      name: glctl-ci
     env:
       DOCKER_BUILD_ARG_RELEASE: ${{ github.ref_name }}
       REGISTRY_PREFIX: huhouhua
