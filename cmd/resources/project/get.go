@@ -23,7 +23,7 @@ import (
 
 	"github.com/AlekSi/pointer"
 	"github.com/spf13/cobra"
-	"github.com/xanzy/go-gitlab"
+	gitlab "gitlab.com/gitlab-org/api/client-go"
 
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 	"github.com/huhouhua/glctl/cmd/validate"
@@ -47,7 +47,7 @@ var (
 glctl get projects
 
 # get all projects from a group
-glctl get projects --all-groups=Group1`)
+glctl get projects --all-groups=true`)
 )
 
 func NewListOptions(ioStreams genericiooptions.IOStreams) *ListOptions {

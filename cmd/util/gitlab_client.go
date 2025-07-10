@@ -18,7 +18,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/xanzy/go-gitlab"
+	"golang.org/x/oauth2"
+
+	"github.com/huhouhua/glctl/cmd/util/auth"
+
+	gitlab "gitlab.com/gitlab-org/api/client-go"
 
 	"github.com/huhouhua/glctl/cmd/types"
 )
@@ -26,21 +30,19 @@ import (
 func NewForConfig(config *types.Config) (*gitlab.Client, error) {
 	authorization := newGitLabAuthorization(config.OathInfo, config.OathEnv)
 	switch {
-	case authorization.HasAuth():
-		return gitlab.NewOAuthClient(
-			*authorization.OathInfo.AccessToken,
-			gitlab.WithBaseURL(withApiUrl(*authorization.OathInfo.HostUrl)),
-		)
 	case authorization.HasPasswordAuth():
-		return gitlab.NewBasicAuthClient(
-			*authorization.OathEnv.UserName,
-			*authorization.OathEnv.Password,
-			gitlab.WithBaseURL(withApiUrl(*authorization.OathEnv.Url)),
-		)
+		as := auth.NewPasswordCredentialsAuthSource(*authorization.OathEnv.UserName, *authorization.OathEnv.Password)
+		return gitlab.NewAuthSourceClient(as, gitlab.WithBaseURL(withApiUrl(*authorization.OathEnv.Url)))
 	case authorization.HasBasicAuth():
 		return gitlab.NewClient(*authorization.OathEnv.PrivateToken, gitlab.WithBaseURL(*authorization.OathEnv.Url))
 	case authorization.HasOathAuth():
-		return gitlab.NewOAuthClient(*authorization.OathEnv.OauthToken, gitlab.WithBaseURL(*authorization.OathEnv.Url))
+		return gitlab.NewAuthSourceClient(gitlab.OAuthTokenSource{TokenSource: oauth2.StaticTokenSource(
+			&oauth2.Token{AccessToken: *authorization.OathEnv.OauthToken},
+		)}, gitlab.WithBaseURL(*authorization.OathEnv.Url))
+	case authorization.HasAuth():
+		return gitlab.NewAuthSourceClient(gitlab.OAuthTokenSource{
+			TokenSource: oauth2.StaticTokenSource(&oauth2.Token{AccessToken: *authorization.OathInfo.AccessToken}),
+		}, gitlab.WithBaseURL(withApiUrl(*authorization.OathInfo.HostUrl)))
 	default:
 		return nil, fmt.Errorf("no client was created. "+
 			"gitlab configuration was not set properly. \n %s", "")

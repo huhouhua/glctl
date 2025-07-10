@@ -27,7 +27,7 @@ import (
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
 
 	"github.com/spf13/cobra"
-	"github.com/xanzy/go-gitlab"
+	gitlab "gitlab.com/gitlab-org/api/client-go"
 
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 )
@@ -81,9 +81,9 @@ func TestDeleteBranch(t *testing.T) {
 		},
 		run: func(opt *DeleteOptions, args []string) error {
 			err := opt.Run(args)
-			var repoErr *gitlab.ErrorResponse
+			var repoErr error
 			assert.ErrorAs(t, err, &repoErr)
-			if assert.Equal(t, repoErr.Message, "{message: 404 Branch Not Found}") {
+			if assert.Equal(t, repoErr.Error(), "404 Not Found") {
 				return nil
 			}
 			return err
@@ -97,9 +97,9 @@ func TestDeleteBranch(t *testing.T) {
 		},
 		run: func(opt *DeleteOptions, args []string) error {
 			err := opt.Run(args)
-			var repoErr *gitlab.ErrorResponse
+			var repoErr error
 			assert.ErrorAs(t, err, &repoErr)
-			if assert.Equal(t, repoErr.Message, "{message: 404 Project Not Found}") {
+			if assert.Equal(t, repoErr.Error(), "404 Not Found") {
 				return nil
 			}
 			return err

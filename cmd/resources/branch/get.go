@@ -22,7 +22,7 @@ import (
 	"github.com/huhouhua/glctl/pkg/util/templates"
 
 	"github.com/spf13/cobra"
-	"github.com/xanzy/go-gitlab"
+	gitlab "gitlab.com/gitlab-org/api/client-go"
 
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
@@ -41,13 +41,13 @@ var (
 # get branch from project
 
 # get branch with project name
-glctl get branchs group1/devops
+glctl get branch group1/devops
 
 # get branch with project id
-glctl get branchs 100
+glctl get branch 100
 
 # get all branch
-glctl get branchs 100 -A
+glctl get branch 100 -A
 `)
 )
 

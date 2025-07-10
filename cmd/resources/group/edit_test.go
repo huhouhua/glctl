@@ -24,7 +24,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/xanzy/go-gitlab"
+	gitlab "gitlab.com/gitlab-org/api/client-go"
 
 	cmdtesting "github.com/huhouhua/glctl/cmd/testing"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
@@ -141,7 +141,7 @@ func TestEditWithComplete(t *testing.T) {
 			},
 			handler: func(err error) {
 				require.NotNil(t, err)
-				assert.Contains(t, err.Error(), "{message: 404 Group Not Found}")
+				assert.Contains(t, err.Error(), "404 Not Found")
 			},
 			wantError: nil,
 		}}

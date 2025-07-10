@@ -21,7 +21,7 @@ import (
 	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/xanzy/go-gitlab"
+	gitlab "gitlab.com/gitlab-org/api/client-go"
 
 	"github.com/AlekSi/pointer"
 	"github.com/spf13/cobra"
@@ -80,8 +80,8 @@ func TestEditBranch(t *testing.T) {
 		optionsFunc: func(opt *EditOptions) {
 			opt.project = "Group1/Project2"
 			opt.protect = true
-			opt.protectBranch.DevelopersCanMerge = pointer.ToBool(true)
-			opt.protectBranch.DevelopersCanPush = pointer.ToBool(true)
+			opt.developersCanMerge = true
+			opt.developersCanPush = true
 		},
 		run: func(opt *EditOptions, args []string) error {
 			defer func() {

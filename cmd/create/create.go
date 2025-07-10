@@ -15,8 +15,9 @@
 package create
 
 import (
-	"github.com/huhouhua/glctl/pkg/util/templates"
 	"github.com/spf13/cobra"
+
+	"github.com/huhouhua/glctl/pkg/util/templates"
 
 	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 

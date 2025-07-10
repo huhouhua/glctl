@@ -22,7 +22,7 @@ import (
 
 	"github.com/AlekSi/pointer"
 	"github.com/spf13/cobra"
-	"github.com/xanzy/go-gitlab"
+	gitlab "gitlab.com/gitlab-org/api/client-go"
 
 	"github.com/huhouhua/glctl/cmd/require"
 	cmdutil "github.com/huhouhua/glctl/cmd/util"
@@ -30,14 +30,15 @@ import (
 )
 
 type EditOptions struct {
-	gitlabClient      *gitlab.Client
-	protectBranch     *gitlab.ProtectBranchOptions
-	protectRepository *gitlab.ProtectRepositoryBranchesOptions
-	project           string
-	protect           bool
-	Unprotect         bool
-	Out               string
-	ioStreams         genericiooptions.IOStreams
+	gitlabClient       *gitlab.Client
+	protectRepository  *gitlab.ProtectRepositoryBranchesOptions
+	developersCanPush  bool
+	developersCanMerge bool
+	project            string
+	protect            bool
+	Unprotect          bool
+	Out                string
+	ioStreams          genericiooptions.IOStreams
 }
 
 var (
@@ -50,11 +51,7 @@ glctl edit branch master -p test/glctl --unprotect`)
 
 func NewEditOptions(ioStreams genericiooptions.IOStreams) *EditOptions {
 	return &EditOptions{
-		ioStreams: ioStreams,
-		protectBranch: &gitlab.ProtectBranchOptions{
-			DevelopersCanPush:  pointer.ToBool(false),
-			DevelopersCanMerge: pointer.ToBool(false),
-		},
+		ioStreams:         ioStreams,
 		protectRepository: &gitlab.ProtectRepositoryBranchesOptions{},
 		Out:               "simple",
 	}
@@ -91,9 +88,9 @@ func (o *EditOptions) AddFlags(cmd *cobra.Command) {
 		"Remove protection of a branch")
 	f.BoolVar(&o.protect, "protect",
 		o.protect, "Protect a branch")
-	f.BoolVar(o.protectBranch.DevelopersCanPush, "dev-can-push", *o.protectBranch.DevelopersCanPush,
+	f.BoolVar(&o.developersCanPush, "dev-can-push", o.developersCanPush,
 		"Used with '--protect'. Flag if developers can push to the branch")
-	f.BoolVar(o.protectBranch.DevelopersCanMerge, "dev-can-merge", *o.protectBranch.DevelopersCanMerge,
+	f.BoolVar(&o.developersCanMerge, "dev-can-merge", o.developersCanMerge,
 		"Used with '--protect'. Flag if developers can merge to the branch")
 }
 
@@ -104,10 +101,10 @@ func (o *EditOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []str
 	if len(args) > 0 {
 		o.protectRepository.Name = pointer.ToString(args[0])
 	}
-	if *o.protectBranch.DevelopersCanMerge {
+	if o.developersCanMerge {
 		o.protectRepository.MergeAccessLevel = pointer.To(gitlab.DeveloperPermissions)
 	}
-	if *o.protectBranch.DevelopersCanPush {
+	if o.developersCanPush {
 		o.protectRepository.PushAccessLevel = pointer.To(gitlab.DeveloperPermissions)
 	}
 	return err
@@ -116,11 +113,11 @@ func (o *EditOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []str
 // Validate makes sure there is no discrepency in command options.
 func (o *EditOptions) Validate(cmd *cobra.Command, args []string) error {
 	if o.protect {
-		if !*o.protectBranch.DevelopersCanMerge {
+		if !o.developersCanMerge {
 			return fmt.Errorf("'--%s' flag can only be used with '--%s' flag",
 				"dev-can-push", "protect")
 		}
-		if !*o.protectBranch.DevelopersCanPush {
+		if !o.developersCanPush {
 			return fmt.Errorf("'--%s' flag can only be used with '--%s' flag",
 				"dev-can-merge", "protect")
 		}

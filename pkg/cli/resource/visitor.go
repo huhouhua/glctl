@@ -15,7 +15,7 @@
 package resource
 
 import (
-	"github.com/xanzy/go-gitlab"
+	gitlab "gitlab.com/gitlab-org/api/client-go"
 
 	"github.com/huhouhua/glctl/pkg/runtime"
 )
