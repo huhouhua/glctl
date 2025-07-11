@@ -168,8 +168,7 @@ func (o *ListOptions) Run(args []string) error {
 		if err != nil {
 			return err
 		}
-		cmdutil.PrintProjectsOut(o.Out, o.ioStreams.Out, project)
-		return nil
+		return cmdutil.PrintProjectsOut(o.Out, o.ioStreams.Out, project)
 	}
 	var projects []*gitlab.Project
 	var err error
@@ -197,6 +196,5 @@ func (o *ListOptions) Run(args []string) error {
 	if err != nil {
 		return nil
 	}
-	cmdutil.PrintProjectsOut(o.Out, o.ioStreams.Out, projects...)
-	return nil
+	return cmdutil.PrintProjectsOut(o.Out, o.ioStreams.Out, projects...)
 }
