@@ -157,6 +157,5 @@ func (o *EditOptions) Run(args []string) error {
 	if err != nil {
 		return err
 	}
-	cmdutil.PrintProjectsOut(o.Out, o.ioStreams.Out, project)
-	return nil
+	return cmdutil.PrintProjectsOut(o.Out, o.ioStreams.Out, project)
 }
