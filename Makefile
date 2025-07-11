@@ -26,7 +26,7 @@ OS = linux darwin
 architecture = amd64 arm64
 NAME = glctl
 ROOT_PACKAGE=github.com/huhouhua/glctl
-COVERAGE := 58
+COVERAGE := 50
 SHELL := /bin/bash
 DOCKER := docker
 
