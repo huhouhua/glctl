@@ -5,7 +5,7 @@ on:
     types: [created]
 
 env:
-  GO_VERSION: '1.22.4'
+  GO_VERSION: '1.25.0'
   CGO_ENABLED: 0
   DOCKER_FILE: Dockerfile.release
 
@@ -50,7 +50,7 @@ jobs:
       REGISTRY_PREFIX: ghcr.io
     strategy:
       matrix:
-        go_version: ['1.22']
+        go_version: ['1.25']
         os: [ubuntu-latest]
     steps:
       - name: Set up Go ${{ matrix.go_version }}
@@ -91,7 +91,7 @@ jobs:
       IMAGE: glctl
     strategy:
       matrix:
-        go_version: ['1.22']
+        go_version: ['1.25']
         os: [ubuntu-latest]
     steps:
       - name: Set up Go ${{ matrix.go_version }}
