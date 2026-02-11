@@ -154,8 +154,8 @@ func (o *ListOptions) Run(args []string) error {
 	}
 	var list []*gitlab.TreeNode
 	if o.All {
-		o.file.ListOptions.PerPage = 100
-		o.file.ListOptions.Page = 1
+		o.file.PerPage = 100
+		o.file.Page = 1
 	}
 	for {
 		tree, _, err := o.gitlabClient.Repositories.ListTree(o.project, o.file)
@@ -166,7 +166,7 @@ func (o *ListOptions) Run(args []string) error {
 		if cap(tree) == 0 || !o.All {
 			break
 		}
-		o.file.ListOptions.Page++
+		o.file.Page++
 	}
 	return cmdutil.PrintFilesOut(o.Out, o.ioStreams.Out, list...)
 }

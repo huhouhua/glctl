@@ -143,7 +143,7 @@ func (o *Options) Run(args []string) error {
 		return err
 	}
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("Login failed!\n%s", cfgMap["error_description"])
+		return fmt.Errorf("login failed!\n%s", cfgMap["error_description"])
 	}
 	home, err := homedir.Dir()
 	if err != nil {

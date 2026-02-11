@@ -64,9 +64,9 @@ func ValidateFlagStringValue(stringSlice []string,
 			return nil
 		}
 	}
-	return fmt.Errorf("'%s' is not a recognized value of '%s' flag. "+
-		"Please choose from: [%s]\n",
-		fValue, fName, strings.Join(stringSlice, ", "))
+	return fmt.Errorf("'%s' is not a recognized value of '%s' flag; choose from [%s]",
+		fValue, fName, strings.Join(stringSlice, ", "),
+	)
 }
 
 func VerifyMarkFlagRequired(cmd *cobra.Command, fName string) {

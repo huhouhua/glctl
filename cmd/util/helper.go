@@ -15,6 +15,7 @@
 package util
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net/url"
@@ -55,50 +56,46 @@ var ErrExit = fmt.Errorf("exit")
 // CheckErr prints a user-friendly error to STDERR and exits with a non-zero
 // exit code. Unrecognized errors will be printed with an "error: " prefix.
 //
-// This method is generic to the command in use and may be used by non-IAM
+// This method is generic to the command in use and may be used by non-GLCTL
 // commands.
 func CheckErr(err error) {
 	checkErr(err, fatalErrHandler)
 }
 
 // checkErr formats a given error as a string and calls the passed handleErr
-// func with that string and an iamctl exit code.
+// func with that string and an glctl exit code.
 func checkErr(err error, handleErr func(string, int)) {
-
 	if err == nil {
 		return
 	}
 
-	switch {
-	case err == ErrExit:
+	if errors.Is(err, ErrExit) {
 		handleErr("", DefaultErrorExitCode)
-	default:
-		//nolint:gocritic
-		switch errType := err.(type) {
-		default: // for any other error type
-			msg, ok := StandardErrorMessage(errType)
-			if !ok {
-				msg = errType.Error()
-				if !strings.HasPrefix(msg, "error: ") {
-					msg = fmt.Sprintf("error: %s", msg)
-				}
-			}
-			handleErr(msg, DefaultErrorExitCode)
+		return
+	}
+	msg, ok := StandardErrorMessage(err)
+	if !ok {
+		msg = err.Error()
+		if !strings.HasPrefix(msg, "error: ") {
+			msg = fmt.Sprintf("error: %s", msg)
 		}
 	}
+
+	handleErr(msg, DefaultErrorExitCode)
 }
 
 // StandardErrorMessage translates common errors into a human readable message, or returns
 // false if the error is not one of the recognized types. It may also log extended information to klog.
 //
-// This method is generic to the command in use and may be used by non-IAM
+// This method is generic to the command in use and may be used by non-GLCTL
 // commands.
 func StandardErrorMessage(err error) (string, bool) {
 	if debugErr, ok := err.(debugError); ok {
 		f, a := debugErr.DebugError()
 		logrus.Infof(f, a)
 	}
-	if t, ok := err.(*url.Error); ok {
+	var t *url.Error
+	if errors.As(err, &t) {
 		logrus.Infof("Connection error: %s %s: %v", t.Op, t.URL, t.Err)
 		if strings.Contains(t.Err.Error(), "connection refused") {
 			host := t.URL
@@ -114,7 +111,6 @@ func StandardErrorMessage(err error) (string, bool) {
 		return fmt.Sprintf("Unable to connect to the server: %v", t.Err), true
 	}
 	return "", false
-
 }
 func Error(w io.Writer, msg interface{}) {
 	fmt.Fprintln(w, "Error:", msg)

@@ -71,9 +71,9 @@ func (t *templater) FlagErrorFunc(exposedFlags ...string) func(*cobra.Command, e
 		c.SilenceUsage = true
 		switch c.CalledAs() {
 		case "options":
-			return fmt.Errorf("%s\nrun '%s' without flags", err, c.CommandPath())
+			return fmt.Errorf("%w\nrun '%s' without flags", err, c.CommandPath())
 		default:
-			return fmt.Errorf("%s\nsee '%s --help' for usage", err, c.CommandPath())
+			return fmt.Errorf("%w\nsee '%s --help' for usage", err, c.CommandPath())
 		}
 	}
 }

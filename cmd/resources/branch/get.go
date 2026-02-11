@@ -118,8 +118,8 @@ func (o *ListOptions) Validate(cmd *cobra.Command, args []string) error {
 func (o *ListOptions) Run(args []string) error {
 	var branches []*gitlab.Branch
 	if o.All {
-		o.branch.ListOptions.PerPage = 100
-		o.branch.ListOptions.Page = 1
+		o.branch.PerPage = 100
+		o.branch.Page = 1
 	}
 	for {
 		list, _, err := o.gitlabClient.Branches.ListBranches(args[0], o.branch)

@@ -23,12 +23,13 @@ all: tidy add-copyright format lint testdata cover build
 
 GO := go
 OS = linux darwin
-architecture = amd64 arm64
+ARCHITECTURE = amd64 arm64
 NAME = glctl
 ROOT_PACKAGE=github.com/huhouhua/glctl
 COVERAGE := 30
 SHELL := /bin/bash
 DOCKER := docker
+GOLANG_CI_LINT_VERSION ?= 2.9.0
 
 # docker command settings
 REGISTRY_PREFIX ?= "ghcr.io"
@@ -53,6 +54,12 @@ OUTPUT_DIR := $(ROOT_DIR)/_output
 $(shell mkdir -p $(OUTPUT_DIR))
 endif
 
+ifeq ($(origin BIN_DIR),undefined)
+BIN_DIR := $(ROOT_DIR)/bin
+$(shell mkdir -p $(BIN_DIR))
+endif
+
+
 GO_LDFLAGS := $(shell $(GO) run $(ROOT_DIR)/scripts/gen-ldflags.go)
 GO_BUILD_FLAGS = --ldflags "$(GO_LDFLAGS)"
 
@@ -71,13 +78,13 @@ include scripts/Makefile.tools.mk
 .PHONY: verify-copyright
 verify-copyright: tools.verify.licctl
 	@echo "===========> Verifying the boilerplate headers for all files"
-	@licctl --check -f $(ROOT_DIR)/scripts/boilerplate.txt $(ROOT_DIR) --skip-dirs=.idea,_output,.github
+	@licctl --check -f $(ROOT_DIR)/scripts/boilerplate.txt $(ROOT_DIR) --skip-dirs=.idea,_output,bin,.github
 
 ## add-copyright: Ensures source code files have copyright license headers.
 .PHONY: add-copyright
 add-copyright: tools.verify.licctl
 	@echo $(ROOT_DIR)
-	@licctl -v -f $(ROOT_DIR)/scripts/boilerplate.txt $(ROOT_DIR) --skip-dirs=.idea,_output,.github
+	@licctl -v -f $(ROOT_DIR)/scripts/boilerplate.txt $(ROOT_DIR) --skip-dirs=.idea,_output,.github,bin
 
 ## format: Gofmt (reformat) package sources (exclude vendor dir if existed).
 .PHONY: format
@@ -90,9 +97,9 @@ format: tools.verify.golines tools.verify.goimports
 
 ## lint: Check syntax and styling of go sources.
 .PHONY: lint
-lint: tools.verify.golangci-lint
+lint: tools.verify.local.golangci-lint
 	@echo "===========> Run golangci to lint source codes"
-	@golangci-lint run -c $(ROOT_DIR)/.golangci.yaml $(ROOT_DIR)/...
+	@$(BIN_DIR)/golangci-lint run -c $(ROOT_DIR)/.golangci.yaml $(ROOT_DIR)/...
 
 ## test: Run unit test.
 .PHONY: test
@@ -110,10 +117,10 @@ cover: test
 	@$(GO) tool cover -func=$(OUTPUT_DIR)/coverage.out | \
 		awk -v target=$(COVERAGE) -f $(ROOT_DIR)/scripts/coverage.awk
 
-## build: Build the Go binary for all OS/architecture combinations
+## build: Build the Go binary for all OS/ARCHITECTURE combinations
 .PHONY: build
 build: clean tidy
-	@for arch in $(architecture);\
+	@for arch in $(ARCHITECTURE);\
 	do \
 		for os in ${OS};\
 		do \

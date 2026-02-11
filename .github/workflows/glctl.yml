@@ -7,9 +7,8 @@ on:
     branches: ["*"]
 
 env:
-  GO_VERSION: '1.25'
+  GO_VERSION: '1.26'
   REGISTRY_PREFIX: ghcr.io
-  DOCKER_COMPOSE_VERSION: v2.21.0
   DOCKER_FILE: Dockerfile.dev
 
 permissions:
@@ -108,11 +107,10 @@ jobs:
 
       - run: git stash # restore patch
 
-      - name: Install docker-compose
-        run: |
-          sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
-          docker-compose version
+      - name: Set up Docker Compose
+        uses: docker/setup-compose-action@v1
+        with:
+          version: latest
 
       - name: Run gitlab service
         run: |

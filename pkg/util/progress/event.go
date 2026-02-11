@@ -39,7 +39,7 @@ const (
 type Event struct {
 	isParent bool
 	status   EventStatus
-	// nolint
+	//nolint:unused
 	color   string
 	spinner *spinner.Spinner
 }

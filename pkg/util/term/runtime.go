@@ -45,7 +45,6 @@ func HandleCrash(additionalHandlers ...func(interface{})) {
 	if r := recover(); r != nil {
 		additionalHandlersWithContext := make([]func(context.Context, interface{}), len(additionalHandlers))
 		for i, handler := range additionalHandlers {
-			handler := handler // capture loop variable
 			additionalHandlersWithContext[i] = func(_ context.Context, r interface{}) {
 				handler(r)
 			}
@@ -53,7 +52,6 @@ func HandleCrash(additionalHandlers ...func(interface{})) {
 
 		handleCrash(context.Background(), r, additionalHandlersWithContext...)
 	}
-
 }
 
 // handleCrash is the common implementation of HandleCrash and HandleCrash.
@@ -74,6 +72,7 @@ func handleCrash(ctx context.Context, r any, additionalHandlers ...func(context.
 
 // logPanic logs the caller tree when a panic occurs (except in the special case of http.ErrAbortHandler).
 func logPanic(ctx context.Context, r interface{}) {
+	//nolint:errorlint
 	if r == http.ErrAbortHandler {
 		// honor the http.ErrAbortHandler sentinel panic value:
 		//   ErrAbortHandler is a sentinel panic value to abort a handler.

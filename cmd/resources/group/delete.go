@@ -92,7 +92,7 @@ func (o *DeleteOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []s
 	if err != nil {
 		group, _, errGroup := o.gitlabClient.Groups.GetGroup(gid, &gitlab.GetGroupOptions{})
 		if errGroup != nil {
-			return fmt.Errorf("couldn't find the id of group %s, got error: %v",
+			return fmt.Errorf("couldn't find the id of group %s, got error: %w",
 				gid, errGroup)
 		}
 		o.groupId = group.ID
