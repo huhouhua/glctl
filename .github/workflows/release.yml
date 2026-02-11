@@ -91,7 +91,7 @@ jobs:
       IMAGE: glctl
     strategy:
       matrix:
-        go_version: ['1.25']
+        go_version: ['1.26']
         os: [ubuntu-latest]
     steps:
       - name: Set up Go ${{ matrix.go_version }}
