@@ -48,10 +48,10 @@ func PrintProjectsOut(format string, w io.Writer, projects ...*gitlab.Project) e
 		var rows [][]string
 		for _, v := range projects {
 			rows = append(rows, []string{
-				strconv.Itoa(v.ID),
+				strconv.FormatInt(v.ID, 10),
 				v.PathWithNamespace,
 				v.HTTPURLToRepo,
-				strconv.Itoa(v.OpenIssuesCount),
+				strconv.FormatInt(v.OpenIssuesCount, 10),
 				strings.Join(v.Topics, ","),
 			})
 		}
@@ -74,10 +74,10 @@ func PrintGroupsOut(format string, w io.Writer, groups ...*gitlab.Group) error {
 		var rows [][]string
 		for _, v := range groups {
 			rows = append(rows, []string{
-				strconv.Itoa(v.ID),
+				strconv.FormatInt(v.ID, 10),
 				v.FullPath,
 				v.WebURL,
-				strconv.Itoa(v.ParentID),
+				strconv.FormatInt(v.ParentID, 10),
 			})
 		}
 		return printTable(header, w, rows)

@@ -32,8 +32,8 @@ func VerifyMarkFlagRequired(cmd *cobra.Command, fName string) {
 
 func AddPaginationVarFlags(cmd *cobra.Command, page *gitlab.ListOptions) {
 	flags := cmd.Flags()
-	flags.IntVarP(&page.Page, "page", "p", page.Page, "Page of results to retrieve")
-	flags.IntVarP(&page.PerPage, "per-page", "", page.PerPage, "The number of results to include per page")
+	flags.Int64VarP(&page.Page, "page", "p", page.Page, "Page of results to retrieve")
+	flags.Int64VarP(&page.PerPage, "per-page", "", page.PerPage, "The number of results to include per page")
 }
 
 func AddOutFlag(cmd *cobra.Command, p *string) {

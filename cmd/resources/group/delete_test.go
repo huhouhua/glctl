@@ -150,7 +150,7 @@ func createTestGroup(t *testing.T, factory cmdutil.Factory, groupName string, wa
 			return nil, err
 		}
 		subName := groupPath[lastIndex]
-		opt.ParentID = pointer.ToInt(group.ID)
+		opt.ParentID = pointer.ToInt64(group.ID)
 		opt.Name = pointer.ToString(subName)
 		opt.Path = pointer.ToString(subName)
 	}

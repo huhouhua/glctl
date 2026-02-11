@@ -23,9 +23,10 @@ import (
 
 	"github.com/huhouhua/glctl/pkg/cli/genericiooptions"
 
+	"math/rand/v2"
+
 	"github.com/AlekSi/pointer"
 	"github.com/stretchr/testify/assert"
-	"golang.org/x/exp/rand"
 
 	"github.com/spf13/cobra"
 	gitlab "gitlab.com/gitlab-org/api/client-go"
@@ -85,7 +86,7 @@ func TestDeleteProject(t *testing.T) {
 				t.Errorf("fork project fail")
 				return nil
 			}
-			return []string{strconv.Itoa(project.ID)}
+			return []string{strconv.FormatInt(project.ID, 10)}
 		},
 		run: func(opt *DeleteOptions, args []string) error {
 			defer func() {
@@ -162,8 +163,8 @@ func TestDeleteProject(t *testing.T) {
 }
 
 func forkProject(forkProject string, client *gitlab.Client) (*gitlab.Project, error) {
-	rand.Seed(uint64(time.Now().UnixNano()))
-	r := rand.Intn(1000)
+	rand.New(rand.NewPCG(uint64(time.Now().UnixNano()), 0))
+	r := rand.IntN(1000)
 	p, _, err := client.Projects.ForkProject(forkProject, &gitlab.ForkProjectOptions{
 		NamespacePath: pointer.ToString("Group1/SubGroup1"),
 		Name:          pointer.ToString(fmt.Sprintf("%s-%b", "glctl-from-delete", r)),
