@@ -13,7 +13,7 @@
 # limitations under the License.
 
 BLOCKER_TOOLS ?= golines go-junit-report golangci-lint licctl goimports
-CRITICAL_TOOLS ?= go-mod-outdated
+CRITICAL_TOOLS ?= go-mod-outdated go-gitlint
 TRIVIAL_TOOLS ?=
 
 TOOLS ?=$(BLOCKER_TOOLS) $(CRITICAL_TOOLS) $(TRIVIAL_TOOLS)
@@ -59,3 +59,7 @@ install.goimports:
 .PHONY: gitlab.%
 gitlab.%:
 	$(ROOT_DIR)/scripts/gitlab.sh --$*
+
+.PHONY: install.go-gitlint
+install.go-gitlint:
+	@$(GO) install github.com/huhouhua/go-gitlint/cmd/go-gitlint@latest
