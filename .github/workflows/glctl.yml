@@ -123,7 +123,6 @@ jobs:
       - name: Run unit test and get test coverage
         run: |
           source testdata/credentials.sh
-          env | grep GITLAB
           make cover
 
       - name: Upload coverage reports to Codecov

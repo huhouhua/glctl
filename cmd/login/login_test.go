@@ -38,7 +38,7 @@ func TestLogin(t *testing.T) {
 				opt.User = "root"
 				opt.Password = "12345"
 			},
-			expectedOutput: "Login failed!\nThe provided authorization grant is invalid, expired, revoked, does not match the redirection URI used in the authorization request, or was issued to another client.",
+			expectedOutput: "login failed!\nThe provided authorization grant is invalid, expired, revoked, does not match the redirection URI used in the authorization request, or was issued to another client.",
 		}, {
 			name: "login incorrect address",
 			args: []string{"http://1.3.4.5"},

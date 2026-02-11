@@ -18,5 +18,5 @@
 GLCTL_ROOT=$(dirname "${BASH_SOURCE[0]}")/../..
 
 readonly DOCKER_COMPOSE_TEST_FILE=${GLCTL_ROOT}/testdata/docker-compose-test.yaml
-readonly DOCKER_COMPOSE=docker-compose
+readonly DOCKER_COMPOSE=(docker compose)
 readonly DOCKER=docker

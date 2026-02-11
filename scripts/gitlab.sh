@@ -81,7 +81,7 @@ if [ "$INSTALL" == "true" ]; then
 h2 "[Step $item]: install..."
 let item+=1
 
-  ${DOCKER_COMPOSE} --project-name gitlab-test -f ${DOCKER_COMPOSE_TEST_FILE} up -d
+  "${DOCKER_COMPOSE[@]}" --project-name gitlab-test -f ${DOCKER_COMPOSE_TEST_FILE} up -d
   wait::gitlab
   exit 0
 fi
@@ -90,7 +90,7 @@ if [ "$UNINSTALL" == "true" ]; then
 h2 "[Step $item]: uninstall..."
 let item+=1
 
-  ${DOCKER_COMPOSE} -f ${DOCKER_COMPOSE_TEST_FILE} down -v
+  "${DOCKER_COMPOSE[@]}" -f ${DOCKER_COMPOSE_TEST_FILE} down -v
   success $"---- uninstall successfully.----"
   exit 0
 fi
