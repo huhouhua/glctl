@@ -30,7 +30,7 @@ import (
 
 type DeleteOptions struct {
 	gitlabClient *gitlab.Client
-	groupId      int
+	groupId      int64
 	ioStreams    genericiooptions.IOStreams
 	Out          string
 }
@@ -86,7 +86,7 @@ func (o *DeleteOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []s
 	}
 	o.gitlabClient = client
 
-	o.groupId, err = strconv.Atoi(gid)
+	o.groupId, err = strconv.ParseInt(gid, 10, 0)
 	// if group is not a number,
 	// search for the group path's id and assign it to gid
 	if err != nil {

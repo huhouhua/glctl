@@ -32,7 +32,7 @@ import (
 
 type EditOptions struct {
 	gitlabClient *gitlab.Client
-	groupId      int
+	groupId      int64
 	Group        *gitlab.UpdateGroupOptions
 	ioStreams    genericiooptions.IOStreams
 	Out          string
@@ -104,7 +104,7 @@ func (o *EditOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []str
 	if err != nil {
 		return err
 	}
-	o.groupId, err = strconv.Atoi(gid)
+	o.groupId, err = strconv.ParseInt(gid, 10, 0)
 	// if group is not a number,
 	// search for the group path's id and assign it to gid
 	if err != nil {

@@ -103,7 +103,7 @@ func (o *CreateOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []s
 	o.Group.Path = pointer.ToString(args[0])
 	o.Group.Name = pointer.ToString(args[0])
 	if strings.TrimSpace(o.Namespace) != "" {
-		id, convErr := strconv.Atoi(o.Namespace)
+		id, convErr := strconv.ParseInt(o.Namespace, 10, 0)
 		// if not nil take the given number
 		if convErr == nil {
 			o.Group.ParentID = &id
@@ -113,7 +113,7 @@ func (o *CreateOptions) Complete(f cmdutil.Factory, cmd *cobra.Command, args []s
 			if errGroup != nil {
 				return errGroup
 			}
-			o.Group.ParentID = pointer.ToInt(groupInfo.ID)
+			o.Group.ParentID = pointer.ToInt64(groupInfo.ID)
 		}
 	}
 	return nil
