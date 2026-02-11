@@ -49,7 +49,7 @@ function check::docker()
 
 function check::docker::compose()
 {
-	if [! docker compose version] &> /dev/null || [! ${DOCKER_COMPOSE}  --version] &> /dev/null
+	if [! docker compose version] &> /dev/null || [! "${DOCKER_COMPOSE[@]}"  --version] &> /dev/null
 	then
 		error "Need to install docker-compose(1.18.0+) or a docker-compose-plugin (https://docs.docker.com/compose/)by yourself first and run this script again."
 		exit 1
@@ -61,7 +61,7 @@ function check::docker::compose()
 		note "$(docker compose version)"
 
 	# or docker-compose has been installed, check its version
-	elif [[ $(${DOCKER_COMPOSE} --version) =~ (([0-9]+)\.([0-9]+)([\.0-9]*)) ]]
+	elif [[ $("${DOCKER_COMPOSE[@]}" --version) =~ (([0-9]+)\.([0-9]+)([\.0-9]*)) ]]
 	then
 		docker_compose_version=${BASH_REMATCH[1]}
 		docker_compose_version_part1=${BASH_REMATCH[2]}
