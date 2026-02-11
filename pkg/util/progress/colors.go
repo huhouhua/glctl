@@ -24,7 +24,7 @@ type colorFunc func(format string, a ...interface{}) string
 
 var (
 	nocolor colorFunc = func(format string, a ...interface{}) string {
-		return fmt.Sprintf(format, a)
+		return fmt.Sprintf(format, a...)
 	}
 	// #unused
 	DoneColor colorFunc = color.BlueString

@@ -177,8 +177,8 @@ func (o *ListOptions) Run(args []string) error {
 		projects, _, err = o.gitlabClient.Groups.ListGroupProjects(o.FromGroup, o.group)
 	} else {
 		if o.AllGroups {
-			o.project.ListOptions.PerPage = 100
-			o.project.ListOptions.Page = 1
+			o.project.PerPage = 100
+			o.project.Page = 1
 		}
 		for {
 			var portion []*gitlab.Project

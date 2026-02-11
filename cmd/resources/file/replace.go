@@ -191,11 +191,11 @@ func (o *ReplaceOptions) update(branch *gitlab.Branch) {
 
 func (o *ReplaceOptions) next() ([]*gitlab.Branch, error) {
 	s := progress.CreatingEvent(true).
-		WithText(fmt.Sprintf(" pull branch on page %d", o.branchList.ListOptions.Page)).
+		WithText(fmt.Sprintf(" pull branch on page %d", o.branchList.Page)).
 		Start()
 	defer s.Stop()
 	branches, _, err := o.gitlabClient.Branches.ListBranches(o.Project, o.branchList)
-	o.branchList.ListOptions.Page++
+	o.branchList.Page++
 	if err != nil {
 		s.Error("Error\n", err.Error())
 		return nil, err

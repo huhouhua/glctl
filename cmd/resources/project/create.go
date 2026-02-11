@@ -191,7 +191,6 @@ func (o *CreateOptions) AddFlags(cmd *cobra.Command) {
 	f.StringVarP(&o.namespace, "namespace", "n",
 		o.namespace, "This can be the parent namespace ID, group path, or user path. "+
 			"(defaults to current user namespace)")
-
 }
 
 // Complete completes all the required options.

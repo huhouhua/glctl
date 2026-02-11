@@ -29,8 +29,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// cmdTestCase describes a test case that works with releases.
-
+// TInfo cmdTestCase describes a test case that works with releases.
 func TInfo(msg interface{}) {
 	fmt.Println("--- INFO:", msg)
 }
@@ -50,7 +49,7 @@ func ErrorAssertionWithEqual(t *testing.T, wantErr, err error) bool {
 
 type TestCmdFunc = func(buffer *bytes.Buffer) *cobra.Command
 
-// A helper to ignore os.Exit(1) errors when running a cobra Command
+// ExecuteCommand A helper to ignore os.Exit(1) errors when running a cobra Command
 func ExecuteCommand(cmdFunc TestCmdFunc, cmd string) (stdout string, err error) {
 	args, err := shellwords.Parse(cmd)
 	if err != nil {
@@ -71,10 +70,9 @@ func ExecuteCommandOfArgs(cmdFunc TestCmdFunc, args ...string) (stdout string, e
 	stdout, _, err = ExecuteCommandC(cmd, args...)
 	TInfo("The command successfully returned values for assertion.")
 	return stdout, err
-
 }
 
-// A helper to ignore os.Exit(1) errors when running a cobra Command
+// ExecuteCommandC A helper to ignore os.Exit(1) errors when running a cobra Command
 func ExecuteCommandC(root *cobra.Command, args ...string) (stdout string, output string, err error) {
 	buf := new(bytes.Buffer)
 	root.SetOut(buf)
