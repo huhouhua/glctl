@@ -6,7 +6,7 @@ require (
 	github.com/AlekSi/pointer v1.2.0
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/briandowns/spinner v1.23.2
-	github.com/fatih/color v1.18.0
+	github.com/fatih/color v1.19.0
 	github.com/golang/glog v1.2.5
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/howeyc/gopass v0.0.0-20210920133722-c8aef6fb66ef
